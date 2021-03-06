@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.custom_category.viewProduct
+package com.smartcity.provider.ui.main.store
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -6,13 +6,13 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.view.*
+import android.view.View
+import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -31,8 +31,8 @@ import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.Optio
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ValuesAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.VariantImageAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ViewPagerAdapter
+import com.smartcity.provider.ui.main.store.state.StoreViewState
 import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.Constants.Companion.DINAR_ALGERIAN
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_product.*
 import javax.inject.Inject
@@ -46,15 +46,15 @@ constructor(
     OptionsAdapter.Interaction,
     VariantImageAdapter.Interaction
 {
-    private lateinit var dialogView:View
+    private lateinit var dialogView: View
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var viewPager: ViewPager
-    private lateinit var product:Product
+    private lateinit var product: Product
     private lateinit var  variantImageRecyclerAdapter: VariantImageAdapter
     private lateinit var  optionsRecyclerAdapter: OptionsAdapter
-    private lateinit var optionsRecyclerview:RecyclerView
+    private lateinit var optionsRecyclerview: RecyclerView
 
-    val viewModel: CustomCategoryViewModel by viewModels{
+    val viewModel: StoreViewModel by viewModels{
         viewModelFactory
     }
 
@@ -63,7 +63,7 @@ constructor(
         cancelActiveJobs()
         // Restore state after process death
         savedInstanceState?.let { inState ->
-            (inState[CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY] as CustomCategoryViewState?)?.let { viewState ->
+            (inState[CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY] as StoreViewState?)?.let { viewState ->
                 viewModel.setViewState(viewState)
             }
         }
@@ -88,7 +88,7 @@ constructor(
             product=it
         }
 
-        adaptViewToNavigate()
+
         initViewPager()
         setPrice(product_price)
         setName()
@@ -169,14 +169,14 @@ constructor(
                         product.let {
                             val image= Constants.PRODUCT_IMAGE_URL +it.images.first().image
                             setVariantDialog(
-                                "${variant.price}${DINAR_ALGERIAN}",
+                                "${variant.price}${Constants.DINAR_ALGERIAN}",
                                 variant.unit.toString(),
                                 image
                             )
                         }
                     }else{
                         setVariantDialog(
-                            "${variant.price}${DINAR_ALGERIAN}",
+                            "${variant.price}${Constants.DINAR_ALGERIAN}",
                             variant.unit.toString(),
                             Constants.PRODUCT_IMAGE_URL +variant.image!!
                         )
@@ -200,6 +200,7 @@ constructor(
             setVariantDialog(getPrice(),"0",image)
         }
     }
+
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             val map=viewModel.getChoisesMap()
@@ -223,24 +224,6 @@ constructor(
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_view_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.edit -> {
-                findNavController().navigate(R.id.action_viewProductFragment_to_createProductFragment)
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun adaptViewToNavigate(){
-        activity?.invalidateOptionsMenu()
-    }
-
     private fun variantsDialog() {
         options_view.setOnClickListener {
             showVariantDialog()
@@ -253,7 +236,8 @@ constructor(
 
     fun initOptionsRecyclerView(recyclerview:RecyclerView){
         recyclerview.apply {
-            layoutManager = LinearLayoutManager(this@ViewProductFragment.context,LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(this@ViewProductFragment.context,
+                LinearLayoutManager.VERTICAL, false)
             val topSpacingDecorator = TopSpacingItemDecoration(0)
             removeItemDecoration(topSpacingDecorator) // does nothing if not applied already
             addItemDecoration(topSpacingDecorator)
@@ -321,11 +305,11 @@ constructor(
         product_description.text=product.description
         expand_description.setOnClickListener {
             if (product_description.visibility==View.GONE){
-                TransitionManager.beginDelayedTransition(card_view,AutoTransition())
+                TransitionManager.beginDelayedTransition(card_view, AutoTransition())
                 product_description.visibility=View.VISIBLE
                 expand_description.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
             }else{
-                TransitionManager.beginDelayedTransition(card_view,AutoTransition())
+                TransitionManager.beginDelayedTransition(card_view, AutoTransition())
                 product_description.visibility=View.GONE
                 expand_description.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
             }
@@ -398,9 +382,9 @@ constructor(
         val prices =product.productVariants.map { productVariant -> productVariant.price }
 
         if(prices.max() != prices.min()){
-            (view as TextView).text= "${prices.min()}${DINAR_ALGERIAN} - ${prices.max()}${DINAR_ALGERIAN}"
+            (view as TextView).text= "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
         }else{
-            (view as TextView).text= "${prices.max()}${DINAR_ALGERIAN}"
+            (view as TextView).text= "${prices.max()}${Constants.DINAR_ALGERIAN}"
         }
     }
 
@@ -409,9 +393,9 @@ constructor(
         val prices =product.productVariants.map { productVariant -> productVariant.price }
 
         if(prices.max() != prices.min()){
-            return "${prices.min()}${DINAR_ALGERIAN} - ${prices.max()}${DINAR_ALGERIAN}"
+            return "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
         }else{
-            return "${prices.max()}${DINAR_ALGERIAN}"
+            return "${prices.max()}${Constants.DINAR_ALGERIAN}"
         }
     }
 
@@ -435,10 +419,6 @@ constructor(
         view_pager.adapter?.registerDataSetObserver(dotsIndicator.dataSetObserver)
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.clearProductFields()
-    }
 
 
     override fun onDestroy() {

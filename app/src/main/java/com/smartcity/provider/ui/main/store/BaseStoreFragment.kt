@@ -25,7 +25,7 @@ constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupActionBarWithNavController(R.id.accountFragment, activity as AppCompatActivity)
+        setupActionBarWithNavController(R.id.storeFragment, activity as AppCompatActivity)
     }
 
     fun setupActionBarWithNavController(fragmentId: Int, activity: AppCompatActivity){

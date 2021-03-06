@@ -287,6 +287,8 @@ constructor(
         }
     }
 
+
+
     fun setChoisesMap(map: MutableMap<String, String>){
         val update = getCurrentViewStateOrNew()
         update.choisesMap.choises = map

@@ -4,10 +4,12 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.*
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
 import kotlinx.android.synthetic.main.layout_view_custom_category_list_item.view.*
+import kotlinx.android.synthetic.main.option_value_item.view.*
 
 
 class ViewCustomCategoryAdapter (
@@ -20,6 +22,14 @@ class ViewCustomCategoryAdapter (
 
     companion object{
         var selectedPosition = 0
+
+        fun getSelectedPositions():Int{
+            return selectedPosition
+        }
+
+        fun setSelectedPositions(position:Int){
+             selectedPosition=position
+        }
     }
 
     fun resetSelectedPosition(){
@@ -141,12 +151,12 @@ class ViewCustomCategoryAdapter (
 
         fun bind(position: Int) = with(itemView) {
             if(selectedPosition==position)
-                itemView.view_custom_category_name.setTextColor(Color.parseColor("#e22b2b"));
+                itemView.custom_category_container.background= ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_selected_white,null)
             else
-                itemView.view_custom_category_name.setTextColor(Color.parseColor("#000000"));
+                itemView.custom_category_container.background=ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_white,null)
 
             itemView.setOnClickListener {
-                selectedPosition=position;
+                selectedPosition=position
                 interactionAll?.onItemAddSelected()
             }
 
@@ -162,9 +172,9 @@ class ViewCustomCategoryAdapter (
         fun bind(item: CustomCategory,position: Int) = with(itemView) {
 
             if(selectedPosition==position)
-                itemView.view_custom_category_name.setTextColor(Color.parseColor("#e22b2b"));
+                itemView.custom_category_container.background= ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_selected_white,null)
             else
-                itemView.view_custom_category_name.setTextColor(Color.parseColor("#000000"));
+                itemView.custom_category_container.background=ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_white,null)
 
             itemView.setOnClickListener {
                 selectedPosition=position;

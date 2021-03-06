@@ -10,7 +10,6 @@
         android:elevation="0dp"
         android:orientation="vertical"
         android:background="@drawable/raduis_selector"
-
         >
 
 

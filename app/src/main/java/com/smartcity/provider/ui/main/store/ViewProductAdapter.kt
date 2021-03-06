@@ -11,6 +11,7 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Product
+import com.smartcity.provider.util.ActionConstants
 
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.Constants.Companion.DINAR_ALGERIAN
@@ -18,7 +19,7 @@ import kotlinx.android.synthetic.main.layout_product_list_item.view.*
 
 class ViewProductAdapter (
     private val requestManager: RequestManager,
-    private val interaction: ViewProductAdapter.Interaction? = null
+    private val interaction: Interaction? = null
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
@@ -110,9 +111,12 @@ class ViewProductAdapter (
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(itemView.product_image)
 
+            itemView.setOnClickListener {
+                interaction?.onItemSelected(item, ActionConstants.SELECTED)
+            }
 
 
-
+            delete_product.visibility=View.GONE
             val name=item.name
             name.replace("\n","").replace("\r","")
             if(name.length>70){
@@ -128,7 +132,9 @@ class ViewProductAdapter (
     }
 
     interface Interaction {
-        fun onItemSelected(position: Int, item: Product, action:Int)
+        fun onItemSelected(item: Product,action:Int)
+
+
     }
 
 }

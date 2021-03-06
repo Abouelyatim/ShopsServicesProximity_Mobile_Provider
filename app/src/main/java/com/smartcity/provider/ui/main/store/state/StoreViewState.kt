@@ -14,7 +14,13 @@ class StoreViewState(
 
     var viewCustomCategoryFields: ViewCustomCategoryFields = ViewCustomCategoryFields(),
 
-    var viewProductList: ViewProductList = ViewProductList()
+    var viewProductList: ViewProductList = ViewProductList(),
+
+    var viewProductFields: ViewProductFields = ViewProductFields(),
+
+    var choisesMap: ChoisesMap = ChoisesMap(),
+
+    var customCategoryRecyclerPosition:Int=0
 
     ) : Parcelable{
 
@@ -26,5 +32,15 @@ class StoreViewState(
     @Parcelize
     data class ViewCustomCategoryFields(
         var customCategoryList: List<CustomCategory> = ArrayList<CustomCategory>()
+    ) : Parcelable
+
+    @Parcelize
+    data class ViewProductFields(
+        var product: Product? = null
+    ) : Parcelable
+
+    @Parcelize
+    data class ChoisesMap(
+        var choises:MutableMap<String, String> = mutableMapOf()
     ) : Parcelable
 }

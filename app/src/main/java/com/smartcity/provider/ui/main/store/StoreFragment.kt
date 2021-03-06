@@ -1,29 +1,32 @@
 package com.smartcity.provider.ui.main.store
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Product
+import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
+import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.getSelectedPositions
+import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.setSelectedPositions
 import com.smartcity.provider.ui.main.store.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent
 import com.smartcity.provider.ui.main.store.state.StoreViewState
+import com.smartcity.provider.util.ActionConstants
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_store.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 class StoreFragment
 @Inject
@@ -42,6 +45,15 @@ constructor(
         viewModelFactory
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable(
+            ACCOUNT_VIEW_STATE_BUNDLE_KEY,
+            viewModel.viewState.value
+        )
+        super.onSaveInstanceState(outState)
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -57,19 +69,27 @@ constructor(
         viewModel.cancelActiveJobs()
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
+        stateChangeListener.expandAppBar()
+
 
         initCustomCategoryRecyclerView()
         initProductRecyclerView()
-        CustomCategoryMain()
         subscribeObservers()
+
+        if(viewModel.getCustomCategoryRecyclerPosition()==0){
+            CustomCategoryMain()
+        }
     }
 
     private fun initProductRecyclerView() {
         view_product_recyclerview.apply {
-            layoutManager = LinearLayoutManager(this@StoreFragment.context)
+            layoutManager = LinearLayoutManager(this@StoreFragment.context,LinearLayoutManager.VERTICAL, false)
             val topSpacingDecorator = TopSpacingItemDecoration(0)
             removeItemDecoration(topSpacingDecorator) // does nothing if not applied already
             addItemDecoration(topSpacingDecorator)
@@ -84,10 +104,15 @@ constructor(
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+
                 }
             })
+
             adapter = productRecyclerAdapter
+
         }
+        //productRecyclerAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
     fun CustomCategoryMain(){
@@ -112,6 +137,8 @@ constructor(
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+
                 }
             })
             adapter = customCategoryrecyclerAdapter
@@ -174,9 +201,14 @@ constructor(
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             customCategoryrecyclerAdapter.submitList(viewModel.getViewCustomCategoryFields())
-            productRecyclerAdapter.submitList(viewModel.getViewProductList().products)
+            productRecyclerAdapter.apply {
+                    submitList(viewModel.getViewProductList().products)
+                }
+
+
         })
     }
+
     fun ProductMain(id:Long){
         viewModel.setStateEvent(
             StoreStateEvent.ProductMain(
@@ -195,25 +227,36 @@ constructor(
         ProductMain(item.pk.toLong())
     }
 
-    override fun onItemSelected(position: Int, item: Product, action: Int) {
-        TODO("Not yet implemented")
+    override fun onItemSelected(item: Product,action:Int) {
+        when(action){
+            ActionConstants.SELECTED ->{
+               viewModel.setViewProductFields(item)
+                findNavController().navigate(R.id.action_storeFragment_to_viewProductFragment)
+            }
+        }
 
     }
+
+
 
     override fun onItemAddSelected() {
         view_custom_category_recyclerview.adapter!!.notifyDataSetChanged()
         AllProduct()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setSelectedPositions(viewModel.getCustomCategoryRecyclerPosition())
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         // clear references (can leak memory)
+        viewModel.setCustomCategoryRecyclerPosition(getSelectedPositions())
         customCategoryrecyclerAdapter.resetSelectedPosition()
         view_custom_category_recyclerview.adapter = null
         view_product_recyclerview.adapter=null
     }
-
-
 
 
 }

@@ -156,7 +156,7 @@ dependencies {
     implementation "androidx.cardview:cardview:$cardview_version"
 
     // Recyclerview
-    def recyclerview_version = "1.1.0-beta03"
+    def recyclerview_version = "1.2.0-beta02"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 
 //    //glide

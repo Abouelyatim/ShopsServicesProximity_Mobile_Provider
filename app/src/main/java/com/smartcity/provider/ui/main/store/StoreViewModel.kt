@@ -1,5 +1,6 @@
 package com.smartcity.provider.ui.main.store
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.smartcity.provider.di.main.MainScope
@@ -10,6 +11,7 @@ import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Loading
+import com.smartcity.provider.ui.main.blog.viewmodel.BlogViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent
@@ -104,6 +106,49 @@ constructor(
             return it.viewCustomCategoryFields.customCategoryList
         }
     }
+
+    fun setViewProductFields(product: Product){
+        val update = getCurrentViewStateOrNew()
+        update.viewProductFields.product = product
+        setViewState(update)
+    }
+
+    fun getViewProductFields():Product?{
+        getCurrentViewStateOrNew().let {
+            return it.viewProductFields.product
+        }
+    }
+
+    fun setChoisesMap(map: MutableMap<String, String>){
+        val update = getCurrentViewStateOrNew()
+        update.choisesMap.choises = map
+        setViewState(update)
+    }
+
+    fun getChoisesMap():MutableMap<String, String>{
+        getCurrentViewStateOrNew().let {
+            return it.choisesMap.choises
+        }
+    }
+    fun clearChoisesMap(){
+        val update = getCurrentViewStateOrNew()
+        update.choisesMap= StoreViewState.ChoisesMap()
+        setViewState(update)
+    }
+
+    fun setCustomCategoryRecyclerPosition(postion:Int){
+        val update = getCurrentViewStateOrNew()
+        update.customCategoryRecyclerPosition=postion
+        setViewState(update)
+    }
+
+    fun getCustomCategoryRecyclerPosition():Int{
+        getCurrentViewStateOrNew().let {
+            return it.customCategoryRecyclerPosition
+        }
+    }
+
+
 
     fun cancelActiveJobs(){
         storeRepository.cancelActiveJobs() // cancel active jobs

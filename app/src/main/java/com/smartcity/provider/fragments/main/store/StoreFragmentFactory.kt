@@ -4,8 +4,8 @@ import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.ui.main.custom_category.viewProduct.ViewProductFragment
 import com.smartcity.provider.ui.main.store.StoreFragment
+import com.smartcity.provider.ui.main.store.ViewProductFragment
 
 import javax.inject.Inject
 
@@ -26,6 +26,7 @@ constructor(
                     viewModelFactory,
                     requestManager)
             }
+
 
             ViewProductFragment::class.java.name -> {
                 ViewProductFragment(
