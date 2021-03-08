@@ -150,10 +150,14 @@ class ViewCustomCategoryAdapter (
 
 
         fun bind(position: Int) = with(itemView) {
-            if(selectedPosition==position)
+            if(selectedPosition==position){
                 itemView.custom_category_container.background= ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_selected_white,null)
-            else
+                itemView.view_custom_category_name.setTextColor(Color.parseColor("#ffffff"))
+            }
+            else{
                 itemView.custom_category_container.background=ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_white,null)
+                itemView.view_custom_category_name.setTextColor(Color.parseColor("#000000"))
+            }
 
             itemView.setOnClickListener {
                 selectedPosition=position
@@ -171,10 +175,16 @@ class ViewCustomCategoryAdapter (
 
         fun bind(item: CustomCategory,position: Int) = with(itemView) {
 
-            if(selectedPosition==position)
+            if(selectedPosition==position){
                 itemView.custom_category_container.background= ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_selected_white,null)
-            else
+                itemView.view_custom_category_name.setTextColor(Color.parseColor("#ffffff"))
+
+            }
+            else{
                 itemView.custom_category_container.background=ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_white,null)
+                itemView.view_custom_category_name.setTextColor(Color.parseColor("#000000"))
+
+            }
 
             itemView.setOnClickListener {
                 selectedPosition=position;

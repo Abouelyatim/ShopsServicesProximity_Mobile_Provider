@@ -23,6 +23,9 @@
                 android:textColor="#000"
                 android:textSize="19sp"
                 android:layout_weight="1"
-                android:padding="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp"
                 />
 </LinearLayout>

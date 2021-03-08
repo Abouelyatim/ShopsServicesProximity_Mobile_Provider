@@ -404,7 +404,6 @@ constructor(
         viewPager = activity!!.findViewById(R.id.view_pager)
         viewPagerAdapter =
             ViewPagerAdapter(
-                context!!,
                 requestManager
             )
 

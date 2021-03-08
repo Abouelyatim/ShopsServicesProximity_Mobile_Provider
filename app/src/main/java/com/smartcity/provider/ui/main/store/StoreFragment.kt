@@ -3,6 +3,7 @@ package com.smartcity.provider.ui.main.store
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Adapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter.*
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
@@ -109,6 +111,7 @@ constructor(
                 }
             })
 
+            productRecyclerAdapter.stateRestorationPolicy= StateRestorationPolicy.PREVENT_WHEN_EMPTY
             adapter = productRecyclerAdapter
 
         }
@@ -123,7 +126,7 @@ constructor(
         view_custom_category_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@StoreFragment.context,LinearLayoutManager.HORIZONTAL, false)
 
-            val rightSpacingDecorator = RightSpacingItemDecoration(60)
+            val rightSpacingDecorator = RightSpacingItemDecoration(15)
             removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
             addItemDecoration(rightSpacingDecorator)
 
@@ -141,8 +144,11 @@ constructor(
 
                 }
             })
+            customCategoryrecyclerAdapter.stateRestorationPolicy= StateRestorationPolicy.PREVENT_WHEN_EMPTY
             adapter = customCategoryrecyclerAdapter
+
         }
+
 
     }
 

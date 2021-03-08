@@ -420,7 +420,6 @@ constructor(
         viewPager = activity!!.findViewById(R.id.view_pager)
         viewPagerAdapter =
             ViewPagerAdapter(
-                context!!,
                 requestManager
             )
 
@@ -444,6 +443,7 @@ constructor(
     override fun onDestroy() {
         super.onDestroy()
         viewPager.adapter=null
+
     }
 
     override fun onItemSelected(option: String, value: String) {

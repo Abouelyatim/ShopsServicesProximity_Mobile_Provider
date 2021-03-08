@@ -21,11 +21,14 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/view_custom_category_recyclerview"
                     android:scrollbars="none"
-
                     />
 
 
-
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@color/new_default_background_color"
+                />
 
         <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"

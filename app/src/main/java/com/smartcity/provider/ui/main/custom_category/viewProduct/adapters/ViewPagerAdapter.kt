@@ -10,11 +10,9 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.util.Constants
 
 class ViewPagerAdapter internal constructor(
-    context: Context,
     requestManager: RequestManager
 ) : PagerAdapter() {
 
-    private val context: Context
     private val requestManager: RequestManager
 
     private lateinit var imageUrls: List<String>
@@ -31,7 +29,7 @@ class ViewPagerAdapter internal constructor(
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val imageView = ImageView(context)
+        val imageView = ImageView(container.context)
         imageView.adjustViewBounds=true
         imageView.scaleType=ImageView.ScaleType.FIT_XY
 
@@ -54,7 +52,6 @@ class ViewPagerAdapter internal constructor(
     }
 
     init {
-        this.context = context
         this.requestManager=requestManager
     }
 }
