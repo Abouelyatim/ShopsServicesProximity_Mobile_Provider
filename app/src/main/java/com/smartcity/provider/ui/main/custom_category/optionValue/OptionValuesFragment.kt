@@ -83,9 +83,7 @@ constructor(
             val attrebute=viewModel.getNewOption()
             attrebute?.let {
                 if (input_value.text.toString().isNotBlank().and(input_value.text.toString().isNotEmpty())){
-                    Log.d("ii",viewModel.getOptionList().toString())
                     it.attributeValues.add(AttributeValue(input_value.text.toString(),""))
-                    Log.d("ii",viewModel.getOptionList().toString())
                     viewModel.setNewOption(it)
                     input_value.text.clear()
                 }

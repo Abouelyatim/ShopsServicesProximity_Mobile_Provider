@@ -144,7 +144,11 @@ constructor(
         setViewState(update)
     }
 
-
+    fun getProductFields():ProductFields{
+        getCurrentViewStateOrNew().let {
+            return it.productFields
+        }
+    }
 
     fun getSelectedCustomCategory():CustomCategory?{
         getCurrentViewStateOrNew().let {
@@ -312,6 +316,10 @@ constructor(
     fun clearProductFields(){
         val update = getCurrentViewStateOrNew()
         update.newOption= NewOption()
+       /* update.productFields.description=""
+        update.productFields.name=""
+        update.productFields.price=""
+        update.productFields.quantity=""*/
         update.productFields= ProductFields()
         update.selectedProductVariant= SelectedProductVariant()
         setViewState(update)

@@ -8,10 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -58,8 +61,7 @@ constructor(
 {
     private lateinit var varianteRecyclerAdapter: VarianteAdapter
     private lateinit var productImageRecyclerAdapter: ProductImageAdapter
-    private var Observer=true
-    var viewStateObserver=true
+
     var ACTION=-1
     val viewModel: CustomCategoryViewModel by viewModels{
         viewModelFactory
@@ -68,6 +70,7 @@ constructor(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
+
         // Restore state after process death
         savedInstanceState?.let { inState ->
             (inState[CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY] as CustomCategoryViewState?)?.let { viewState ->
@@ -112,7 +115,11 @@ constructor(
             createUpdateProduct()
         }
 
+
+
     }
+
+
 
     private fun subscribeObservers() {
         viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
@@ -150,6 +157,7 @@ constructor(
                                 viewModel.setProductList(it)
                             }
                             viewModel.clearProductFields()
+                            setProductProperties("","","","")
                             findNavController().navigate(R.id.action_createProductFragment_to_productFragment)
                         }
 
@@ -169,20 +177,6 @@ constructor(
         })
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-            if(Observer){
-                viewState.productFields?.let {productFields ->
-                    if (viewStateObserver){
-                        setProductProperties(
-                            productFields.name,
-                            productFields.description,
-                            productFields.price,
-                            productFields.quantity
-                        )
-                    }
-
-                }
-            }
-
             productImageRecyclerAdapter.submitList(viewModel.getProductImageList())
             varianteRecyclerAdapter.submitList(viewModel.getProductVariantsList())
 
@@ -233,7 +227,6 @@ constructor(
 
     private fun updateProductOptionList(){
         try {
-            viewStateObserver=false
             val options= Collections.synchronizedSet(viewModel.getOptionList())
             options.map { option->
                 option.attributeValues.map {optionValue->
@@ -269,7 +262,6 @@ constructor(
             }
 
             viewModel.setOptionList(attributeList.toHashSet())
-            viewStateObserver=true
         }catch (e:Exception){
 
         }
@@ -529,6 +521,10 @@ constructor(
         input_product_price.setText(price)
         input_product_quantity.setText(quentity)
 
+       //TODO update edit text
+       /* input_product_name.addTextChangedListener {
+            Log.d("ii",it.toString())
+        }*/
     }
 
     fun showErrorDialog(errorMessage: String){
@@ -573,7 +569,6 @@ constructor(
     override fun onItemSelected(position: Int, item: ProductVariants,action:Int) {
         when(action){
             ActionConstants.SELECTED->{
-                viewStateObserver=false
                 viewModel.setSelectedProductVariant(item)
                 findNavController().navigate(R.id.action_createProductFragment_to_variantFragment)
             }
@@ -637,9 +632,7 @@ constructor(
                     viewModel.getProductImageList()?.let {
                         val list=it.toMutableList()
                         list.remove(uri)
-                        Observer=false
                         viewModel.setProductImageList(list)
-                        Observer=true
                         dialog.dismiss()
                     }
 
@@ -658,6 +651,19 @@ constructor(
 
         dialog.show()
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getProductFields().let { productFields->
+            setProductProperties(
+                productFields.name,
+                productFields.description,
+                productFields.price,
+                productFields.quantity
+            )
+        }
+    }
+
 
     override fun onPause() {
         super.onPause()
@@ -680,7 +686,7 @@ constructor(
         variant_recyclerview.adapter = null
         recyclerview_product_image.adapter=null
         productImageRecyclerAdapter.clearItemTouchHelper()
-        viewModel.setProductFields(
+       /* viewModel.setProductFields(
             ProductFields(
                 input_product_description.text.toString(),
                 input_product_name.text.toString(),
@@ -690,7 +696,7 @@ constructor(
                 viewModel.getProductVariantsList()!!.toMutableList(),
                 viewModel.getOptionList()!!.toHashSet()
             )
-        )
+        )*/
     }
 
 }

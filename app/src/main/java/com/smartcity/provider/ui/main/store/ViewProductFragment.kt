@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.store
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -160,6 +161,8 @@ constructor(
         return resultSortedMap
     }
 
+
+
     private fun showDetailedProduct(map: Map<String, String>){
         product.let {
             for (variant in it.productVariants){
@@ -197,9 +200,17 @@ constructor(
     private fun showDefaultProduct(){
         product.let {
             val image= Constants.PRODUCT_IMAGE_URL +it.images.first().image
-            setVariantDialog(getPrice(),"0",image)
+
+            if(it.attributes.isEmpty()){
+                setVariantDialog(getPrice(),it.productVariants.first().unit.toString(),image)
+            }else{
+                setVariantDialog(getPrice(),"0",image)
+            }
+
         }
     }
+
+
 
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
@@ -218,9 +229,18 @@ constructor(
                 if(map.size==product.attributes.size){
                     showDetailedProduct(map)
                 }else{
+                    //Log.d("ii","map.isNotEmpty() else showDefaultProduct")
                     showDefaultProduct()
                 }
             }
+
+            /*if(this::dialogView.isInitialized){
+                if(product.attributes.isEmpty()){
+                    showDefaultProductWithQuantity(product.productVariants.first().unit.toString())
+                }
+            }*/
+
+
         })
     }
 
@@ -267,7 +287,7 @@ constructor(
 
 
     fun showVariantDialog(){
-        val dialog = BottomSheetDialog(context!!, android.R.style.Theme_Light)
+        val dialog = Dialog(context!!, android.R.style.Theme_Light)
         dialog.window.setBackgroundDrawable( ColorDrawable(Color.parseColor("#99000000")))
         dialogView = layoutInflater.inflate(R.layout.dialog_variants, null)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -298,6 +318,10 @@ constructor(
         dialog.setOnDismissListener {
             viewModel.clearChoisesMap()
         }
+
+
+
+
         dialog.show()
     }
 
@@ -367,8 +391,9 @@ constructor(
             }
 
         }else{
-            options_view.visibility=View.GONE
-            options_view_separatore.visibility=View.GONE
+            product_attrebute.text="Stock"
+            //options_view.visibility=View.GONE
+            //options_view_separatore.visibility=View.GONE
         }
 
     }

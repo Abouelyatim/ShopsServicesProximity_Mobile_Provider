@@ -5,7 +5,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
     <View
 
@@ -120,6 +121,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
+            android:background="#fff"
             android:fillViewport="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -188,4 +190,10 @@
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#fff"
+        />
 </LinearLayout >

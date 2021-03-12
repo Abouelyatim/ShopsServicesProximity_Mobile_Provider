@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.custom_category.viewProduct
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -160,6 +161,8 @@ constructor(
         return resultSortedMap
     }
 
+
+
     private fun showDetailedProduct(map: Map<String, String>){
         product.let {
             for (variant in it.productVariants){
@@ -169,14 +172,14 @@ constructor(
                         product.let {
                             val image= Constants.PRODUCT_IMAGE_URL +it.images.first().image
                             setVariantDialog(
-                                "${variant.price}${DINAR_ALGERIAN}",
+                                "${variant.price}${Constants.DINAR_ALGERIAN}",
                                 variant.unit.toString(),
                                 image
                             )
                         }
                     }else{
                         setVariantDialog(
-                            "${variant.price}${DINAR_ALGERIAN}",
+                            "${variant.price}${Constants.DINAR_ALGERIAN}",
                             variant.unit.toString(),
                             Constants.PRODUCT_IMAGE_URL +variant.image!!
                         )
@@ -197,9 +200,18 @@ constructor(
     private fun showDefaultProduct(){
         product.let {
             val image= Constants.PRODUCT_IMAGE_URL +it.images.first().image
-            setVariantDialog(getPrice(),"0",image)
+
+            if(it.attributes.isEmpty()){
+                setVariantDialog(getPrice(),it.productVariants.first().unit.toString(),image)
+            }else{
+                setVariantDialog(getPrice(),"0",image)
+            }
+
         }
     }
+
+
+
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             val map=viewModel.getChoisesMap()
@@ -217,28 +229,19 @@ constructor(
                 if(map.size==product.attributes.size){
                     showDetailedProduct(map)
                 }else{
+                    //Log.d("ii","map.isNotEmpty() else showDefaultProduct")
                     showDefaultProduct()
                 }
             }
+
+            /*if(this::dialogView.isInitialized){
+                if(product.attributes.isEmpty()){
+                    showDefaultProductWithQuantity(product.productVariants.first().unit.toString())
+                }
+            }*/
+
+
         })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_view_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.edit -> {
-                findNavController().navigate(R.id.action_viewProductFragment_to_createProductFragment)
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun adaptViewToNavigate(){
-        activity?.invalidateOptionsMenu()
     }
 
     private fun variantsDialog() {
@@ -253,7 +256,8 @@ constructor(
 
     fun initOptionsRecyclerView(recyclerview:RecyclerView){
         recyclerview.apply {
-            layoutManager = LinearLayoutManager(this@ViewProductFragment.context,LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(this@ViewProductFragment.context,
+                LinearLayoutManager.VERTICAL, false)
             val topSpacingDecorator = TopSpacingItemDecoration(0)
             removeItemDecoration(topSpacingDecorator) // does nothing if not applied already
             addItemDecoration(topSpacingDecorator)
@@ -283,7 +287,7 @@ constructor(
 
 
     fun showVariantDialog(){
-        val dialog = BottomSheetDialog(context!!, android.R.style.Theme_Light)
+        val dialog = Dialog(context!!, android.R.style.Theme_Light)
         dialog.window.setBackgroundDrawable( ColorDrawable(Color.parseColor("#99000000")))
         dialogView = layoutInflater.inflate(R.layout.dialog_variants, null)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -314,6 +318,8 @@ constructor(
         dialog.setOnDismissListener {
             viewModel.clearChoisesMap()
         }
+
+
         dialog.show()
     }
 
@@ -321,11 +327,11 @@ constructor(
         product_description.text=product.description
         expand_description.setOnClickListener {
             if (product_description.visibility==View.GONE){
-                TransitionManager.beginDelayedTransition(card_view,AutoTransition())
+                TransitionManager.beginDelayedTransition(card_view, AutoTransition())
                 product_description.visibility=View.VISIBLE
                 expand_description.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
             }else{
-                TransitionManager.beginDelayedTransition(card_view,AutoTransition())
+                TransitionManager.beginDelayedTransition(card_view, AutoTransition())
                 product_description.visibility=View.GONE
                 expand_description.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
             }
@@ -383,8 +389,9 @@ constructor(
             }
 
         }else{
-            options_view.visibility=View.GONE
-            options_view_separatore.visibility=View.GONE
+            product_attrebute.text="Stock"
+            //options_view.visibility=View.GONE
+            //options_view_separatore.visibility=View.GONE
         }
 
     }
@@ -398,9 +405,9 @@ constructor(
         val prices =product.productVariants.map { productVariant -> productVariant.price }
 
         if(prices.max() != prices.min()){
-            (view as TextView).text= "${prices.min()}${DINAR_ALGERIAN} - ${prices.max()}${DINAR_ALGERIAN}"
+            (view as TextView).text= "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
         }else{
-            (view as TextView).text= "${prices.max()}${DINAR_ALGERIAN}"
+            (view as TextView).text= "${prices.max()}${Constants.DINAR_ALGERIAN}"
         }
     }
 
@@ -409,9 +416,9 @@ constructor(
         val prices =product.productVariants.map { productVariant -> productVariant.price }
 
         if(prices.max() != prices.min()){
-            return "${prices.min()}${DINAR_ALGERIAN} - ${prices.max()}${DINAR_ALGERIAN}"
+            return "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
         }else{
-            return "${prices.max()}${DINAR_ALGERIAN}"
+            return "${prices.max()}${Constants.DINAR_ALGERIAN}"
         }
     }
 
@@ -434,16 +441,11 @@ constructor(
         view_pager.adapter?.registerDataSetObserver(dotsIndicator.dataSetObserver)
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.clearProductFields()
-    }
 
 
     override fun onDestroy() {
         super.onDestroy()
         viewPager.adapter=null
-
     }
 
     override fun onItemSelected(option: String, value: String) {
@@ -455,5 +457,25 @@ constructor(
             map.put(option,value)
         }
         viewModel.setChoisesMap(map)
+    }
+
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.edit_view_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.edit -> {
+                findNavController().navigate(R.id.action_viewProductFragment_to_createProductFragment)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun adaptViewToNavigate(){
+        activity?.invalidateOptionsMenu()
     }
 }

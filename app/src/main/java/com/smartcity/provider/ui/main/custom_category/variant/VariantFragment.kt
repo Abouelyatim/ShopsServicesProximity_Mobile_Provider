@@ -34,6 +34,7 @@ import com.smartcity.provider.util.ErrorHandling
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_create_product.*
 import kotlinx.android.synthetic.main.fragment_create_store.*
 import kotlinx.android.synthetic.main.fragment_option_values.*
 import kotlinx.android.synthetic.main.fragment_variant.*
@@ -85,16 +86,16 @@ constructor(
 
         updateProductVariant()
         selectImage()
-        subscribeObservers()
         deleteImage()
 
         copyImage()
         pasteImage()
-
+        subscribeObservers()
         viewModel.getSelectedProductVariant()?.let {
             imageUri=it.imageUri
         }
     }
+
 
     private fun pasteImage() {
         variant_image_paste.setOnClickListener {
@@ -120,38 +121,34 @@ constructor(
     }
 
 
-    var Observer=true
+
     private fun deleteImage() {
         variant_image_delete.setOnClickListener {
             viewModel.getSelectedProductVariant()?.let {productVariant ->
                 variant_image.setImageResource(R.drawable.ic_baseline_add_photo_alternate_24)
                 imageUri=null
-                Observer=false
-               // viewModel.setCopyImage(null)
+
                 Toast.makeText(context,"deleted",Toast.LENGTH_SHORT).show()
-                Observer=true
+
             }
 
         }
     }
 
     private fun subscribeObservers() {
-        viewModel.viewState.observe(viewLifecycleOwner, Observer{
-
-           if(Observer){
-               it.selectedProductVariant.variante?.let{ productVariant ->
-                   setVariantProperties(
-                       productVariant.price,
-                       productVariant.unit,
-                       productVariant.imageUri
-                   )
-               }
-           }
-
-
-
+        viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
+            viewState.selectedProductVariant.variante?.let {productVariant ->
+                setVariantProperties(
+                    productVariant.price,
+                    productVariant.unit,
+                    productVariant.imageUri
+                )
+            }
         })
     }
+
+
+
     private fun setVariantProperties(price:Double,
                                      quantity:Int,
                                      imageUri: Uri?){
@@ -262,6 +259,8 @@ constructor(
             }
         }
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

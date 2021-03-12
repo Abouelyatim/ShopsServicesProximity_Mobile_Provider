@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.custom_category.product
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -190,17 +191,22 @@ constructor(
     fun deleteProduct(id:Long){
         viewModel.setStateEvent(CustomCategoryStateEvent.DeleteProduct(id))
     }
+
+
+
     override fun onResume() {
         super.onResume()
         viewModel.clearViewProductFields()
         viewModel.clearProductFields()
     }
 
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         // clear references (can leak memory)
         //viewModel.clearProductList()
-
+        viewModel.clearProductFields()
         product_recyclerview.adapter = null
 
     }
