@@ -9,6 +9,9 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Order
 import com.smartcity.provider.util.Constants
+import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
+import com.smartcity.provider.util.DateUtils.Companion.convertServerStringDateToLong
+import com.smartcity.provider.util.DateUtils.Companion.convertStringToStringDate
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.layout_order_item_header.view.*
 
@@ -117,7 +120,8 @@ class OrderAdapter (
         fun bind(item: Order) = with(itemView) {
 
             itemView.order_id.text=item.id.toString()
-            itemView.order_time.text=item.createAt
+
+            itemView.order_time.text=convertStringToStringDate(item.createAt)
 
             var total=0.0
             item.orderProductVariants.map {

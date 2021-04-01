@@ -1,7 +1,9 @@
 package com.smartcity.provider.util
 
+import android.R.string
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class DateUtils {
 
@@ -25,6 +27,16 @@ class DateUtils {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             try {
                 val date = sdf.format(Date(longDate))
+                return date
+            } catch (e: Exception) {
+                throw Exception(e)
+            }
+        }
+
+        fun convertStringToStringDate(date: String): String{
+            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.ENGLISH)
+            try {
+                val date = sdf.format(sdf.parse(date)).replace("T"," ")
                 return date
             } catch (e: Exception) {
                 throw Exception(e)
