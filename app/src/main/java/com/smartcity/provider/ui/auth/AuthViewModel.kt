@@ -1,7 +1,6 @@
 package com.smartcity.provider.ui.auth
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.*
 import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.models.AuthToken
@@ -12,10 +11,7 @@ import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Loading
 import com.smartcity.provider.ui.auth.state.*
 import com.smartcity.provider.ui.auth.state.AuthStateEvent.*
-import com.smartcity.provider.ui.main.blog.viewmodel.BlogViewModel
 import com.smartcity.provider.util.AbsentLiveData
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 @AuthScope

@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.blog
+package com.smartcity.provider.ui.main.order
 
 import android.content.Context
 import android.os.Bundle
@@ -14,7 +14,7 @@ import com.smartcity.provider.R
 import com.smartcity.provider.ui.DataStateChangeListener
 import com.smartcity.provider.ui.UICommunicationListener
 
-abstract class BaseBlogFragment
+abstract class BaseOrderFragment
 constructor(
     @LayoutRes
     private val layoutRes: Int
@@ -29,7 +29,7 @@ constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupActionBarWithNavController(R.id.blogFragment, activity as AppCompatActivity)
+        setupActionBarWithNavController(R.id.orderFragment, activity as AppCompatActivity)
     }
 
     abstract fun cancelActiveJobs()

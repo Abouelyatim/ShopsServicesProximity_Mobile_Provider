@@ -65,6 +65,8 @@ interface OpenApiMainService {
     fun deleteProduct(@Path("id") id: Long?):LiveData<GenericApiResponse<GenericResponse>>
 
 
+    @GET("order/current-provider/{id}")
+    fun getAllOrders(@Path("id") id: Long?):LiveData<GenericApiResponse<ListOrderResponse>>
 
 
 
@@ -72,27 +74,6 @@ interface OpenApiMainService {
 
 
 
-    @GET("account/properties")
-    fun getAccountProperties(
-        @Header("Authorization") authorization: String
-    ): LiveData<GenericApiResponse<AccountProperties>>
-
-    @PUT("account/properties/update")
-    @FormUrlEncoded
-    fun saveAccountProperties(
-        @Header("Authorization") authorization: String,
-        @Field("email") email: String,
-        @Field("username") username: String
-    ): LiveData<GenericApiResponse<GenericResponse>>
-
-    @PUT("account/change_password/")
-    @FormUrlEncoded
-    fun updatePassword(
-        @Header("Authorization") authorization: String,
-        @Field("old_password") currentPassword: String,
-        @Field("new_password") newPassword: String,
-        @Field("confirm_new_password") confirmNewPassword: String
-    ): LiveData<GenericApiResponse<GenericResponse>>
 
     @GET("blog/list")
     fun searchListBlogPosts(
@@ -127,14 +108,6 @@ interface OpenApiMainService {
     ): LiveData<GenericApiResponse<BlogCreateUpdateResponse>>
 
 
-    @Multipart
-    @POST("blog/create")
-    fun createBlog(
-        @Header("Authorization") authorization: String,
-        @Part("title") title: RequestBody,
-        @Part("body") body: RequestBody,
-        @Part image: MultipartBody.Part?
-    ): LiveData<GenericApiResponse<BlogCreateUpdateResponse>>
 }
 
 

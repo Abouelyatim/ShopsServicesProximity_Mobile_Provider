@@ -1,6 +1,5 @@
 package com.smartcity.provider.ui.main.store
 
-import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.smartcity.provider.di.main.MainScope
@@ -11,9 +10,6 @@ import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Loading
-import com.smartcity.provider.ui.main.blog.viewmodel.BlogViewModel
-import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
-import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent.*
 import com.smartcity.provider.ui.main.store.state.StoreViewState

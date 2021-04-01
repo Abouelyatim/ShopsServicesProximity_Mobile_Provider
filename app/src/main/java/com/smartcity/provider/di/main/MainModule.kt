@@ -5,7 +5,7 @@ import com.smartcity.provider.persistence.AccountPropertiesDao
 import com.smartcity.provider.persistence.AppDatabase
 import com.smartcity.provider.persistence.BlogPostDao
 import com.smartcity.provider.repository.main.StoreRepository
-import com.smartcity.provider.repository.main.BlogRepository
+import com.smartcity.provider.repository.main.OrderRepository
 import com.smartcity.provider.repository.main.CustomCategoryRepository
 
 
@@ -48,10 +48,9 @@ object MainModule {
     @Provides
     fun provideBlogRepository(
         openApiMainService: OpenApiMainService,
-        blogPostDao: BlogPostDao,
         sessionManager: SessionManager
-    ): BlogRepository {
-        return BlogRepository(openApiMainService, blogPostDao, sessionManager)
+    ): OrderRepository {
+        return OrderRepository(openApiMainService, sessionManager)
     }
 
     @JvmStatic

@@ -4,9 +4,8 @@ import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.ui.main.blog.BlogFragment
-import com.smartcity.provider.ui.main.blog.UpdateBlogFragment
-import com.smartcity.provider.ui.main.blog.ViewBlogFragment
+import com.smartcity.provider.ui.main.order.OrderFragment
+
 import javax.inject.Inject
 
 @MainScope
@@ -21,20 +20,14 @@ constructor(
 
         when (className) {
 
-            BlogFragment::class.java.name -> {
-                BlogFragment(viewModelFactory, requestManager)
+            OrderFragment::class.java.name -> {
+                OrderFragment(viewModelFactory, requestManager)
             }
 
-            ViewBlogFragment::class.java.name -> {
-                ViewBlogFragment(viewModelFactory, requestManager)
-            }
 
-            UpdateBlogFragment::class.java.name -> {
-                UpdateBlogFragment(viewModelFactory, requestManager)
-            }
 
             else -> {
-                BlogFragment(viewModelFactory, requestManager)
+                OrderFragment(viewModelFactory, requestManager)
             }
         }
 

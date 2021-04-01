@@ -1,9 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.product
 
-import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,18 +17,13 @@ import com.smartcity.provider.ui.UIMessage
 import com.smartcity.provider.ui.UIMessageType
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
 import com.smartcity.provider.ui.main.custom_category.CustomCategoryViewModel
-import com.smartcity.provider.ui.main.custom_category.createProduct.VarianteAdapter
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.util.ActionConstants
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.TopSpacingItemDecoration
-import kotlinx.android.synthetic.main.fragment_blog.*
-import kotlinx.android.synthetic.main.fragment_create_product.*
-import kotlinx.android.synthetic.main.fragment_custom_category.*
 import kotlinx.android.synthetic.main.fragment_product.*
-import kotlinx.android.synthetic.main.fragment_product.swipe_refresh
 import javax.inject.Inject
 
 

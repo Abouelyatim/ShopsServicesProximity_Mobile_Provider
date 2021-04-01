@@ -26,5 +26,8 @@ class SuccessHandling {
         const val DONE_Custom_Category_Main = "Done CustomCategoryMain"
         const val DONE_Product_Main ="Done ProductMain"
         const val DONE_All_Product ="Done AllProduct"
+
+
+        const val DONE_Orders ="Done GetOrder"
     }
 }

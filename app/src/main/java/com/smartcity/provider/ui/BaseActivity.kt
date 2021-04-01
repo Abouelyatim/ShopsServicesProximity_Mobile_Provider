@@ -21,7 +21,6 @@ abstract class BaseActivity: AppCompatActivity(),
     DataStateChangeListener,
     UICommunicationListener
 {
-
     val TAG: String = "AppDebug"
 
     abstract fun inject()

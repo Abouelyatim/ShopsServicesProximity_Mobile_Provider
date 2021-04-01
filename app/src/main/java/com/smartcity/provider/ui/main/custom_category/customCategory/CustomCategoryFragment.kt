@@ -239,7 +239,6 @@ constructor(
                     }
 
                 }
-
             }
         })
         //submit list to recycler view

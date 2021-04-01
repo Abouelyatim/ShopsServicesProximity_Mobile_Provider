@@ -2,10 +2,7 @@ package com.smartcity.provider.ui.auth
 
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,13 +12,7 @@ import com.smartcity.provider.R
 import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.ui.auth.state.AuthStateEvent.*
 import com.smartcity.provider.ui.auth.state.RegistrationFields
-import com.smartcity.provider.ui.main.blog.viewmodel.removeDeletedBlogPost
-import com.smartcity.provider.ui.main.blog.viewmodel.setIsAuthorOfBlogPost
-import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.fragment_register.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AuthScope

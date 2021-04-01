@@ -1,21 +1,15 @@
 package com.smartcity.provider.ui.auth
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.AttributeSet
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.Toast
-import androidx.core.view.marginBottom
-import androidx.core.view.marginRight
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -28,8 +22,6 @@ import com.smartcity.provider.ui.*
 import com.smartcity.provider.ui.auth.state.AuthStateEvent
 import com.smartcity.provider.ui.auth.state.CategoryStore
 import com.smartcity.provider.ui.auth.state.StoreFields
-import com.smartcity.provider.ui.main.blog.viewmodel.removeDeletedBlogPost
-import com.smartcity.provider.ui.main.blog.viewmodel.setIsAuthorOfBlogPost
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.ErrorHandling
 import com.smartcity.provider.util.SuccessHandling
@@ -327,7 +319,6 @@ constructor(
 
     override fun onDestroyView() {
         super.onDestroyView()
-
         viewModel.setCategoryStore(CategoryStore())
         viewModel.setStoreFields(
             StoreFields(

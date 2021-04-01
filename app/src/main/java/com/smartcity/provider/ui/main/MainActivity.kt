@@ -16,7 +16,7 @@ import com.smartcity.provider.models.AuthToken
 import com.smartcity.provider.ui.BaseActivity
 import com.smartcity.provider.ui.auth.AuthActivity
 import com.smartcity.provider.ui.main.store.BaseStoreFragment
-import com.smartcity.provider.ui.main.blog.*
+import com.smartcity.provider.ui.main.order.*
 
 import com.smartcity.provider.util.BOTTOM_NAV_BACKSTACK_KEY
 import com.smartcity.provider.util.BottomNavController
@@ -74,7 +74,7 @@ class MainActivity : BaseActivity(),
                 if(fragment is BaseStoreFragment){
                     fragment.cancelActiveJobs()
                 }
-                if(fragment is BaseBlogFragment){
+                if(fragment is BaseOrderFragment){
                     fragment.cancelActiveJobs()
                 }
                 if(fragment is BaseCustomCategoryFragment){
@@ -92,13 +92,13 @@ class MainActivity : BaseActivity(),
         Log.d(TAG, "logInfo: onReSelectItem")
         when(fragment){
 
-            is ViewBlogFragment -> {
+           /* is ViewOrderFragment -> {
                 navController.navigate(R.id.action_viewBlogFragment_to_home)
             }
 
-            is UpdateBlogFragment -> {
+            is UpdateOrderFragment -> {
                 navController.navigate(R.id.action_updateBlogFragment_to_home)
-            }
+            }*/
 
 
 

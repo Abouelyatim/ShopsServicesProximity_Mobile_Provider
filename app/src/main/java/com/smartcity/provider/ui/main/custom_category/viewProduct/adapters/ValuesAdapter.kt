@@ -150,8 +150,7 @@ class ValuesAdapter (
 
             }else{
                 itemView.setOnClickListener {
-                    oldPositionMap.put(item.attribute,
-                        selectedPositionMap[item.attribute]!!)
+                    oldPositionMap.put(item.attribute, selectedPositionMap[item.attribute]!!)
                     interaction?.onItemSelected(item.attribute,item.value)
                     selectedPositionMap.put(item.attribute,position)
                     view.text=item.value

@@ -92,7 +92,7 @@ class BottomNavController(
             }
 
             R.id.menu_nav_blog -> {
-                BlogNavHostFragment.create(R.navigation.nav_blog)
+                BlogNavHostFragment.create(R.navigation.nav_order)
             }
 
             R.id.menu_nav_create_blog -> {
@@ -100,7 +100,7 @@ class BottomNavController(
             }
 
             else -> {
-                BlogNavHostFragment.create(R.navigation.nav_blog)
+                BlogNavHostFragment.create(R.navigation.nav_order)
             }
         }
     }

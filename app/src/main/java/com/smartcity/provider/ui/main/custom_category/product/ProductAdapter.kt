@@ -117,7 +117,6 @@ class ProductAdapter(
             Log.d(TAG,image)
             requestManager
                 .load(image)
-                .skipMemoryCache(true)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(itemView.product_image)
 
