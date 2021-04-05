@@ -77,7 +77,6 @@
     <string name="text_register">Register</string>
     <string name="text_forgot_password">Forgot password</string>
     <string name="process_death_state">process_death_state</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

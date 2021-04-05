@@ -27,6 +27,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
+import com.smartcity.provider.util.PreferenceKeys
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.progress_bar
@@ -50,6 +51,9 @@ class MainActivity : BaseActivity(),
     @Named("CreateBlogFragmentFactory")
     lateinit var createBlogFragmentFactory: FragmentFactory
 
+    @Inject
+    @Named("GetSharedPreferences")
+    lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -133,9 +137,37 @@ class MainActivity : BaseActivity(),
 
         subscribeObservers()
         restoreSession(savedInstanceState)
+
+        //todo subscribe only once- with token
+        subscribeNotificationTopic(sharedPreferences)
+
+        //todo use fcm token to identify user
+
+        /* FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+             if (!task.isSuccessful) {
+                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                 return@OnCompleteListener
+             }
+             val token = task.result
+             Log.d("tokenid", "${token}")
+         })*/
+
     }
 
-
+    private fun subscribeNotificationTopic(sharedPreferences: SharedPreferences) {
+        val previousAuthUserEmail: String? = sharedPreferences.getString(PreferenceKeys.PREVIOUS_AUTH_USER, null)
+        previousAuthUserEmail?.let {
+            val topic=it.replace("@","")
+            Log.d(TAG, topic)
+            FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful)
+                        Log.d(TAG, "Email topic subscription successful")
+                    else
+                        Log.e(TAG, "Email topic subscription failed. Error: " + task.exception?.localizedMessage)
+                }
+        }
+    }
 
     private fun setupBottomNavigationView(savedInstanceState: Bundle?){
         bottomNavigationView = findViewById(R.id.bottom_navigation_view)

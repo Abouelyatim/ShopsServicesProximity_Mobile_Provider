@@ -35,13 +35,11 @@ object MainFragmentsModule {
     @Named("BlogFragmentFactory")
     fun provideBlogFragmentFactory(
         viewModelFactory: ViewModelProvider.Factory,
-        requestManager: RequestManager,
-        preferences: SharedPreferences
+        requestManager: RequestManager
     ): FragmentFactory {
         return BlogFragmentFactory(
             viewModelFactory,
-            requestManager,
-            preferences
+            requestManager
         )
     }
 
@@ -58,4 +56,15 @@ object MainFragmentsModule {
             requestManager
         )
     }
+
+    @JvmStatic
+    @MainScope
+    @Provides
+    @Named("GetSharedPreferences")
+    fun provideSharedPreferences(
+         sharedPreferences: SharedPreferences
+    ): SharedPreferences {
+        return sharedPreferences
+    }
+
 }

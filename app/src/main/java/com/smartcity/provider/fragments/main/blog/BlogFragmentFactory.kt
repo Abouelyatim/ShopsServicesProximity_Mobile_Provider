@@ -14,8 +14,7 @@ class BlogFragmentFactory
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
-    private val requestManager: RequestManager,
-    private val sharedPreferences: SharedPreferences
+    private val requestManager: RequestManager
 ) : FragmentFactory() {
 
     override fun instantiate(classLoader: ClassLoader, className: String) =
@@ -23,13 +22,13 @@ constructor(
         when (className) {
 
             OrderFragment::class.java.name -> {
-                OrderFragment(viewModelFactory, requestManager,sharedPreferences)
+                OrderFragment(viewModelFactory, requestManager)
             }
 
 
 
             else -> {
-                OrderFragment(viewModelFactory, requestManager,sharedPreferences)
+                OrderFragment(viewModelFactory, requestManager)
             }
         }
 

@@ -29,8 +29,7 @@ class OrderFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
-    private val requestManager: RequestManager,
-    val sharedPreferences: SharedPreferences
+    private val requestManager: RequestManager
 ): BaseOrderFragment(R.layout.fragment_order)
 {
 
@@ -79,41 +78,11 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
 
-        //todo use fcm token to identify user
-       /* FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-            val token = task.result
-            Log.d("tokenid", "${token}")
-        })*/
-
-
-
         initRecyclerView()
         subscribeObservers()
         getOrders()
-
-        //todo subscribe only once- with token
-        subscribeNotificationTopic(sharedPreferences)
-
     }
-    private fun subscribeNotificationTopic(sharedPreferences: SharedPreferences) {
-        val previousAuthUserEmail: String? = sharedPreferences.getString(PreferenceKeys.PREVIOUS_AUTH_USER, null)
-        previousAuthUserEmail?.let {
-            val topic=it.replace("@","")
-            Log.d(TAG, topic)
-            FirebaseMessaging.getInstance().subscribeToTopic(topic)
-                .addOnCompleteListener { task ->
 
-                    if (task.isSuccessful)
-                        Log.d(TAG, "Global topic subscription successful")
-                    else
-                        Log.e(TAG, "Global topic subscription failed. Error: " + task.exception?.localizedMessage)
-                }
-        }
-    }
 
     private fun getOrders() {
         viewModel.setStateEvent(
@@ -175,7 +144,7 @@ constructor(
     override fun onDestroyView() {
         super.onDestroyView()
         // clear references (can leak memory)
-
+        orders_recyclerview.adapter=null
     }
 
 
