@@ -1,5 +1,6 @@
 package com.smartcity.provider.di.main
 
+import android.content.SharedPreferences
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
@@ -34,11 +35,13 @@ object MainFragmentsModule {
     @Named("BlogFragmentFactory")
     fun provideBlogFragmentFactory(
         viewModelFactory: ViewModelProvider.Factory,
-        requestManager: RequestManager
+        requestManager: RequestManager,
+        preferences: SharedPreferences
     ): FragmentFactory {
         return BlogFragmentFactory(
             viewModelFactory,
-            requestManager
+            requestManager,
+            preferences
         )
     }
 

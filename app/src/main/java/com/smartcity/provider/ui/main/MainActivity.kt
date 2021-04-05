@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -24,6 +25,7 @@ import com.smartcity.provider.util.BottomNavController.*
 import com.smartcity.provider.util.setUpNavigation
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.messaging.FirebaseMessaging
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -132,6 +134,8 @@ class MainActivity : BaseActivity(),
         subscribeObservers()
         restoreSession(savedInstanceState)
     }
+
+
 
     private fun setupBottomNavigationView(savedInstanceState: Bundle?){
         bottomNavigationView = findViewById(R.id.bottom_navigation_view)

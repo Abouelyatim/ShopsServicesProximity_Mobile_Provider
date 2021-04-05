@@ -1,5 +1,6 @@
 package com.smartcity.provider.fragments.main.blog
 
+import android.content.SharedPreferences
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
@@ -13,7 +14,8 @@ class BlogFragmentFactory
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
-    private val requestManager: RequestManager
+    private val requestManager: RequestManager,
+    private val sharedPreferences: SharedPreferences
 ) : FragmentFactory() {
 
     override fun instantiate(classLoader: ClassLoader, className: String) =
@@ -21,13 +23,13 @@ constructor(
         when (className) {
 
             OrderFragment::class.java.name -> {
-                OrderFragment(viewModelFactory, requestManager)
+                OrderFragment(viewModelFactory, requestManager,sharedPreferences)
             }
 
 
 
             else -> {
-                OrderFragment(viewModelFactory, requestManager)
+                OrderFragment(viewModelFactory, requestManager,sharedPreferences)
             }
         }
 

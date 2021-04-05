@@ -1,5 +1,6 @@
 package com.smartcity.provider.repository.main
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.switchMap
@@ -43,7 +44,6 @@ constructor(
 ): JobManager("BlogRepository")
 {
     private val TAG: String = "AppDebug"
-
 
     fun attemptGetOrders(
         id:Long

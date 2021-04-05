@@ -1,5 +1,6 @@
 package com.smartcity.provider.di.main
 
+import android.content.SharedPreferences
 import com.smartcity.provider.api.main.OpenApiMainService
 import com.smartcity.provider.persistence.AccountPropertiesDao
 import com.smartcity.provider.persistence.AppDatabase

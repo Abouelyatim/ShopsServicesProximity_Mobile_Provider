@@ -1,7 +1,9 @@
 package com.smartcity.provider.ui.main.order
 
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
@@ -10,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.google.firebase.messaging.FirebaseMessaging
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
@@ -17,7 +20,7 @@ import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
 import com.smartcity.provider.ui.main.order.viewmodel.getOrderList
 import com.smartcity.provider.ui.main.order.viewmodel.setOrderListData
-import com.smartcity.provider.util.SuccessHandling
+import com.smartcity.provider.util.PreferenceKeys
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
 import javax.inject.Inject
@@ -26,7 +29,8 @@ class OrderFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
-    private val requestManager: RequestManager
+    private val requestManager: RequestManager,
+    val sharedPreferences: SharedPreferences
 ): BaseOrderFragment(R.layout.fragment_order)
 {
 
@@ -75,13 +79,40 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
 
+        //todo use fcm token to identify user
+       /* FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.d("tokenid", "${token}")
+        })*/
+
 
 
         initRecyclerView()
         subscribeObservers()
         getOrders()
 
+        //todo subscribe only once- with token
+        subscribeNotificationTopic(sharedPreferences)
 
+    }
+    private fun subscribeNotificationTopic(sharedPreferences: SharedPreferences) {
+        val previousAuthUserEmail: String? = sharedPreferences.getString(PreferenceKeys.PREVIOUS_AUTH_USER, null)
+        previousAuthUserEmail?.let {
+            val topic=it.replace("@","")
+            Log.d(TAG, topic)
+            FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                .addOnCompleteListener { task ->
+
+                    if (task.isSuccessful)
+                        Log.d(TAG, "Global topic subscription successful")
+                    else
+                        Log.e(TAG, "Global topic subscription failed. Error: " + task.exception?.localizedMessage)
+                }
+        }
     }
 
     private fun getOrders() {
