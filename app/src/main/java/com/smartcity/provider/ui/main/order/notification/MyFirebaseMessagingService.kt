@@ -4,12 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.smartcity.provider.ui.main.MainActivity
+import com.smartcity.provider.ui.main.order.OrderFragment
 import org.json.JSONException
 import org.json.JSONObject
 
+object Events {
+    val serviceEvent: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+}
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     val TAG = "AppDebug"
@@ -23,6 +30,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+        Events.serviceEvent.postValue("new")
             handleCustomDataMessage(
                 title = remoteMessage.notification?.title!!,
                 message = remoteMessage.notification?.body!!
