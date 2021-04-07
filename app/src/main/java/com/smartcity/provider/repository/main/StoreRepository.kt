@@ -33,7 +33,7 @@ constructor(
     val openApiMainService: OpenApiMainService,
     val accountPropertiesDao: AccountPropertiesDao,
     val sessionManager: SessionManager
-): JobManager("AccountRepository")
+): JobManager("StoreRepository")
 {
 
     private val TAG: String = "AppDebug"

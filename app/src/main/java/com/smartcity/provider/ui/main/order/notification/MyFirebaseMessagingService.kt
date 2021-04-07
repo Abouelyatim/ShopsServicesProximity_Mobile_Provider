@@ -1,30 +1,23 @@
 package com.smartcity.provider.ui.main.order.notification
 
 import android.content.Context
-import android.content.Intent
-import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.smartcity.provider.ui.main.MainActivity
-import com.smartcity.provider.ui.main.order.OrderFragment
-import org.json.JSONException
-import org.json.JSONObject
 
 object Events {
     val serviceEvent: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 }
-class MyFirebaseMessagingService : FirebaseMessagingService() {
 
+class MyFirebaseMessagingService : FirebaseMessagingService() {
     val TAG = "AppDebug"
     private var notificationUtils: NotificationUtils? = null
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-
         Log.e("FCM Token", token)
     }
 
@@ -38,7 +31,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     }
 
-
     private fun handleCustomDataMessage(title: String, message: String) {
         showNotificationMessage(applicationContext, title, message)
     }
@@ -51,6 +43,4 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         notificationUtils = NotificationUtils(context)
         notificationUtils?.showNotificationMessage(title, message)
     }
-
-
 }

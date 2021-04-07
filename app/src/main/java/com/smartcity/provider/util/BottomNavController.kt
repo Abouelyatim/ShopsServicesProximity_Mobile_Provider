@@ -18,6 +18,7 @@ import com.smartcity.provider.fragments.main.blog.BlogNavHostFragment
 
 import com.smartcity.provider.util.BottomNavController.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.smartcity.provider.fragments.main.account.AccountNavHostFragment
 import com.smartcity.provider.fragments.main.custom_category.CustomCategoryNavHostFragment
 
 import kotlinx.android.parcel.Parcelize
@@ -88,7 +89,7 @@ class BottomNavController(
         return when(menuItemId){
 
             R.id.menu_nav_account -> {
-                StoreNavHostFragment.create(R.navigation.nav_account)
+                StoreNavHostFragment.create(R.navigation.nav_store)
             }
 
             R.id.menu_nav_blog -> {
@@ -97,6 +98,10 @@ class BottomNavController(
 
             R.id.menu_nav_create_blog -> {
                 CustomCategoryNavHostFragment.create(R.navigation.nav_custom_category)
+            }
+
+            R.id.menu_nav_configuration ->{
+                AccountNavHostFragment.create(R.navigation.nav_account)
             }
 
             else -> {

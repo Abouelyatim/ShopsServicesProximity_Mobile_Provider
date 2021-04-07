@@ -131,7 +131,6 @@ constructor(
                 }
             }
         })
-
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             recyclerOrderAdapter.submitList(

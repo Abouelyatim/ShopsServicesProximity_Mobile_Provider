@@ -26,6 +26,7 @@ import com.smartcity.provider.util.setUpNavigation
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
+import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
 import com.smartcity.provider.util.PreferenceKeys
 
@@ -40,8 +41,8 @@ class MainActivity : BaseActivity(),
 {
 
     @Inject
-    @Named("AccountFragmentFactory")
-    lateinit var accountFragmentFactory: FragmentFactory
+    @Named("StoreFragmentFactory")
+    lateinit var storeFragmentFactory: FragmentFactory
 
     @Inject
     @Named("BlogFragmentFactory")
@@ -50,6 +51,10 @@ class MainActivity : BaseActivity(),
     @Inject
     @Named("CreateBlogFragmentFactory")
     lateinit var createBlogFragmentFactory: FragmentFactory
+
+    @Inject
+    @Named("AccountFragmentFactory")
+    lateinit var accountFragmentFactory: FragmentFactory
 
     @Inject
     @Named("GetSharedPreferences")
@@ -84,6 +89,9 @@ class MainActivity : BaseActivity(),
                     fragment.cancelActiveJobs()
                 }
                 if(fragment is BaseCustomCategoryFragment){
+                    fragment.cancelActiveJobs()
+                }
+                if(fragment is BaseAccountFragment){
                     fragment.cancelActiveJobs()
                 }
             }

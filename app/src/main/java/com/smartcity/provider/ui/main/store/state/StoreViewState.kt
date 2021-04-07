@@ -7,7 +7,7 @@ import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import kotlinx.android.parcel.Parcelize
 
-const val ACCOUNT_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.account.state.AccountViewState"
+const val STORE_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.account.state.StoreViewState"
 
 @Parcelize
 class StoreViewState(

@@ -11,13 +11,17 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import kotlin.random.Random
 
 class NotificationUtils(base: Context) : ContextWrapper(base) {
 
     val   ANDROID_CHANNEL_ID:String  = "com.smartcity.provider.ui.main.order.notification"
     val   ANDROID_CHANNEL_NAME:String  = "ANDROID CHANNEL"
-    val NOTIFICATION_ID = 100
+    var NOTIFICATION_ID = 100
 
+    init {
+        NOTIFICATION_ID= Random.nextInt()
+    }
 
     fun showNotificationMessage(
         title: String?,

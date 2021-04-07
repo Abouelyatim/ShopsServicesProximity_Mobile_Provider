@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
+import com.smartcity.provider.fragments.main.account.AccountFragmentFactory
 import com.smartcity.provider.fragments.main.store.StoreFragmentFactory
 import com.smartcity.provider.fragments.main.blog.BlogFragmentFactory
 import com.smartcity.provider.fragments.main.custom_category.CustomCategoryFragmentFactory
@@ -18,8 +19,8 @@ object MainFragmentsModule {
     @JvmStatic
     @MainScope
     @Provides
-    @Named("AccountFragmentFactory")
-    fun provideAccountFragmentFactory(
+    @Named("StoreFragmentFactory")
+    fun provideStoreFragmentFactory(
         viewModelFactory: ViewModelProvider.Factory,
         requestManager: RequestManager
     ): FragmentFactory {
@@ -52,6 +53,20 @@ object MainFragmentsModule {
         requestManager: RequestManager
     ): FragmentFactory {
         return CustomCategoryFragmentFactory(
+            viewModelFactory,
+            requestManager
+        )
+    }
+
+    @JvmStatic
+    @MainScope
+    @Provides
+    @Named("AccountFragmentFactory")
+    fun provideAccountFragmentFactory(
+        viewModelFactory: ViewModelProvider.Factory,
+        requestManager: RequestManager
+    ): FragmentFactory {
+        return AccountFragmentFactory(
             viewModelFactory,
             requestManager
         )

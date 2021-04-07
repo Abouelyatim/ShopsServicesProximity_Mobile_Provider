@@ -1,9 +1,7 @@
 package com.smartcity.provider.ui.main.store
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Adapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -16,10 +14,9 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Product
-import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.getSelectedPositions
 import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.setSelectedPositions
-import com.smartcity.provider.ui.main.store.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
+import com.smartcity.provider.ui.main.store.state.STORE_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent
 import com.smartcity.provider.ui.main.store.state.StoreViewState
 import com.smartcity.provider.util.ActionConstants
@@ -49,7 +46,7 @@ constructor(
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
-            ACCOUNT_VIEW_STATE_BUNDLE_KEY,
+            STORE_VIEW_STATE_BUNDLE_KEY,
             viewModel.viewState.value
         )
         super.onSaveInstanceState(outState)
@@ -61,7 +58,7 @@ constructor(
         cancelActiveJobs()
         // Restore state after process death
         savedInstanceState?.let { inState ->
-            (inState[ACCOUNT_VIEW_STATE_BUNDLE_KEY] as StoreViewState?)?.let { viewState ->
+            (inState[STORE_VIEW_STATE_BUNDLE_KEY] as StoreViewState?)?.let { viewState ->
                 viewModel.setViewState(viewState)
             }
         }
