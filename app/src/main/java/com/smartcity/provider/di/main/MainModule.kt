@@ -71,9 +71,11 @@ object MainModule {
     @Provides
     fun provideAccountRepository(
         openApiMainService: OpenApiMainService,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        preferences: SharedPreferences,
+        editor: SharedPreferences.Editor
     ): AccountRepository {
-        return AccountRepository(openApiMainService, sessionManager)
+        return AccountRepository(openApiMainService, sessionManager,preferences,editor)
     }
 }
 

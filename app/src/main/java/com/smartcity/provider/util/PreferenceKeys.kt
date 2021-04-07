@@ -9,6 +9,7 @@ class PreferenceKeys {
 
         // Shared Preference Keys
         const val PREVIOUS_AUTH_USER: String = "com.codingwithmitch.openapi.PREVIOUS_AUTH_USER"
+        const val NOTIFICATION_SETTINGS: String = "com.codingwithmitch.openapi.NOTIFICATION_SETTINGS"
         const val BLOG_FILTER: String = "com.codingwithmitch.openapi.BLOG_FILTER"
         const val BLOG_ORDER: String = "com.codingwithmitch.openapi.BLOG_ORDER"
 

@@ -6,34 +6,35 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.RelativeLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.messaging.FirebaseMessaging
 import com.smartcity.provider.BaseApplication
 import com.smartcity.provider.R
 import com.smartcity.provider.models.AUTH_TOKEN_BUNDLE_KEY
 import com.smartcity.provider.models.AuthToken
 import com.smartcity.provider.ui.BaseActivity
 import com.smartcity.provider.ui.auth.AuthActivity
+import com.smartcity.provider.ui.main.account.BaseAccountFragment
+import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
+import com.smartcity.provider.ui.main.order.BaseOrderFragment
 import com.smartcity.provider.ui.main.store.BaseStoreFragment
-import com.smartcity.provider.ui.main.order.*
-
 import com.smartcity.provider.util.BOTTOM_NAV_BACKSTACK_KEY
 import com.smartcity.provider.util.BottomNavController
 import com.smartcity.provider.util.BottomNavController.*
-import com.smartcity.provider.util.setUpNavigation
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.messaging.FirebaseMessaging
-import com.smartcity.provider.ui.main.account.BaseAccountFragment
-import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
 import com.smartcity.provider.util.PreferenceKeys
-
+import com.smartcity.provider.util.setUpNavigation
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.progress_bar
 import javax.inject.Inject
 import javax.inject.Named
+
 
 class MainActivity : BaseActivity(),
     OnNavigationGraphChanged,
@@ -221,6 +222,15 @@ class MainActivity : BaseActivity(),
 
     override fun expandAppBar() {
         findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true)
+    }
+
+    override fun displayBottomNavigation(bool: Boolean){
+        if(bool){
+            bottom_navigation_view.visibility = View.VISIBLE
+        }
+        else{
+            bottom_navigation_view.visibility = View.GONE
+        }
     }
 
     override fun onBackPressed() = bottomNavController.onBackPressed()

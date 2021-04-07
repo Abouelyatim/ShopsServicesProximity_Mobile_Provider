@@ -20,14 +20,17 @@ import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Response
 import com.smartcity.provider.ui.ResponseType
 import com.smartcity.provider.ui.auth.state.*
-import com.smartcity.provider.util.*
+import com.smartcity.provider.util.AbsentLiveData
+import com.smartcity.provider.util.ApiSuccessResponse
 import com.smartcity.provider.util.ErrorHandling.Companion.ERROR_SAVE_AUTH_TOKEN
 import com.smartcity.provider.util.ErrorHandling.Companion.GENERIC_AUTH_ERROR
+import com.smartcity.provider.util.GenericApiResponse
+import com.smartcity.provider.util.NotificationSettings.Companion.SETTINGS_NOTIFICATION
+import com.smartcity.provider.util.PreferenceKeys
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE
 import com.smartcity.provider.util.SuccessHandling.Companion.STORE_CREATION_DONE
 import kotlinx.coroutines.Job
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 @AuthScope
@@ -413,6 +416,7 @@ constructor(
 
 
     private fun saveAuthenticatedUserToPrefs(email: String){
+        sharedPrefsEditor.putStringSet(PreferenceKeys.NOTIFICATION_SETTINGS,SETTINGS_NOTIFICATION.toMutableSet())
         sharedPrefsEditor.putString(PreferenceKeys.PREVIOUS_AUTH_USER, email)
         sharedPrefsEditor.apply()
     }

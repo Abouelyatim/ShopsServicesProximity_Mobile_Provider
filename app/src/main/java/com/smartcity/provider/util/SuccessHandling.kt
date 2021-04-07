@@ -7,6 +7,9 @@ class SuccessHandling {
         const val RESPONSE_PASSWORD_UPDATE_SUCCESS = "successfully changed password"
         const val RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE = "Done checking for previously authenticated user."
 
+        const val RESPONSE_SAVE_NOTIFICATION_SETTINGS_DONE = "Done save notification settings."
+        const val RESPONSE_GET_NOTIFICATION_SETTINGS_DONE = "Done getting notification settings."
+
         const val STORE_CREATION_DONE = "Done cration store."
         const val CUSTOM_CATEGORY_CREATION_DONE = "Done cration."
 

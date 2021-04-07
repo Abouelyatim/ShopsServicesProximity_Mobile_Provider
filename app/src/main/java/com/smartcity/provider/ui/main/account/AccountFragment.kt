@@ -5,10 +5,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountViewState
+import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
+import kotlinx.android.synthetic.main.fragment_account.*
 import javax.inject.Inject
 
 
@@ -52,6 +55,12 @@ constructor(
         setHasOptionsMenu(true)
         stateChangeListener.expandAppBar()
 
+        notification_settings.setOnClickListener {
+            navNotification()
+        }
     }
 
+    fun navNotification(){
+        findNavController().navigate(R.id.action_accountFragment_to_notificationFragment)
+    }
 }

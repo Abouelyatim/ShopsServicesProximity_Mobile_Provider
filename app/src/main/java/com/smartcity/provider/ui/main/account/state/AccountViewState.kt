@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 const val ACCOUNT_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.account.state.AccountViewState"
 @Parcelize
 class AccountViewState(
-    var customCategoryRecyclerPosition:Int=0
+    var notificationSettings:List<String> = listOf()
 ) : Parcelable {
 
 }

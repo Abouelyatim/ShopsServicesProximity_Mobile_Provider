@@ -144,6 +144,10 @@ class AuthActivity : BaseActivity()
         // ignore
     }
 
+    override fun displayBottomNavigation(bool: Boolean) {
+
+    }
+
 
 }
 

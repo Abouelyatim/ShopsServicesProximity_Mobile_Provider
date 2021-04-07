@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.ui.main.account.AccountFragment
+import com.smartcity.provider.ui.main.account.NotificationFragment
 import javax.inject.Inject
 
 @MainScope
@@ -25,6 +26,11 @@ constructor(
                     requestManager)
             }
 
+            NotificationFragment::class.java.name -> {
+                NotificationFragment(
+                    viewModelFactory,
+                    requestManager)
+            }
 
             else -> {
                 AccountFragment(

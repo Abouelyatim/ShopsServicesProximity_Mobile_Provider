@@ -3,7 +3,7 @@ package com.smartcity.provider.di.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.smartcity.provider.di.auth.keys.MainViewModelKey
-import com.smartcity.provider.ui.main.account.AccountViewModel
+import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
 import com.smartcity.provider.ui.main.store.StoreViewModel
 import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
 import com.smartcity.provider.ui.main.custom_category.CustomCategoryViewModel
