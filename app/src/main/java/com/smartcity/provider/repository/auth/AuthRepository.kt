@@ -411,10 +411,7 @@ constructor(
         }.asLiveData()
 
     }
-
-
-
-
+    
     private fun saveAuthenticatedUserToPrefs(email: String){
         sharedPrefsEditor.putStringSet(PreferenceKeys.NOTIFICATION_SETTINGS,SETTINGS_NOTIFICATION.toMutableSet())
         sharedPrefsEditor.putString(PreferenceKeys.PREVIOUS_AUTH_USER, email)
