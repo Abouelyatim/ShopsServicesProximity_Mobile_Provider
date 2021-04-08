@@ -38,23 +38,15 @@
 
 
         <service
-                android:name=".ui.main.order.notification.MyFirebaseMessagingService">
+                android:name=".ui.main.order.notification.MyFirebaseMessagingService"
+                >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <meta-data
-                android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@mipmap/ic_stat_notify_more" />
-
-        <meta-data
-                android:name="com.google.firebase.messaging.default_notification_color"
-                android:resource="@color/white"
-                android:value="#fff"
-                tools:replace="android:resource"
-                />
-
+        <service android:name=".ui.main.order.notification.NotificationUtils$NotificationSoundService">
+        </service>
 
     </application>
 

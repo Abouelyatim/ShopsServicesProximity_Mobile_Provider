@@ -29,9 +29,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Events.serviceEvent.postValue("new")
+
+
             handleCustomDataMessage(
-                title = remoteMessage.notification?.title!!,
-                message = remoteMessage.notification?.body!!
+                title = remoteMessage.data.get("title")!!,
+                message = remoteMessage.data.get("message")!!
             )
 
     }

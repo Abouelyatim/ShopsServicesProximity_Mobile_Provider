@@ -4,15 +4,15 @@ import android.annotation.TargetApi
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
+import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.smartcity.provider.R
-import com.smartcity.provider.ui.main.MainActivity
 import kotlin.random.Random
 
 
@@ -22,7 +22,6 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
     init {
         NOTIFICATION_ID= Random.nextInt()
     }
-
 
     fun showNotificationMessage(
         title:String,
@@ -36,10 +35,9 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
         makeNotification(title,body,shouldSound,shouldVibrate)
     }
 
-    fun  getManager(): NotificationManager {
-        return getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private fun setupNotificationChannels() {
+        registerNormalNotificationChannel(getManager())
     }
-
 
     @TargetApi(Build.VERSION_CODES.O)
     fun registerNormalNotificationChannel(notificationManager: NotificationManager) {
@@ -78,15 +76,6 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
         notificationManager.createNotificationChannel(channel_none)
     }
 
-    private fun setupNotificationChannels() {
-        registerNormalNotificationChannel(getManager())
-    }
-
-    private fun playSound(){
-        val mediaPlayer = MediaPlayer.create(base, R.raw.notification)
-        mediaPlayer.start()
-    }
-
     fun makeNotification(
         title:String,
         body:String,
@@ -99,14 +88,19 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
                 .setSmallIcon(R.mipmap.ic_stat_notify_more)
                 .setContentText(body)
 
-        val intent = Intent(base, MainActivity::class.java)
+        /*val intent = Intent(base, AuthActivity::class.java)
+        intent.putExtra("Confirm",true)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
         val pendingIntent = PendingIntent.getActivity(
             base,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_ONE_SHOT
         )
-        builder.setContentIntent(pendingIntent)
+        builder.addAction(R.drawable.ic_account_circle_white_24dp,"Confirm",pendingIntent)
+
+        builder.setContentIntent(pendingIntent)*/
 
         if (shouldSound && !shouldVibrate) {
             playSound()
@@ -124,6 +118,7 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
 
         getManager().notify(NOTIFICATION_ID, builder.build())
     }
+
     private fun getChannelId(
         shouldSound:Boolean,
         shouldVibrate:Boolean
@@ -138,7 +133,36 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
             "CHANNEL_ID_NONE"
         }
     }
+
+    private fun playSound(){
+        startService(Intent(this, NotificationSoundService::class.java))
+    }
+
+    internal class NotificationSoundService : Service() {
+        var mediaPlayer: MediaPlayer? = null
+        override fun onBind(intent: Intent?): IBinder? {
+            return null
+        }
+
+        override fun onCreate() {
+             mediaPlayer = MediaPlayer.create(this, R.raw.notification)
+            mediaPlayer!!.isLooping = false
+        }
+
+        override fun onDestroy() {
+            mediaPlayer!!.stop()
+        }
+
+        override  fun onStart(intent: Intent?, startid: Int) {
+            mediaPlayer!!.start()
+        }
+    }
+
     private fun isOreoOrAbove(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    }
+
+    fun  getManager(): NotificationManager {
+        return getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 }
