@@ -1,10 +1,7 @@
 package com.smartcity.provider.ui.main.order.notification
 
 import android.annotation.TargetApi
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -13,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.smartcity.provider.R
+import com.smartcity.provider.ui.auth.AuthActivity
 import kotlin.random.Random
 
 
@@ -82,41 +80,78 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
         shouldSound:Boolean,
         shouldVibrate:Boolean
     ) {
-        val builder: NotificationCompat.Builder =
+        val builderHeadsUp: NotificationCompat.Builder =
             NotificationCompat.Builder(base, getChannelId(shouldSound,shouldVibrate))
                 .setContentTitle(title)
                 .setSmallIcon(R.mipmap.ic_stat_notify_more)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
                 .setContentText(body)
 
-        /*val intent = Intent(base, AuthActivity::class.java)
-        intent.putExtra("Confirm",true)
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        val builderSimple: NotificationCompat.Builder =
+        NotificationCompat.Builder(base, getChannelId(false,false))
+            .setContentTitle(title)
+            .setSmallIcon(R.mipmap.ic_stat_notify_more)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentText(body)
 
-        val pendingIntent = PendingIntent.getActivity(
+        val intent = Intent(base, AuthActivity::class.java)
+       // intent.putExtra("Confirm",true)
+       // intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+       /* val pendingIntent = PendingIntent.getActivity(
             base,
             0,
             intent,
             PendingIntent.FLAG_ONE_SHOT
-        )
-        builder.addAction(R.drawable.ic_account_circle_white_24dp,"Confirm",pendingIntent)
+        )*/
+       // builder.addAction(R.drawable.ic_account_circle_white_24dp,"Confirm",pendingIntent)
 
-        builder.setContentIntent(pendingIntent)*/
+       // builderSimple.setContentIntent(pendingIntent)
+
+
+       /* val pendingIntent = PendingIntent.getBroadcast(
+            base, NOTIFICATION_ID, actionIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )*/
+
+       /* val pendingIntentHeadsUp = PendingIntent.getBroadcast(
+            base,
+            NOTIFICATION_ID,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )*/
+
+        val pendingIntentHeadsUp = PendingIntent.getActivity(
+            base,
+            0,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
+
+        builderHeadsUp.setContentIntent(pendingIntentHeadsUp)
+
+        builderHeadsUp.setFullScreenIntent(pendingIntentHeadsUp,true)
+
+
 
         if (shouldSound && !shouldVibrate) {
             playSound()
-            builder.setDefaults(Notification.DEFAULT_SOUND)
+            builderHeadsUp.setDefaults(Notification.DEFAULT_SOUND)
                 .setVibrate(longArrayOf(0L))
         }
         if (shouldVibrate && !shouldSound) {
-            builder.setDefaults(Notification.DEFAULT_VIBRATE)
+            builderHeadsUp.setDefaults(Notification.DEFAULT_VIBRATE)
                 .setSound(null)
         }
         if (shouldSound && shouldVibrate) {
             playSound()
-            builder.setDefaults(Notification.DEFAULT_ALL)
+            builderHeadsUp.setDefaults(Notification.DEFAULT_ALL)
         }
 
-        getManager().notify(NOTIFICATION_ID, builder.build())
+        getManager().notify(NOTIFICATION_ID, builderHeadsUp.build())
+        getManager().notify(NOTIFICATION_ID+1,builderSimple.build())
     }
 
     private fun getChannelId(
@@ -140,21 +175,26 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
 
     internal class NotificationSoundService : Service() {
         var mediaPlayer: MediaPlayer? = null
+
         override fun onBind(intent: Intent?): IBinder? {
             return null
         }
 
         override fun onCreate() {
-             mediaPlayer = MediaPlayer.create(this, R.raw.notification)
+            super.onCreate()
+            mediaPlayer = MediaPlayer.create(this, R.raw.notification)
             mediaPlayer!!.isLooping = false
         }
 
-        override fun onDestroy() {
-            mediaPlayer!!.stop()
+        override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+            super.onStartCommand(intent, flags, startId)
+            mediaPlayer!!.start()
+            return START_NOT_STICKY
         }
 
-        override  fun onStart(intent: Intent?, startid: Int) {
-            mediaPlayer!!.start()
+        override fun onDestroy() {
+            super.onDestroy()
+            mediaPlayer!!.stop()
         }
     }
 

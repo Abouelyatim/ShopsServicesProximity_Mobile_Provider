@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
             android:usesCleartextTraffic="true"
@@ -47,6 +49,7 @@
 
         <service android:name=".ui.main.order.notification.NotificationUtils$NotificationSoundService">
         </service>
+
 
     </application>
 

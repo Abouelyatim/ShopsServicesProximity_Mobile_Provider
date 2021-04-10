@@ -1,10 +1,10 @@
 package com.smartcity.provider.ui.main.order
 
 
-import android.content.SharedPreferences
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
-import android.util.Log
+import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.google.firebase.messaging.FirebaseMessaging
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.notification.Events
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
@@ -22,10 +21,10 @@ import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
 import com.smartcity.provider.ui.main.order.viewmodel.getOrderList
 import com.smartcity.provider.ui.main.order.viewmodel.setOrderListData
-import com.smartcity.provider.util.PreferenceKeys
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
 import javax.inject.Inject
+
 
 class OrderFragment
 @Inject
