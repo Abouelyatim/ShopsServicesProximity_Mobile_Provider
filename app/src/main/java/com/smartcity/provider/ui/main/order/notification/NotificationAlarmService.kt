@@ -1,15 +1,14 @@
 package com.smartcity.provider.ui.main.order.notification
 
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
-import com.smartcity.provider.ui.auth.AuthActivity
 
 class NotificationAlarmService : Service() {
+    private var running :Boolean=true
+
     override fun onBind(p0: Intent?): IBinder? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -17,14 +16,35 @@ class NotificationAlarmService : Service() {
 
 
         val notification = notificationUtils.returnNotification(
-            "service",
-            "service",
+            "New Orders",
+            "Click here!",
             false,
             false,
             false
         )
 
         startForeground(1, notification)
+
+        object : Thread() {
+            override fun run() {
+                while (running){
+                    sleep(10000)
+                    notificationUtils.showNotificationMessage(
+                        "New Orders",
+                        "Click here!",
+                        false,
+                        false,
+                        true
+                    )
+                }
+            }
+        }.start()
+
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        running = false
+        super.onDestroy()
     }
 }
