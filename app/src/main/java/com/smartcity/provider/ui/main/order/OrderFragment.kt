@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.notification.Events
+
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
@@ -82,7 +83,6 @@ constructor(
         initRecyclerView()
         subscribeObservers()
         getOrders()
-
     }
 
 
@@ -141,10 +141,6 @@ constructor(
             getOrders()
         })
     }
-
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

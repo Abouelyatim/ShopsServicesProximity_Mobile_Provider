@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.RelativeLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.Observer
@@ -25,6 +22,7 @@ import com.smartcity.provider.ui.auth.AuthActivity
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
 import com.smartcity.provider.ui.main.order.BaseOrderFragment
+import com.smartcity.provider.ui.main.order.notification.NotificationAlarmService
 import com.smartcity.provider.ui.main.store.BaseStoreFragment
 import com.smartcity.provider.util.BOTTOM_NAV_BACKSTACK_KEY
 import com.smartcity.provider.util.BottomNavController
@@ -161,6 +159,12 @@ class MainActivity : BaseActivity(),
              Log.d("tokenid", "${token}")
          })*/
 
+        stopNotificationAlarmService()
+    }
+
+    private fun stopNotificationAlarmService() {
+        val serviceIntent = Intent(this, NotificationAlarmService::class.java)
+        stopService(serviceIntent)
     }
 
     private fun subscribeNotificationTopic(sharedPreferences: SharedPreferences) {

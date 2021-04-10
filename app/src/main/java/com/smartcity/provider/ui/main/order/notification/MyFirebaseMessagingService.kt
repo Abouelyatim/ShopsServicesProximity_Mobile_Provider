@@ -1,7 +1,9 @@
 package com.smartcity.provider.ui.main.order.notification
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -9,6 +11,7 @@ import com.smartcity.provider.util.NotificationSettings.Companion.ORDERS_NOTIFIC
 import com.smartcity.provider.util.NotificationSettings.Companion.SOUND_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.VIBRATION_NOTIFICATION
 import com.smartcity.provider.util.PreferenceKeys
+import com.smartcity.provider.util.RunningAppHelper.Companion.isAppIsInBackground
 
 
 object Events {
@@ -68,6 +71,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         shouldVibrate:Boolean
     ) {
         notificationUtils = NotificationUtils(context)
-        notificationUtils?.showNotificationMessage(title, message,shouldSound,shouldVibrate)
+        notificationUtils?.showNotificationMessage(title, message,shouldSound,shouldVibrate,true)
+
+        if(isAppIsInBackground(baseContext)){
+            val serviceIntent = Intent(this, NotificationAlarmService::class.java)
+            ContextCompat.startForegroundService(this, serviceIntent)
+        }
     }
 }

@@ -21,16 +21,33 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
         NOTIFICATION_ID= Random.nextInt()
     }
 
+    fun returnNotification(
+        title:String,
+        body:String,
+        shouldSound:Boolean,
+        shouldVibrate:Boolean,
+        headsUp: Boolean
+    ):Notification{
+        if (isOreoOrAbove()) {
+            setupNotificationChannels()
+        }
+        return makeNotification(title,body,shouldSound,shouldVibrate,headsUp)
+    }
+
+
+
     fun showNotificationMessage(
         title:String,
         body:String,
         shouldSound:Boolean,
-        shouldVibrate:Boolean
+        shouldVibrate:Boolean,
+        headsUp: Boolean
     ){
         if (isOreoOrAbove()) {
             setupNotificationChannels()
         }
-        makeNotification(title,body,shouldSound,shouldVibrate)
+        getManager().notify(NOTIFICATION_ID,
+            makeNotification(title,body,shouldSound,shouldVibrate,headsUp))
     }
 
     private fun setupNotificationChannels() {
@@ -78,23 +95,17 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
         title:String,
         body:String,
         shouldSound:Boolean,
-        shouldVibrate:Boolean
-    ) {
+        shouldVibrate:Boolean,
+        headsUp:Boolean
+    ) :Notification{
         val builderHeadsUp: NotificationCompat.Builder =
             NotificationCompat.Builder(base, getChannelId(shouldSound,shouldVibrate))
                 .setContentTitle(title)
                 .setSmallIcon(R.mipmap.ic_stat_notify_more)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
+                .setAutoCancel(false)
                 .setContentText(body)
 
-        val builderSimple: NotificationCompat.Builder =
-        NotificationCompat.Builder(base, getChannelId(false,false))
-            .setContentTitle(title)
-            .setSmallIcon(R.mipmap.ic_stat_notify_more)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setContentText(body)
 
         val intent = Intent(base, AuthActivity::class.java)
        // intent.putExtra("Confirm",true)
@@ -127,13 +138,14 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
             base,
             0,
             intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         builderHeadsUp.setContentIntent(pendingIntentHeadsUp)
 
-        builderHeadsUp.setFullScreenIntent(pendingIntentHeadsUp,true)
-
+        if (headsUp){
+            builderHeadsUp.setFullScreenIntent(pendingIntentHeadsUp,true)
+        }
 
 
         if (shouldSound && !shouldVibrate) {
@@ -150,8 +162,8 @@ class NotificationUtils(val base: Context) : ContextWrapper(base) {
             builderHeadsUp.setDefaults(Notification.DEFAULT_ALL)
         }
 
-        getManager().notify(NOTIFICATION_ID, builderHeadsUp.build())
-        getManager().notify(NOTIFICATION_ID+1,builderSimple.build())
+        return builderHeadsUp.build()
+
     }
 
     private fun getChannelId(

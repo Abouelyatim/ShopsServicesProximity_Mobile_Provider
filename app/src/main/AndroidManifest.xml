@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
+
     <application
             android:usesCleartextTraffic="true"
             android:name="com.smartcity.provider.BaseApplication"
@@ -50,7 +51,10 @@
         <service android:name=".ui.main.order.notification.NotificationUtils$NotificationSoundService">
         </service>
 
-
+        <service
+                android:name=".ui.main.order.notification.NotificationAlarmService"
+                >
+        </service>
     </application>
 
 </manifest>
