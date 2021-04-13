@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.smartcity.provider.util.NotificationSettings
 import com.smartcity.provider.util.NotificationSettings.Companion.ORDERS_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.SOUND_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.VIBRATION_NOTIFICATION
@@ -58,9 +59,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     VIBRATION_NOTIFICATION in it
                 )
 
+                if(NotificationSettings.REMINDER_NOTIFICATION in it){
+                    startReminder()
+                }
             }
         }
 
+    }
+
+    private fun startReminder(){
+        if(isAppIsInBackground(baseContext)){
+            val serviceIntent = Intent(this, NotificationAlarmService::class.java)
+            ContextCompat.startForegroundService(this, serviceIntent)
+        }
     }
 
     private fun showNotificationMessage(
@@ -73,9 +84,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         notificationUtils = NotificationUtils(context)
         notificationUtils?.showNotificationMessage(title, message,shouldSound,shouldVibrate,true)
 
-        if(isAppIsInBackground(baseContext)){
-            val serviceIntent = Intent(this, NotificationAlarmService::class.java)
-            ContextCompat.startForegroundService(this, serviceIntent)
-        }
+
     }
 }

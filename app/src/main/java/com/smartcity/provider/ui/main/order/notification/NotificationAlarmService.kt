@@ -6,6 +6,7 @@ import android.os.IBinder
 
 class NotificationAlarmService : Service() {
     private var running :Boolean=true
+    private val cycle=10000L
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -28,7 +29,10 @@ class NotificationAlarmService : Service() {
         object : Thread() {
             override fun run() {
                 while (running){
-                    sleep(10000)
+                    sleep(cycle)
+                    if(!running){
+                        break
+                    }
                     notificationUtils.showNotificationMessage(
                         "New Orders",
                         "Click here!",
@@ -39,6 +43,7 @@ class NotificationAlarmService : Service() {
                 }
             }
         }.start()
+
 
         return super.onStartCommand(intent, flags, startId)
     }

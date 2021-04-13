@@ -44,7 +44,16 @@
             android:layout_height="1dp"
             android:background="@color/default_background_color"/>
 
+        <LinearLayout
+                android:id="@+id/orders_children"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
     <LinearLayout
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -58,6 +67,7 @@
                 android:textSize="16sp"
                 android:textColor="@color/dark"
                 />
+
         <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_vibration"
                 android:layout_width="wrap_content"
@@ -71,6 +81,8 @@
             android:background="@color/default_background_color"/>
 
     <LinearLayout
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -91,6 +103,44 @@
                 />
     </LinearLayout>
 
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/default_background_color"/>
+
+            <LinearLayout
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Reminder"
+                        android:layout_weight="1"
+                        android:textSize="16sp"
+                        android:textColor="@color/dark"
+                        />
+                <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+                        android:id="@+id/number_button"
+                        android:layout_weight="1"
+                        android:layout_width="120dp"
+                        app:backGroundColor="@color/white"
+                        app:textSize="8sp"
+                        android:layout_height="30dp"
+                        app:textColor="@color/grey4"
+                        tools:ignore="SmallSp" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switch_reminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

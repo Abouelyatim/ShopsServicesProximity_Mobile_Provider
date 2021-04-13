@@ -1,7 +1,9 @@
 package com.smartcity.provider.ui.main.account
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -15,6 +17,7 @@ import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
 import com.smartcity.provider.util.NotificationSettings.Companion.ORDERS_NOTIFICATION
+import com.smartcity.provider.util.NotificationSettings.Companion.REMINDER_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.SOUND_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.VIBRATION_NOTIFICATION
 import com.smartcity.provider.util.SuccessHandling
@@ -34,6 +37,7 @@ constructor(
     }
 
     private lateinit var  switches:List<Pair<String,SwitchMaterial>>
+    private var clickedSwitch:List<String> = listOf()
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -68,6 +72,7 @@ constructor(
         saveNotificationSettings()
         initSwitches()
         getSettings()
+        setSwitchesParent()
     }
 
     private fun getSettings() {
@@ -90,11 +95,25 @@ constructor(
         switches= listOf(
             Pair(ORDERS_NOTIFICATION,switch_orders),
             Pair(VIBRATION_NOTIFICATION,switch_vibration),
-            Pair(SOUND_NOTIFICATION,switch_sound)
+            Pair(SOUND_NOTIFICATION,switch_sound),
+            Pair(REMINDER_NOTIFICATION,switch_reminder)
         )
     }
 
+    private fun setSwitchesParent(){
+        switch_orders.setOnCheckedChangeListener { p0, p1 ->
+            if (!p1){
+                orders_children.visibility=View.GONE
+            }else{
+                orders_children.visibility=View.VISIBLE
+            }
+        }
+    }
+
     private fun setSwitchesUi(clickedSwitch:List<String>){
+        if((ORDERS_NOTIFICATION in clickedSwitch).not()){
+            orders_children.visibility=View.GONE
+        }
         switches.map {
             if(it.first in clickedSwitch){
                 it.second.isChecked=true
@@ -128,6 +147,7 @@ constructor(
                         if (response.message==SuccessHandling.RESPONSE_GET_NOTIFICATION_SETTINGS_DONE){
                             data.data?.let{
                                 it.peekContent()?.let{
+                                    clickedSwitch=it.notificationSettings
                                     setSwitchesUi(it.notificationSettings)
                                 }
                             }
