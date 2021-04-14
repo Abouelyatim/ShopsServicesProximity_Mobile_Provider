@@ -159,6 +159,11 @@ class MainActivity : BaseActivity(),
              Log.d("tokenid", "${token}")
          })*/
 
+
+    }
+
+    override fun onStart() {
+        super.onStart()
         stopNotificationAlarmService()
     }
 

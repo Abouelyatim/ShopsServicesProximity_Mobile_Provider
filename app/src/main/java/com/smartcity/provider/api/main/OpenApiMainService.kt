@@ -65,48 +65,8 @@ interface OpenApiMainService {
     fun deleteProduct(@Path("id") id: Long?):LiveData<GenericApiResponse<GenericResponse>>
 
 
-    @GET("order/current-provider/{id}")
+    @GET("order/current-provider-orders/{id}")
     fun getAllOrders(@Path("id") id: Long?):LiveData<GenericApiResponse<ListOrderResponse>>
-
-
-
-
-
-
-
-
-    @GET("blog/list")
-    fun searchListBlogPosts(
-        @Header("Authorization") authorization: String,
-        @Query("search") query: String,
-        @Query("ordering") ordering: String,
-        @Query("page") page: Int
-    ): LiveData<GenericApiResponse<BlogListSearchResponse>>
-
-
-    @GET("blog/{slug}/is_author")
-    fun isAuthorOfBlogPost(
-        @Header("Authorization") authorization: String,
-        @Path("slug") slug: String
-    ): LiveData<GenericApiResponse<GenericResponse>>
-
-
-    @DELETE("blog/{slug}/delete")
-    fun deleteBlogPost(
-        @Header("Authorization") authorization: String,
-        @Path("slug") slug: String
-    ): LiveData<GenericApiResponse<GenericResponse>>
-
-    @Multipart
-    @PUT("blog/{slug}/update")
-    fun updateBlog(
-        @Header("Authorization") authorization: String,
-        @Path("slug") slug: String,
-        @Part("title") title: RequestBody,
-        @Part("body") body: RequestBody,
-        @Part image: MultipartBody.Part?
-    ): LiveData<GenericApiResponse<BlogCreateUpdateResponse>>
-
 
 }
 

@@ -127,12 +127,13 @@
                 <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
                         android:id="@+id/number_button"
                         android:layout_weight="1"
-                        android:layout_width="120dp"
+                        android:layout_width="0dp"
                         app:backGroundColor="@color/white"
                         app:textSize="8sp"
-                        android:layout_height="30dp"
+                        android:layout_height="25dp"
                         app:textColor="@color/grey4"
-                        tools:ignore="SmallSp" />
+                        tools:ignore="SmallSp"
+                        android:layout_gravity="center"/>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switch_reminder"
