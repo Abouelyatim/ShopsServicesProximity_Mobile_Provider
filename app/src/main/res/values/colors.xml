@@ -25,6 +25,7 @@
     <color name="new_default_background_color">#FAFAFA</color>
 
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 
     <color name="bleu">#2979ff</color>
     <color name="bleu_light">#9475A7FF</color>

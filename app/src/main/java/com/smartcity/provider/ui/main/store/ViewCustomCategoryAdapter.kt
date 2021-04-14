@@ -35,6 +35,7 @@ class ViewCustomCategoryAdapter (
     fun resetSelectedPosition(){
         selectedPosition=0
     }
+
     val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CustomCategory>() {
 
         override fun areItemsTheSame(oldItem: CustomCategory, newItem: CustomCategory): Boolean {

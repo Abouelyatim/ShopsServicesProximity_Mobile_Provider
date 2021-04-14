@@ -52,7 +52,6 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -67,8 +66,6 @@ constructor(
     override fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
-
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -217,6 +214,7 @@ constructor(
             StoreStateEvent.ProductMain(
                 id
             ))
+        viewModel.clearViewProductList()
     }
 
     fun AllProduct(){
@@ -240,8 +238,6 @@ constructor(
 
     }
 
-
-
     override fun onItemAddSelected() {
         view_custom_category_recyclerview.adapter!!.notifyDataSetChanged()
         AllProduct()
@@ -260,6 +256,4 @@ constructor(
         view_custom_category_recyclerview.adapter = null
         view_product_recyclerview.adapter=null
     }
-
-
 }

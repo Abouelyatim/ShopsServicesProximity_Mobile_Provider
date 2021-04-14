@@ -1,10 +1,7 @@
 package com.smartcity.provider.ui.main.order
 
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
@@ -14,14 +11,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
+import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedPositions
+import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedPositions
 import com.smartcity.provider.ui.main.order.notification.Events
 
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
-import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
-import com.smartcity.provider.ui.main.order.viewmodel.getOrderList
-import com.smartcity.provider.ui.main.order.viewmodel.setOrderListData
+import com.smartcity.provider.ui.main.order.viewmodel.*
+import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter
+import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
 import javax.inject.Inject
@@ -32,9 +31,11 @@ class OrderFragment
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseOrderFragment(R.layout.fragment_order)
+): BaseOrderFragment(R.layout.fragment_order),
+    OrderActionAdapter.Interaction
 {
 
+    private lateinit var recyclerOrderActionAdapter: OrderActionAdapter
     private lateinit var recyclerOrderAdapter: OrderAdapter
 
     val viewModel: OrderViewModel by viewModels{
@@ -80,7 +81,9 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
 
-        initRecyclerView()
+        initOrderRecyclerView()
+        initOrderActionRecyclerView()
+        setOrderAction()
         subscribeObservers()
         getOrders()
     }
@@ -92,7 +95,7 @@ constructor(
         )
     }
 
-    private fun initRecyclerView() {
+    private fun initOrderRecyclerView() {
         orders_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@OrderFragment.context)
             val topSpacingDecorator = TopSpacingItemDecoration(0)
@@ -114,6 +117,34 @@ constructor(
         }
     }
 
+    fun initOrderActionRecyclerView(){
+        order_action_recyclerview.apply {
+            layoutManager = LinearLayoutManager(this@OrderFragment.context,LinearLayoutManager.HORIZONTAL, false)
+
+            val rightSpacingDecorator = RightSpacingItemDecoration(15)
+            removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
+            addItemDecoration(rightSpacingDecorator)
+
+            recyclerOrderActionAdapter =
+                OrderActionAdapter(
+                    this@OrderFragment
+                )
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+
+                }
+            })
+            recyclerOrderActionAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            adapter = recyclerOrderActionAdapter
+
+        }
+
+
+    }
 
     private fun subscribeObservers(){
         viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
@@ -140,16 +171,41 @@ constructor(
         Events.serviceEvent.observe(viewLifecycleOwner, Observer<String> { profile ->
             getOrders()
         })
+
+        recyclerOrderActionAdapter.apply {
+            submitList(
+                viewModel.getOrderAction()
+            )
+        }
+    }
+
+    private fun setOrderAction(){
+        viewModel.setOrderActionList(
+            listOf(
+                Triple("All orders",R.drawable.ic_baseline_all_inclusive_white,R.drawable.ic_baseline_all_inclusive_black),
+                Triple("Today",R.drawable.ic_baseline_today_white,R.drawable.ic_baseline_today_black),
+                Triple("Record",R.drawable.ic_baseline_history_white,R.drawable.ic_baseline_history_black)
+            )
+        )
+    }
+
+    override fun onItemSelected(position: Int, item: String) {
+        order_action_recyclerview.adapter!!.notifyDataSetChanged()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setSelectedPositions(viewModel.getOrderActionRecyclerPosition())
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         // clear references (can leak memory)
+        viewModel.setOrderActionRecyclerPosition(getSelectedPositions())
+        recyclerOrderActionAdapter.resetSelectedPosition()
         orders_recyclerview.adapter=null
+        order_action_recyclerview.adapter=null
     }
-
-
-
 }
 
 

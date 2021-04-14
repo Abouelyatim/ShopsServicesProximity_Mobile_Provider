@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.order.state
 
 import android.os.Parcelable
+import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Order
 import kotlinx.android.parcel.Parcelize
 
@@ -15,7 +16,9 @@ data class OrderViewState (
 
     @Parcelize
     data class OrderFields(
-        var orderList: List<Order> = ArrayList<Order>()
+        var orderList: List<Order> = listOf(),
+        var orderAction: List<Triple<String,Int,Int>> = listOf(),
+        var orderActionRecyclerPosition: Int =0
     ) : Parcelable
 
 

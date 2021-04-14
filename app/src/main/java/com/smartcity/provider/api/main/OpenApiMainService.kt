@@ -65,8 +65,8 @@ interface OpenApiMainService {
     fun deleteProduct(@Path("id") id: Long?):LiveData<GenericApiResponse<GenericResponse>>
 
 
-    @GET("order/current-provider-orders/{id}")
-    fun getAllOrders(@Path("id") id: Long?):LiveData<GenericApiResponse<ListOrderResponse>>
+    @GET("order/current-provider-orders")
+    fun getAllOrders(@Query("id") id: Long?):LiveData<GenericApiResponse<ListOrderResponse>>
 
 }
 

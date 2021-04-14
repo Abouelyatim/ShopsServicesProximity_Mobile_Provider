@@ -10,7 +10,17 @@ fun OrderViewModel.getOrderList(): List<Order> {
 }
 
 
+fun OrderViewModel.getOrderAction(): List<Triple<String,Int,Int>> {
+    getCurrentViewStateOrNew().let {
+        return it.orderFields.orderAction
+    }
+}
 
+fun OrderViewModel.getOrderActionRecyclerPosition():Int{
+    getCurrentViewStateOrNew().let {
+        return it.orderFields.orderActionRecyclerPosition
+    }
+}
 
 
 

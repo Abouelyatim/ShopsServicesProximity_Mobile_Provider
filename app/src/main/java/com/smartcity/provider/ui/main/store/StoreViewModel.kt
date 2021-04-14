@@ -76,6 +76,7 @@ constructor(
         update.viewProductList= StoreViewState.ViewProductList()
         setViewState(update)
     }
+
     fun setViewProductList(productList: StoreViewState.ViewProductList){
         val update = getCurrentViewStateOrNew()
         update.viewProductList=productList
