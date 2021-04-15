@@ -68,6 +68,15 @@ interface OpenApiMainService {
     @GET("order/current-provider-orders")
     fun getAllOrders(@Query("id") id: Long?):LiveData<GenericApiResponse<ListOrderResponse>>
 
+    @GET("order/current-provider-today-orders")
+    fun getTodayOrders(@Query("id") id: Long?):LiveData<GenericApiResponse<ListOrderResponse>>
+
+    @GET("order/current-provider-dates-orders")
+    fun getOrdersByDate(
+        @Query("id") id: Long?,
+        @Query("startDate") startDate: String?,
+        @Query("endDate") endDate: String?
+    ):LiveData<GenericApiResponse<ListOrderResponse>>
 }
 
 

@@ -13,13 +13,15 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedPositions
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedPositions
+import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.ALL
+import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.DATE
+import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.TODAY
 import com.smartcity.provider.ui.main.order.notification.Events
 
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.*
-import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
@@ -34,6 +36,11 @@ constructor(
 ): BaseOrderFragment(R.layout.fragment_order),
     OrderActionAdapter.Interaction
 {
+    object ActionOrder {
+        const val ALL = "All orders"
+        const val TODAY = "Today"
+        const val DATE = "Record"
+    }
 
     private lateinit var recyclerOrderActionAdapter: OrderActionAdapter
     private lateinit var recyclerOrderAdapter: OrderAdapter
@@ -41,7 +48,6 @@ constructor(
     val viewModel: OrderViewModel by viewModels{
         viewModelFactory
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,11 +91,15 @@ constructor(
         initOrderActionRecyclerView()
         setOrderAction()
         subscribeObservers()
-        getOrders()
+
+        if(viewModel.getOrderActionRecyclerPosition()==0){
+            getAllOrders()
+        }
+
     }
 
 
-    private fun getOrders() {
+    private fun getAllOrders() {
         viewModel.setStateEvent(
             OrderStateEvent.GetOrderEvent()
         )
@@ -164,12 +174,13 @@ constructor(
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             recyclerOrderAdapter.submitList(
-                viewModel.getOrderList().asReversed()
+                viewModel.getOrderList()
             )
         })
         //new order event
         Events.serviceEvent.observe(viewLifecycleOwner, Observer<String> { profile ->
-            getOrders()
+            //todo
+           // getOrders()
         })
 
         recyclerOrderActionAdapter.apply {
@@ -182,15 +193,47 @@ constructor(
     private fun setOrderAction(){
         viewModel.setOrderActionList(
             listOf(
-                Triple("All orders",R.drawable.ic_baseline_all_inclusive_white,R.drawable.ic_baseline_all_inclusive_black),
-                Triple("Today",R.drawable.ic_baseline_today_white,R.drawable.ic_baseline_today_black),
-                Triple("Record",R.drawable.ic_baseline_history_white,R.drawable.ic_baseline_history_black)
+                Triple(ALL,R.drawable.ic_baseline_all_inclusive_white,R.drawable.ic_baseline_all_inclusive_black),
+                Triple(TODAY,R.drawable.ic_baseline_today_white,R.drawable.ic_baseline_today_black),
+                Triple(DATE,R.drawable.ic_baseline_history_white,R.drawable.ic_baseline_history_black)
             )
         )
     }
 
+
     override fun onItemSelected(position: Int, item: String) {
         order_action_recyclerview.adapter!!.notifyDataSetChanged()
+        resetUI()
+        viewModel.clearOrderList()
+        when(item){
+            ALL->{ getAllOrders() }
+
+            TODAY->{ getTodayOrders() }
+
+            DATE->{ getOrdersByDate("2021-04-08","2021-04-15") }
+        }
+    }
+
+    private fun getTodayOrders() {
+        viewModel.setStateEvent(
+            OrderStateEvent.GetTodayOrderEvent()
+        )
+    }
+
+    private fun getOrdersByDate(startDate:String,endDate:String) {
+        viewModel.setStateEvent(
+            OrderStateEvent.GetOrderByDateEvent(
+                startDate,
+                endDate
+            )
+        )
+    }
+
+
+    private  fun resetUI(){
+        orders_recyclerview.smoothScrollToPosition(0)
+        stateChangeListener.hideSoftKeyboard()
+        focusable_view.requestFocus()
     }
 
     override fun onResume() {

@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.order.viewmodel
 
 import com.smartcity.provider.models.product.Order
+import com.smartcity.provider.ui.main.store.state.StoreViewState
 
 
 fun OrderViewModel.setOrderListData(orderList: List<Order>){
@@ -23,6 +24,10 @@ fun OrderViewModel.setOrderActionRecyclerPosition(postion:Int){
     setViewState(update)
 }
 
-
+fun OrderViewModel.clearOrderList(){
+    val update = getCurrentViewStateOrNew()
+    update.orderFields.orderList= listOf()
+    setViewState(update)
+}
 
 

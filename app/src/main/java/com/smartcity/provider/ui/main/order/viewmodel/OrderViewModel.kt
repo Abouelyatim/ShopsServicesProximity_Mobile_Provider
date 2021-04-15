@@ -39,6 +39,24 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is GetTodayOrderEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    orderRepository.attemptGetTodayOrders(
+                        authToken.account_pk!!.toLong()
+                    )
+                }?: AbsentLiveData.create()
+            }
+
+            is GetOrderByDateEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    orderRepository.attemptGetOrdersByDate(
+                        authToken.account_pk!!.toLong(),
+                        stateEvent.startDate,
+                        stateEvent.endDate
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(
