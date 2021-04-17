@@ -181,6 +181,7 @@ constructor(
                     data.data?.let{
                         it.getContentIfNotHandled()?.let{
                             viewModel.setOrderListData(it.orderFields.orderList)
+                            setEmptyListUi(it.orderFields.orderList.isEmpty())
                         }
                     }
                 }
@@ -202,6 +203,14 @@ constructor(
             submitList(
                 viewModel.getOrderAction()
             )
+        }
+    }
+
+    private fun setEmptyListUi(empty:Boolean){
+        if(empty){
+            empty_list.visibility=View.VISIBLE
+        }else{
+            empty_list.visibility=View.GONE
         }
     }
 
@@ -232,7 +241,7 @@ constructor(
             }
 
             DATE->{
-                //getOrdersByDate("2021-04-08","2021-04-15")
+                showDatePicker()
                 setDateRangeUi(true)
                 order_date_range.setOnClickListener {
                     showDatePicker()
