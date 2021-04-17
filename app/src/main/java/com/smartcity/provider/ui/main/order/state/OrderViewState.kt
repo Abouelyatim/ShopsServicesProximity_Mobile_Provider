@@ -18,7 +18,10 @@ data class OrderViewState (
     data class OrderFields(
         var orderList: List<Order> = listOf(),
         var orderAction: List<Triple<String,Int,Int>> = listOf(),
-        var orderActionRecyclerPosition: Int =0
+        var orderActionRecyclerPosition: Int =0,
+        var dateFilter:String="DESC",
+        var amountFilter:String="ASC",
+        var rangeDate:Pair<String?,String?> =Pair(null,null)
     ) : Parcelable
 
 

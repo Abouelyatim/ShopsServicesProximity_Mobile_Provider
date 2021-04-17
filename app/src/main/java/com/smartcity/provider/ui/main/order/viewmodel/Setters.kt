@@ -30,4 +30,22 @@ fun OrderViewModel.clearOrderList(){
     setViewState(update)
 }
 
+fun OrderViewModel.setDateFilter(filter: String?){
+    filter?.let{
+        val update = getCurrentViewStateOrNew()
+        update.orderFields.dateFilter = filter
+        setViewState(update)
+    }
+}
 
+fun OrderViewModel.setAmountFilter(filter: String?){
+    val update = getCurrentViewStateOrNew()
+    update.orderFields.amountFilter = filter!!
+    setViewState(update)
+}
+
+fun OrderViewModel.setRangeDate(range: Pair<String?,String?>){
+    val update = getCurrentViewStateOrNew()
+    update.orderFields.rangeDate = range
+    setViewState(update)
+}

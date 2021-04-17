@@ -2,13 +2,22 @@ package com.smartcity.provider.ui.main.order
 
 
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.customview.getCustomView
 import com.bumptech.glide.RequestManager
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -24,6 +33,7 @@ import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.*
+import com.smartcity.provider.util.DateUtils.Companion.convertDatePickerStringDateToLong
 import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.TopSpacingItemDecoration
@@ -99,6 +109,7 @@ constructor(
     }
 
     private fun initData(position: Int){
+        resetUI()
         when(position){
             ALL.second ->{
                 getAllOrders()
@@ -111,6 +122,7 @@ constructor(
             }
 
             DATE.second ->{
+                getOrdersByDate()
                 setDateRangeUi(true)
             }
         }
@@ -258,14 +270,25 @@ constructor(
         builder.setTitleText(R.string.select_date)
         builder.setTheme(R.style.CustomThemeOverlay_MaterialCalendar_Fullscreen)
         builder.setCalendarConstraints(calendarConstraints.build())
-       // builder.setSelection()
+
+        if (!viewModel.getRangeDate().first.isNullOrEmpty() && !viewModel.getRangeDate().second.isNullOrEmpty()){
+            builder.setSelection(androidx.core.util.Pair(
+                convertDatePickerStringDateToLong(viewModel.getRangeDate().first!!),
+                convertDatePickerStringDateToLong(viewModel.getRangeDate().second!!)
+            ))
+        }
+
         val materialDatePicker=builder.build()
 
         materialDatePicker.addOnPositiveButtonClickListener {
-            getOrdersByDate(
-                convertLongToStringDate(it.first!!),
-                convertLongToStringDate(it.second!!)
+            viewModel.setRangeDate(
+                Pair(
+                    convertLongToStringDate(it.first!!),
+                    convertLongToStringDate(it.second!!)
+                )
             )
+
+            getOrdersByDate()
         }
         materialDatePicker.show(activity!!.supportFragmentManager,"DATE_PICKER")
     }
@@ -276,12 +299,9 @@ constructor(
         )
     }
 
-    private fun getOrdersByDate(startDate:String,endDate:String) {
+    private fun getOrdersByDate() {
         viewModel.setStateEvent(
-            OrderStateEvent.GetOrderByDateEvent(
-                startDate,
-                endDate
-            )
+            OrderStateEvent.GetOrderByDateEvent()
         )
     }
 
@@ -296,6 +316,84 @@ constructor(
             order_date_range.visibility=View.VISIBLE
         else
             order_date_range.visibility=View.GONE
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.search_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when(item.itemId){
+            R.id.action_filter_settings -> {
+                showFilterDialog()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showFilterDialog() {
+        activity?.let {
+            val dialog = MaterialDialog(it)
+                .noAutoDismiss()
+                .customView(R.layout.layout_order_filter)
+
+            val view = dialog.getCustomView()
+
+            val dateFilter = viewModel.getDateFilter()
+            val amountFilter = viewModel.getAmountFilter()
+
+            view.findViewById<RadioGroup>(R.id.date_filter_group).apply {
+                when (dateFilter) {
+                    "ASC" -> check(R.id.date_filter_asc)
+                    "DESC" -> check(R.id.date_filter_desc)
+                }
+            }
+
+            view.findViewById<RadioGroup>(R.id.amount_filter_group).apply {
+                when (amountFilter) {
+                    "ASC" -> check(R.id.amount_filter_asc)
+                    "DESC" -> check(R.id.amount_filter_desc)
+                }
+            }
+
+            view.findViewById<TextView>(R.id.positive_button).setOnClickListener {
+                Log.d(TAG, "FilterDialog: apply filter.")
+
+                val newDateFilter =
+                    when (view.findViewById<RadioGroup>(R.id.date_filter_group).checkedRadioButtonId) {
+                        R.id.date_filter_asc -> "ASC"
+                        R.id.date_filter_desc -> "DESC"
+                        else -> "DESC"
+                    }
+
+                val newAmountFilter =
+                    when (view.findViewById<RadioGroup>(R.id.amount_filter_group).checkedRadioButtonId) {
+                        R.id.amount_filter_asc -> "ASC"
+                        R.id.amount_filter_desc -> "DESC"
+                        else -> "ASC"
+                    }
+
+                viewModel.apply {
+                    saveFilterOptions(newDateFilter, newAmountFilter)
+                    setDateFilter(newDateFilter)
+                    setAmountFilter(newAmountFilter)
+                }
+
+
+                initData(getSelectedPositions())
+                dialog.dismiss()
+            }
+
+            view.findViewById<TextView>(R.id.negative_button).setOnClickListener {
+                Log.d(TAG, "FilterDialog: cancelling filter.")
+                dialog.dismiss()
+            }
+
+            dialog.show()
+        }
     }
 
     override fun onResume() {

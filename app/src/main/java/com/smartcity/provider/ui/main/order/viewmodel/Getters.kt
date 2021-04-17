@@ -22,7 +22,21 @@ fun OrderViewModel.getOrderActionRecyclerPosition():Int{
     }
 }
 
+fun OrderViewModel.getDateFilter(): String {
+    getCurrentViewStateOrNew().let {
+        return it.orderFields.dateFilter
+    }
+}
 
+fun OrderViewModel.getAmountFilter(): String {
+    getCurrentViewStateOrNew().let {
+        return it.orderFields.amountFilter
+    }
+}
 
-
+fun OrderViewModel.getRangeDate(): Pair<String?,String?> {
+    getCurrentViewStateOrNew().let {
+        return it.orderFields.rangeDate
+    }
+}
 

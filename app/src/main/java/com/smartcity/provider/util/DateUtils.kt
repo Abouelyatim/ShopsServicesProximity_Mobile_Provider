@@ -1,6 +1,5 @@
 package com.smartcity.provider.util
 
-import android.R.string
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,6 +16,20 @@ class DateUtils {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             try {
                 val time = sdf.parse(stringDate).time
+                return time
+            } catch (e: Exception) {
+                throw Exception(e)
+            }
+        }
+
+        fun convertDatePickerStringDateToLong(stringDate: String): Long{
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            try {
+                val c = Calendar.getInstance()
+                c.time = sdf.parse(stringDate)
+                c.add(Calendar.DATE, 1) // number of days to add
+                val time = sdf.parse(sdf.format(c.time)).time
+
                 return time
             } catch (e: Exception) {
                 throw Exception(e)

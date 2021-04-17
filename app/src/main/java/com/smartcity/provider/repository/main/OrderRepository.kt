@@ -12,10 +12,12 @@ import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Response
 import com.smartcity.provider.ui.ResponseType
+import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.state.OrderViewState.OrderFields
 import com.smartcity.provider.util.AbsentLiveData
 import com.smartcity.provider.util.ApiSuccessResponse
+import com.smartcity.provider.util.ErrorHandling.Companion.ERROR_MUST_SELECT_TWO_DATES
 import com.smartcity.provider.util.GenericApiResponse
 import com.smartcity.provider.util.SuccessHandling
 import kotlinx.coroutines.Job
@@ -32,7 +34,9 @@ constructor(
     private val TAG: String = "AppDebug"
 
     fun attemptGetOrders(
-        id:Long
+        id:Long,
+        dateFilter:String,
+        amountFilter:String
     ): LiveData<DataState<OrderViewState>> {
         return object: NetworkBoundResource<ListOrderResponse, Order, OrderViewState>(
             sessionManager.isConnectedToTheInternet(),
@@ -72,7 +76,9 @@ constructor(
 
             override fun createCall(): LiveData<GenericApiResponse<ListOrderResponse>> {
                 return openApiMainService.getAllOrders(
-                    id= id
+                    id= id,
+                    date = dateFilter,
+                    amount = amountFilter
                 )
             }
 
@@ -90,7 +96,9 @@ constructor(
 
 
     fun attemptGetTodayOrders(
-        id:Long
+        id:Long,
+        dateFilter:String,
+        amountFilter:String
     ): LiveData<DataState<OrderViewState>> {
         return object: NetworkBoundResource<ListOrderResponse, Order, OrderViewState>(
             sessionManager.isConnectedToTheInternet(),
@@ -130,7 +138,9 @@ constructor(
 
             override fun createCall(): LiveData<GenericApiResponse<ListOrderResponse>> {
                 return openApiMainService.getTodayOrders(
-                    id= id
+                    id= id,
+                    date = dateFilter,
+                    amount = amountFilter
                 )
             }
 
@@ -149,9 +159,17 @@ constructor(
 
     fun attemptGetOrdersByDate(
         id:Long,
-        startDate: String,
-        endDate: String
+        startDate: String?,
+        endDate: String?,
+        dateFilter:String,
+        amountFilter:String
     ): LiveData<DataState<OrderViewState>> {
+
+        if(startDate.isNullOrEmpty() || endDate.isNullOrEmpty()){
+            return returnErrorResponse(ERROR_MUST_SELECT_TWO_DATES, ResponseType.Dialog())
+        }
+
+
         return object: NetworkBoundResource<ListOrderResponse, Order, OrderViewState>(
             sessionManager.isConnectedToTheInternet(),
             true,
@@ -192,7 +210,9 @@ constructor(
                 return openApiMainService.getOrdersByDate(
                     id= id,
                     startDate = startDate,
-                    endDate = endDate
+                    endDate = endDate,
+                    date = dateFilter,
+                    amount = amountFilter
                 )
             }
 
@@ -207,6 +227,24 @@ constructor(
 
         }.asLiveData()
     }
+
+
+    private fun returnErrorResponse(errorMessage: String, responseType: ResponseType): LiveData<DataState<OrderViewState>>{
+        Log.d(TAG, "returnErrorResponse: ${errorMessage}")
+
+        return object: LiveData<DataState<OrderViewState>>(){
+            override fun onActive() {
+                super.onActive()
+                value = DataState.error(
+                    Response(
+                        errorMessage,
+                        responseType
+                    )
+                )
+            }
+        }
+    }
+
 }
 
 

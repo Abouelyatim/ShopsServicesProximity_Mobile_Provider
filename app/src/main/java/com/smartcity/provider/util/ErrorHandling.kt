@@ -18,6 +18,8 @@ class ErrorHandling{
         const val ERROR_SOMETHING_WRONG_WITH_IMAGE = "Something went wrong with the image."
         const val ERROR_MUST_SELECT_IMAGE = "You must select an image."
 
+        const val ERROR_MUST_SELECT_TWO_DATES = "You must select two dates."
+
         const val GENERIC_AUTH_ERROR = "Error"
         const val PAGINATION_DONE_ERROR = "Invalid page."
         const val ERROR_CHECK_NETWORK_CONNECTION = "Check network connection."

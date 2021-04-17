@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="vertical"
-            android:id="@+id/filter_group"
+            android:id="@+id/date_filter_group"
             >
 
         <TextView
@@ -27,14 +27,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000"
                 android:textSize="16sp"
-                android:text="@string/author_or_date"
+                android:text="Filter by order date"
                 />
 
         <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/filter_author"
-                android:text="@string/filter_author"
+                android:id="@+id/date_filter_asc"
+                android:text="ASC"
                 android:textSize="16sp"
                 android:textColor="#000"
                 android:layout_marginTop="20dp"
@@ -43,8 +43,8 @@
         <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/filter_date"
-                android:text="@string/filter_date"
+                android:id="@+id/date_filter_desc"
+                android:text="DESC"
                 android:textSize="16sp"
                 android:textColor="#000"
                 android:layout_marginTop="20dp"
@@ -58,21 +58,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="vertical"
-            android:id="@+id/order_group"
+            android:id="@+id/amount_filter_group"
             >
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000"
                 android:textSize="16sp"
-                android:text="@string/asc_desc"
+                android:text="Filter by order amount"
                 />
 
 
         <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/filter_asc"
+                android:id="@+id/amount_filter_asc"
                 android:text="@string/filter_asc"
                 android:textSize="16sp"
                 android:textColor="#000"
@@ -82,7 +82,7 @@
         <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/filter_desc"
+                android:id="@+id/amount_filter_desc"
                 android:text="@string/filter_desc"
                 android:textSize="16sp"
                 android:textColor="#000"

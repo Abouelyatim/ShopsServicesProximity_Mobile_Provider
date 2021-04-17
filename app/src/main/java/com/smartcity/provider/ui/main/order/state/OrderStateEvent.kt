@@ -6,10 +6,7 @@ sealed class OrderStateEvent {
 
     class GetTodayOrderEvent : OrderStateEvent()
 
-    class GetOrderByDateEvent(
-        val startDate:String,
-        val endDate:String
-    ) : OrderStateEvent()
+    class GetOrderByDateEvent() : OrderStateEvent()
 
     class None: OrderStateEvent()
 }
