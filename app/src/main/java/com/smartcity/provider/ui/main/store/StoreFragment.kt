@@ -221,6 +221,7 @@ constructor(
         viewModel.setStateEvent(
             StoreStateEvent.AllProduct()
         )
+        viewModel.clearViewProductList()
     }
 
     override fun onItemSelected(position: Int, item: CustomCategory) {

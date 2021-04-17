@@ -21,7 +21,7 @@
                 android:id="@+id/view_custom_category_name"
                 android:text="All items"
                 android:textColor="#000"
-                android:textSize="19sp"
+                android:textSize="18sp"
                 android:layout_weight="1"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"

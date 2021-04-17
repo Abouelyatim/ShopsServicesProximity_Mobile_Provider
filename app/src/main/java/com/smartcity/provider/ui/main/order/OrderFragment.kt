@@ -2,14 +2,21 @@ package com.smartcity.provider.ui.main.order
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.MaterialDatePicker
+
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedPositions
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedPositions
@@ -22,6 +29,7 @@ import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.*
+import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
@@ -91,13 +99,20 @@ constructor(
         initOrderActionRecyclerView()
         setOrderAction()
         subscribeObservers()
-
-        if(viewModel.getOrderActionRecyclerPosition()==0){
-            getAllOrders()
-        }
+        loadFirstTimeData()
 
     }
 
+    private fun loadFirstTimeData(){
+        if(viewModel.getOrderActionRecyclerPosition()==0){
+            getAllOrders()
+        }
+        if (viewModel.getOrderActionRecyclerPosition()==2){
+            setDateRangeUi(true)
+        }else{
+            setDateRangeUi(false)
+        }
+    }
 
     private fun getAllOrders() {
         viewModel.setStateEvent(
@@ -206,12 +221,43 @@ constructor(
         resetUI()
         viewModel.clearOrderList()
         when(item){
-            ALL->{ getAllOrders() }
+            ALL->{
+                getAllOrders()
+                setDateRangeUi(false)
+            }
 
-            TODAY->{ getTodayOrders() }
+            TODAY->{
+                getTodayOrders()
+                setDateRangeUi(false)
+            }
 
-            DATE->{ getOrdersByDate("2021-04-08","2021-04-15") }
+            DATE->{
+                //getOrdersByDate("2021-04-08","2021-04-15")
+                setDateRangeUi(true)
+                order_date_range.setOnClickListener {
+                    showDatePicker()
+                }
+            }
         }
+    }
+
+    private fun showDatePicker(){
+        val calendarConstraints= CalendarConstraints.Builder()
+        calendarConstraints.setValidator(DateValidatorPointBackward.now())
+
+       val builder= MaterialDatePicker.Builder.dateRangePicker()
+        builder.setTitleText(R.string.select_date)
+        builder.setTheme(R.style.CustomThemeOverlay_MaterialCalendar_Fullscreen)
+        builder.setCalendarConstraints(calendarConstraints.build())
+        val materialDatePicker=builder.build()
+
+        materialDatePicker.addOnPositiveButtonClickListener {
+            getOrdersByDate(
+                convertLongToStringDate(it.first!!),
+                convertLongToStringDate(it.second!!)
+            )
+        }
+        materialDatePicker.show(activity!!.supportFragmentManager,"DATE_PICKER")
     }
 
     private fun getTodayOrders() {
@@ -236,6 +282,12 @@ constructor(
         focusable_view.requestFocus()
     }
 
+    private fun setDateRangeUi(visibility: Boolean){
+        if (visibility)
+            order_date_range.visibility=View.VISIBLE
+        else
+            order_date_range.visibility=View.GONE
+    }
     override fun onResume() {
         super.onResume()
         setSelectedPositions(viewModel.getOrderActionRecyclerPosition())

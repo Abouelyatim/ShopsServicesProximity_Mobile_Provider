@@ -20,7 +20,6 @@
                 android:layout_height="?attr/actionBarSize"
                 android:id="@+id/tool_bar"
                 app:layout_scrollFlags="enterAlways"
-
                 >
 
             <TextView
