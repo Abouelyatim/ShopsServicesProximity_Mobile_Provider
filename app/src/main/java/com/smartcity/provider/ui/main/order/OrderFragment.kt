@@ -2,11 +2,8 @@ package com.smartcity.provider.ui.main.order
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +13,6 @@ import com.bumptech.glide.RequestManager
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedPositions
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedPositions
@@ -24,7 +20,6 @@ import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.ALL
 import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.DATE
 import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.TODAY
 import com.smartcity.provider.ui.main.order.notification.Events
-
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
@@ -45,9 +40,9 @@ constructor(
     OrderActionAdapter.Interaction
 {
     object ActionOrder {
-        const val ALL = "All orders"
-        const val TODAY = "Today"
-        const val DATE = "Record"
+        val ALL = Pair<String,Int>("All orders",0)
+        val TODAY = Pair<String,Int>("Today",1)
+        val DATE = Pair<String,Int>("Record",2)
     }
 
     private lateinit var recyclerOrderActionAdapter: OrderActionAdapter
@@ -99,18 +94,29 @@ constructor(
         initOrderActionRecyclerView()
         setOrderAction()
         subscribeObservers()
-        loadFirstTimeData()
+        initData(viewModel.getOrderActionRecyclerPosition())
 
     }
 
-    private fun loadFirstTimeData(){
-        if(viewModel.getOrderActionRecyclerPosition()==0){
-            getAllOrders()
+    private fun initData(position: Int){
+        when(position){
+            ALL.second ->{
+                getAllOrders()
+                setDateRangeUi(false)
+            }
+
+            TODAY.second ->{
+                getTodayOrders()
+                setDateRangeUi(false)
+            }
+
+            DATE.second ->{
+                setDateRangeUi(true)
+            }
         }
-        if (viewModel.getOrderActionRecyclerPosition()==2){
-            setDateRangeUi(true)
-        }else{
-            setDateRangeUi(false)
+
+        order_date_range.setOnClickListener {
+            showDatePicker()
         }
     }
 
@@ -146,7 +152,7 @@ constructor(
         order_action_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@OrderFragment.context,LinearLayoutManager.HORIZONTAL, false)
 
-            val rightSpacingDecorator = RightSpacingItemDecoration(15)
+            val rightSpacingDecorator = RightSpacingItemDecoration(16)
             removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
             addItemDecoration(rightSpacingDecorator)
 
@@ -165,10 +171,7 @@ constructor(
             })
             recyclerOrderActionAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             adapter = recyclerOrderActionAdapter
-
         }
-
-
     }
 
     private fun subscribeObservers(){
@@ -195,8 +198,9 @@ constructor(
         })
         //new order event
         Events.serviceEvent.observe(viewLifecycleOwner, Observer<String> { profile ->
-            //todo
-           // getOrders()
+            if(getSelectedPositions()== TODAY.second){
+                getTodayOrders()
+            }
         })
 
         recyclerOrderActionAdapter.apply {
@@ -215,37 +219,33 @@ constructor(
     }
 
     private fun setOrderAction(){
+        val list= mutableListOf<Triple<String,Int,Int>>()
+        list.add(ALL.second,Triple(ALL.first,R.drawable.ic_baseline_all_inclusive_white,R.drawable.ic_baseline_all_inclusive_black))
+        list.add(TODAY.second,Triple(TODAY.first,R.drawable.ic_baseline_today_white,R.drawable.ic_baseline_today_black))
+        list.add(DATE.second,Triple(DATE.first,R.drawable.ic_baseline_history_white,R.drawable.ic_baseline_history_black))
         viewModel.setOrderActionList(
-            listOf(
-                Triple(ALL,R.drawable.ic_baseline_all_inclusive_white,R.drawable.ic_baseline_all_inclusive_black),
-                Triple(TODAY,R.drawable.ic_baseline_today_white,R.drawable.ic_baseline_today_black),
-                Triple(DATE,R.drawable.ic_baseline_history_white,R.drawable.ic_baseline_history_black)
-            )
+            list
         )
     }
-
 
     override fun onItemSelected(position: Int, item: String) {
         order_action_recyclerview.adapter!!.notifyDataSetChanged()
         resetUI()
         viewModel.clearOrderList()
         when(item){
-            ALL->{
+            ALL.first->{
                 getAllOrders()
                 setDateRangeUi(false)
             }
 
-            TODAY->{
+            TODAY.first->{
                 getTodayOrders()
                 setDateRangeUi(false)
             }
 
-            DATE->{
+            DATE.first->{
                 showDatePicker()
                 setDateRangeUi(true)
-                order_date_range.setOnClickListener {
-                    showDatePicker()
-                }
             }
         }
     }
@@ -258,6 +258,7 @@ constructor(
         builder.setTitleText(R.string.select_date)
         builder.setTheme(R.style.CustomThemeOverlay_MaterialCalendar_Fullscreen)
         builder.setCalendarConstraints(calendarConstraints.build())
+       // builder.setSelection()
         val materialDatePicker=builder.build()
 
         materialDatePicker.addOnPositiveButtonClickListener {
@@ -284,7 +285,6 @@ constructor(
         )
     }
 
-
     private  fun resetUI(){
         orders_recyclerview.smoothScrollToPosition(0)
         stateChangeListener.hideSoftKeyboard()
@@ -297,6 +297,7 @@ constructor(
         else
             order_date_range.visibility=View.GONE
     }
+
     override fun onResume() {
         super.onResume()
         setSelectedPositions(viewModel.getOrderActionRecyclerPosition())

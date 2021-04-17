@@ -120,7 +120,7 @@ constructor(
         view_custom_category_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@StoreFragment.context,LinearLayoutManager.HORIZONTAL, false)
 
-            val rightSpacingDecorator = RightSpacingItemDecoration(15)
+            val rightSpacingDecorator = RightSpacingItemDecoration(16)
             removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
             addItemDecoration(rightSpacingDecorator)
 

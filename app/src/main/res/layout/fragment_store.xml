@@ -21,6 +21,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/view_custom_category_recyclerview"
                     android:scrollbars="none"
+                    android:paddingStart="16dp"
                     />
 
 
