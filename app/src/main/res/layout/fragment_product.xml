@@ -22,7 +22,7 @@
                 android:textAllCaps="false"
                 android:textColor="#fff"
                 android:textSize="16sp"
-                android:layout_margin="15dp"
+                android:layout_margin="16dp"
                 />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -36,7 +36,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/product_recyclerview"
                     android:scrollbars="vertical"
-                    android:layout_margin="20dp"
+                    android:layout_margin="16dp"
                     tools:listitem="@layout/layout_product_list_item"
                     />
 

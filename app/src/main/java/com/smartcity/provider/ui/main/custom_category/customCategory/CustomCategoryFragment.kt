@@ -176,7 +176,7 @@ constructor(
     fun initvRecyclerView(){
         custom_category_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@CustomCategoryFragment.context)
-            val topSpacingDecorator = TopSpacingItemDecoration(30)
+            val topSpacingDecorator = TopSpacingItemDecoration(0)
             removeItemDecoration(topSpacingDecorator) // does nothing if not applied already
             addItemDecoration(topSpacingDecorator)
 

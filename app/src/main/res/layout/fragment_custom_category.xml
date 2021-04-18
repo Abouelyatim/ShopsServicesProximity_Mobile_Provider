@@ -5,14 +5,15 @@
         android:id="@+id/productFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/app_background_color"
         tools:context=".ui.main.custom_category.customCategory.CustomCategoryFragment"
+
         >
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
         <View android:layout_width="0.5dp"
                 android:layout_height="0.5dp"
@@ -28,8 +29,12 @@
                 android:textAllCaps="false"
                 android:textColor="#fff"
                 android:textSize="16sp"
-                android:layout_margin="15dp"
+                android:layout_margin="16dp"
                 />
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/default_background_color"/>
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,12 +45,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/custom_category_recyclerview"
-                    tools:listitem="@layout/layout_custom_category_list_item"
                     android:scrollbars="vertical"
-                    android:layout_margin="20dp"
+                    android:layout_margin="16dp"
                     />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     </LinearLayout>
 

@@ -1,34 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:state_pressed="true">
-        <shape android:shape="rectangle">
-            <corners android:radius="30dip" />
-            <stroke android:width="1dip"
-                    android:color="@color/bleu" />
-            <gradient android:angle="-90"
-                    android:endColor="@color/grey2"
-                    android:startColor="@color/grey2" />
+<?xml version="1.0" encoding="UTF-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="@color/bleu_light">
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="@color/bleu"/>
+            <stroke android:width="1dp" android:color="@color/bleu" />
+            <corners android:radius="30dp"/>
+            <padding android:left="0dp" android:top="0dp"
+                    android:right="0dp" android:bottom="0dp" />
         </shape>
     </item>
-
-    <item android:state_focused="true">
-        <shape android:shape="rectangle">
-            <corners android:radius="30dip" />
-            <stroke android:width="1dip"
-                    android:color="@color/bleu" />
-            <solid android:color="@color/bleu" />
-        </shape>
-    </item>
-
-    <item>
-        <shape android:shape="rectangle">
-            <corners android:radius="30dip" />
-            <stroke android:width="1dip"
-                    android:color="@color/bleu" />
-            <gradient android:angle="-90"
-                    android:endColor="@color/bleu"
-                    android:startColor="@color/bleu" />
-        </shape>
-    </item>
-</selector>
+</ripple>
