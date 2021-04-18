@@ -23,6 +23,7 @@
     <string name="field_register">Register</string>
     <string name="network_error_response">Error</string>
     <string name="account">Account</string>
+    <string name="store">Store</string>
     <string name="configuration">Configuration</string>
     <string name="logout">Logout</string>
     <string name="my_blogs">My Blogs</string>
