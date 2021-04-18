@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
@@ -38,6 +39,8 @@ import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
+import kotlinx.android.synthetic.main.fragment_order.swipe_refresh
+import kotlinx.android.synthetic.main.fragment_product.*
 import javax.inject.Inject
 
 
@@ -47,7 +50,8 @@ constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
 ): BaseOrderFragment(R.layout.fragment_order),
-    OrderActionAdapter.Interaction
+    OrderActionAdapter.Interaction,
+    SwipeRefreshLayout.OnRefreshListener
 {
     object ActionOrder {
         val ALL = Pair<String,Int>("All orders",0)
@@ -99,6 +103,7 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
+        swipe_refresh.setOnRefreshListener(this)
 
         initOrderRecyclerView()
         initOrderActionRecyclerView()
@@ -408,6 +413,11 @@ constructor(
         recyclerOrderActionAdapter.resetSelectedPosition()
         orders_recyclerview.adapter=null
         order_action_recyclerview.adapter=null
+    }
+
+    override fun onRefresh() {
+        initData(getSelectedPositions())
+        swipe_refresh.isRefreshing = false
     }
 }
 
