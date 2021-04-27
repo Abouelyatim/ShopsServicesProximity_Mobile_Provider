@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context=".ui.main.account.NotificationFragment"
+        tools:context=".ui.main.account.notification.NotificationFragment"
         android:orientation="vertical"
         android:background="@color/new_default_background_color"
         >

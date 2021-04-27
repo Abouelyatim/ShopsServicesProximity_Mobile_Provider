@@ -13,6 +13,7 @@ class SuccessHandling {
         const val STORE_CREATION_DONE = "Done cration store."
         const val CUSTOM_CATEGORY_CREATION_DONE = "Done cration."
 
+        const val CREATION_DONE = "created."
         const val DELETE_DONE = "deleted."
         const val CUSTOM_CATEGORY_UPDATE_DONE = "Done update"
 

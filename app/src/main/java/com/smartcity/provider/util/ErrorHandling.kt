@@ -25,6 +25,7 @@ class ErrorHandling{
         const val ERROR_CHECK_NETWORK_CONNECTION = "Check network connection."
         const val ERROR_UNKNOWN = "Unknown error"
 
+        const val ERROR_FILL_ALL_INFORMATION = "You must fill all information."
 
         fun isNetworkError(msg: String): Boolean{
             when{

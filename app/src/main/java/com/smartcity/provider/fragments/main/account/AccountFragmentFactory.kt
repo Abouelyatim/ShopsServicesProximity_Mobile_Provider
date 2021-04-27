@@ -4,8 +4,11 @@ import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.ui.main.account.AccountFragment
-import com.smartcity.provider.ui.main.account.NotificationFragment
+import com.smartcity.provider.ui.main.account.*
+import com.smartcity.provider.ui.main.account.notification.NotificationFragment
+import com.smartcity.provider.ui.main.account.policy.PolicyFormFragment
+import com.smartcity.provider.ui.main.account.policy.PolicyFormOptionFragment
+import com.smartcity.provider.ui.main.account.policy.PolicyFragment
 import javax.inject.Inject
 
 @MainScope
@@ -29,7 +32,29 @@ constructor(
             NotificationFragment::class.java.name -> {
                 NotificationFragment(
                     viewModelFactory,
-                    requestManager)
+                    requestManager
+                )
+            }
+
+            PolicyFragment::class.java.name -> {
+                PolicyFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            PolicyFormFragment::class.java.name -> {
+                PolicyFormFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            PolicyFormOptionFragment::class.java.name -> {
+                PolicyFormOptionFragment(
+                    viewModelFactory,
+                    requestManager
+                )
             }
 
             else -> {

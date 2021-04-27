@@ -13,10 +13,13 @@
         <action
                 android:id="@+id/action_accountFragment_to_notificationFragment"
                 app:destination="@id/notificationFragment" />
+        <action
+                android:id="@+id/action_accountFragment_to_policyFragment"
+                app:destination="@id/policyFragment" />
     </fragment>
     <fragment
             android:id="@+id/notificationFragment"
-            android:name="com.smartcity.provider.ui.main.account.NotificationFragment"
+            android:name="com.smartcity.provider.ui.main.account.notification.NotificationFragment"
             android:label="fragment_notification"
             tools:layout="@layout/fragment_notification" >
         <action
@@ -24,5 +27,31 @@
                 app:destination="@id/accountFragment"
                 app:popUpTo="@+id/nav_account"
                 app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+            android:id="@+id/policyFragment"
+            android:name="com.smartcity.provider.ui.main.account.policy.PolicyFragment"
+            android:label="PolicyFragment" >
+        <action
+                android:id="@+id/action_policyFragment_to_policyFormFragment"
+                app:destination="@id/policyFormFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/policyFormFragment"
+            android:name="com.smartcity.provider.ui.main.account.policy.PolicyFormFragment"
+            android:label="fragment_policy_form"
+            tools:layout="@layout/fragment_policy_form" >
+        <action
+                android:id="@+id/action_policyFormFragment_to_policyFormOptionFragment"
+                app:destination="@id/policyFormOptionFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/policyFormOptionFragment"
+            android:name="com.smartcity.provider.ui.main.account.policy.PolicyFormOptionFragment"
+            android:label="fragment_policy_form_option"
+            tools:layout="@layout/fragment_policy_form_option" >
+        <action
+                android:id="@+id/action_policyFormOptionFragment_to_policyFragment"
+                app:destination="@id/policyFragment" />
     </fragment>
 </navigation>

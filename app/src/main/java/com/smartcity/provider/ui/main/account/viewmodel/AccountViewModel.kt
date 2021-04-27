@@ -11,6 +11,7 @@ import com.smartcity.provider.ui.Loading
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent.*
 import com.smartcity.provider.ui.main.account.state.AccountViewState
+import com.smartcity.provider.util.AbsentLiveData
 import javax.inject.Inject
 
 @MainScope
@@ -35,6 +36,16 @@ constructor(
                 return accountRepository.attemptSetNotificationSettings(
                     stateEvent.settings
                 )
+            }
+
+            is SavePolicy ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    stateEvent.policy.providerId=authToken.account_pk!!.toLong()
+                    accountRepository.attemptCreatePolicy(
+                        stateEvent.policy
+                    )
+
+                }?: AbsentLiveData.create()
             }
 
             is None ->{

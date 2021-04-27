@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.account
+package com.smartcity.provider.ui.main.account.policy
 
 import android.os.Bundle
 import android.view.View
@@ -8,19 +8,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
+import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
-import kotlinx.android.synthetic.main.fragment_account.*
+import com.smartcity.provider.ui.main.account.viewmodel.clearPolicyConfiguration
+import kotlinx.android.synthetic.main.fragment_policy.*
 import javax.inject.Inject
 
 
-class AccountFragment
+class PolicyFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_account){
+): BaseAccountFragment(R.layout.fragment_policy){
 
     val viewModel: AccountViewModel by viewModels{
         viewModelFactory
@@ -33,7 +35,6 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -54,21 +55,21 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
         stateChangeListener.expandAppBar()
+        stateChangeListener.displayBottomNavigation(false)
 
-        notification_settings.setOnClickListener {
-            navNotification()
-        }
 
-        policy_settings.setOnClickListener {
-            navPolicy()
+        configure_policy_button.setOnClickListener {
+            navPolicyForm()
         }
     }
 
-    fun navNotification(){
-        findNavController().navigate(R.id.action_accountFragment_to_notificationFragment)
+    fun navPolicyForm(){
+        viewModel.clearPolicyConfiguration()
+        findNavController().navigate(R.id.action_policyFragment_to_policyFormFragment)
     }
 
-    fun navPolicy(){
-        findNavController().navigate(R.id.action_accountFragment_to_policyFragment)
+    override fun onDestroy() {
+        super.onDestroy()
+        stateChangeListener.displayBottomNavigation(true)
     }
 }

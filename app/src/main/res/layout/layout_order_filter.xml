@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:text="Apply"
                 android:textSize="16sp"
-                android:textColor="@color/tealDark"
+                android:textColor="@color/bleu"
                 />
 
     </LinearLayout>

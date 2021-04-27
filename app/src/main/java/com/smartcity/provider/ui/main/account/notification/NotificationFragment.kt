@@ -1,9 +1,7 @@
-package com.smartcity.provider.ui.main.account
+package com.smartcity.provider.ui.main.account.notification
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -12,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.smartcity.provider.R
+import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
