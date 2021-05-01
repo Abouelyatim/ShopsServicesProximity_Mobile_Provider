@@ -1,8 +1,12 @@
 package com.smartcity.provider.ui.main.account.policy
 
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -50,12 +54,13 @@ constructor(
         viewModel.cancelActiveJobs()
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        stateChangeListener.displayBottomNavigation(false)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
         stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
 
 
         configure_policy_button.setOnClickListener {

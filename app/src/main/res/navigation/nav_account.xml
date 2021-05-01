@@ -31,7 +31,8 @@
     <fragment
             android:id="@+id/policyFragment"
             android:name="com.smartcity.provider.ui.main.account.policy.PolicyFragment"
-            android:label="PolicyFragment" >
+            android:label="PolicyFragment"
+            tools:layout="@layout/fragment_policy" >
         <action
                 android:id="@+id/action_policyFragment_to_policyFormFragment"
                 app:destination="@id/policyFormFragment" />
@@ -51,7 +52,10 @@
             android:label="fragment_policy_form_option"
             tools:layout="@layout/fragment_policy_form_option" >
         <action
-                android:id="@+id/action_policyFormOptionFragment_to_policyFragment"
-                app:destination="@id/policyFragment" />
+                android:id="@+id/action_policyFormOptionFragment_to_accountFragment"
+                app:destination="@id/accountFragment"
+                app:launchSingleTop="true"
+                app:popUpTo="@+id/nav_account"
+                app:popUpToInclusive="false"/>
     </fragment>
 </navigation>
