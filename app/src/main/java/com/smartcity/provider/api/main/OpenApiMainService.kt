@@ -8,6 +8,7 @@ import com.smartcity.provider.api.main.responses.*
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.models.AccountProperties
 import com.smartcity.provider.models.Policy
+import com.smartcity.provider.models.StoreInformation
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.util.GenericApiResponse
 import okhttp3.MultipartBody
@@ -92,6 +93,11 @@ interface OpenApiMainService {
     @POST("policy/create")
     fun createPolicy(
         @Body policy: Policy
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @POST("store/Information")
+    fun setStoreInformation(
+        @Body storeInformation: StoreInformation
     ): LiveData<GenericApiResponse<GenericResponse>>
 }
 

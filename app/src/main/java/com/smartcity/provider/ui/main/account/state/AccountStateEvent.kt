@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.account.state
 
 import com.smartcity.provider.models.Policy
+import com.smartcity.provider.models.StoreInformation
 
 sealed class AccountStateEvent {
 
@@ -12,6 +13,10 @@ sealed class AccountStateEvent {
 
     class SavePolicy(
         var policy: Policy
+    ):AccountStateEvent()
+
+    class SetStoreInformation(
+        var storeInformation: StoreInformation
     ):AccountStateEvent()
 
     class None: AccountStateEvent()

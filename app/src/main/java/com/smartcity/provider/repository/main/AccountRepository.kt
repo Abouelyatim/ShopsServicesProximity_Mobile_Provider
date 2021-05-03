@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import com.smartcity.provider.api.GenericResponse
 import com.smartcity.provider.api.main.OpenApiMainService
 import com.smartcity.provider.di.main.MainScope
+import com.smartcity.provider.models.StoreInformation
 import com.smartcity.provider.repository.JobManager
 import com.smartcity.provider.repository.NetworkBoundResource
 import com.smartcity.provider.session.SessionManager
@@ -115,6 +116,62 @@ constructor(
 
             override fun setJob(job: Job) {
                 addJob("attemptCreatePolicy", job)
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+
+            }
+
+        }.asLiveData()
+    }
+
+    fun attemptSetStoreInformation(
+        storeInformation: StoreInformation
+    ): LiveData<DataState<AccountViewState>> {
+
+
+        return object :
+            NetworkBoundResource<GenericResponse, Any, AccountViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = null
+                        ,
+                        response = Response(
+                            SuccessHandling.CREATION_DONE,
+                            ResponseType.Toast()
+                        )
+                    )
+                )
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+
+                return openApiMainService.setStoreInformation(
+                    storeInformation = storeInformation
+                )
+            }
+
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+
+
+            override fun setJob(job: Job) {
+                addJob("attemptSetStoreInformation", job)
             }
 
             override suspend fun updateLocalDb(cacheObject: Any?) {

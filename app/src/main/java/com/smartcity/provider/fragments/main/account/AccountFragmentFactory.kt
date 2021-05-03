@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.ui.main.account.*
+import com.smartcity.provider.ui.main.account.information.InformationFragment
 import com.smartcity.provider.ui.main.account.notification.NotificationFragment
 import com.smartcity.provider.ui.main.account.policy.PolicyFormFragment
 import com.smartcity.provider.ui.main.account.policy.PolicyFormOptionFragment
@@ -52,6 +53,13 @@ constructor(
 
             PolicyFormOptionFragment::class.java.name -> {
                 PolicyFormOptionFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            InformationFragment::class.java.name -> {
+                InformationFragment(
                     viewModelFactory,
                     requestManager
                 )

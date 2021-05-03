@@ -16,6 +16,9 @@
         <action
                 android:id="@+id/action_accountFragment_to_policyFragment"
                 app:destination="@id/policyFragment" />
+        <action
+                android:id="@+id/action_accountFragment_to_informationFragment"
+                app:destination="@id/informationFragment" />
     </fragment>
     <fragment
             android:id="@+id/notificationFragment"
@@ -52,10 +55,14 @@
             android:label="fragment_policy_form_option"
             tools:layout="@layout/fragment_policy_form_option" >
         <action
-                android:id="@+id/action_policyFormOptionFragment_to_accountFragment"
-                app:destination="@id/accountFragment"
-                app:launchSingleTop="true"
-                app:popUpTo="@+id/nav_account"
-                app:popUpToInclusive="false"/>
+                android:id="@+id/action_policyFormOptionFragment_to_policyFragment"
+                app:destination="@id/policyFragment"
+                app:popUpTo="@+id/policyFragment"
+                app:popUpToInclusive="true"/>
     </fragment>
+    <fragment
+            android:id="@+id/informationFragment"
+            android:name="com.smartcity.provider.ui.main.account.information.InformationFragment"
+            android:label="fragment_information"
+            tools:layout="@layout/fragment_information" />
 </navigation>

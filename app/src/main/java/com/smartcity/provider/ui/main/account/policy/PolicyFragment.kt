@@ -72,9 +72,4 @@ constructor(
         viewModel.clearPolicyConfiguration()
         findNavController().navigate(R.id.action_policyFragment_to_policyFormFragment)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stateChangeListener.displayBottomNavigation(true)
-    }
 }

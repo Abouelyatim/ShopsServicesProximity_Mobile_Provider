@@ -54,6 +54,7 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
         stateChangeListener.expandAppBar()
+        stateChangeListener.displayBottomNavigation(true)
 
         notification_settings.setOnClickListener {
             navNotification()
@@ -61,6 +62,10 @@ constructor(
 
         policy_settings.setOnClickListener {
             navPolicy()
+        }
+
+        information_settings.setOnClickListener {
+            navInformation()
         }
     }
 
@@ -70,5 +75,9 @@ constructor(
 
     fun navPolicy(){
         findNavController().navigate(R.id.action_accountFragment_to_policyFragment)
+    }
+
+    fun navInformation(){
+        findNavController().navigate(R.id.action_accountFragment_to_informationFragment)
     }
 }

@@ -17,6 +17,7 @@ class ErrorHandling{
         const val ERROR_SAVE_AUTH_TOKEN = "Error saving authentication token.\nTry restarting the app."
         const val ERROR_SOMETHING_WRONG_WITH_IMAGE = "Something went wrong with the image."
         const val ERROR_MUST_SELECT_IMAGE = "You must select an image."
+        const val ERROR_INVALID_PHONE_NUMBER_FORMAT = "Invalid phone number format."
 
         const val ERROR_MUST_SELECT_TWO_DATES = "You must select two dates."
 

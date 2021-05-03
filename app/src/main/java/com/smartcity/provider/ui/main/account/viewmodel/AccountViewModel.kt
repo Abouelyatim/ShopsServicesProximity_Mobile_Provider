@@ -48,6 +48,16 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is SetStoreInformation ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    stateEvent.storeInformation.providerId=authToken.account_pk!!.toLong()
+                    accountRepository.attemptSetStoreInformation(
+                        stateEvent.storeInformation
+                    )
+
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

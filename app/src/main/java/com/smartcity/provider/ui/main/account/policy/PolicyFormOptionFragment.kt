@@ -114,7 +114,7 @@ constructor(
     }
 
     private fun navPolicy(){
-        findNavController().navigate(R.id.action_policyFormOptionFragment_to_accountFragment)
+        findNavController().navigate(R.id.action_policyFormOptionFragment_to_policyFragment)
     }
 
     private fun savePolicy() {
@@ -251,6 +251,8 @@ constructor(
 
     override fun onDestroy() {
         super.onDestroy()
-       // deposit_ranges_recyclerview.adapter=null
+        deposit_ranges_recyclerview?.let {
+            it.adapter=null
+        }
     }
 }
