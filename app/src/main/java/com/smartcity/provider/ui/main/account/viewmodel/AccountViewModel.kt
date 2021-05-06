@@ -58,10 +58,18 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is GetStoreInformation ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    accountRepository.attemptGetStoreInformation(
+                        authToken.account_pk!!.toLong()
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(
-                        DataState(
+                        DataState<AccountViewState>(
                             null,
                             Loading(false),
                             null

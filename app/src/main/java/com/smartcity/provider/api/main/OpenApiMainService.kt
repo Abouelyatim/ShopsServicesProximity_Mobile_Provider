@@ -99,6 +99,11 @@ interface OpenApiMainService {
     fun setStoreInformation(
         @Body storeInformation: StoreInformation
     ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @GET("store/Information/{id}")
+    fun getStoreInformation(
+        @Path(value = "id") id:Long
+    ): LiveData<GenericApiResponse<StoreInformation>>
 }
 
 

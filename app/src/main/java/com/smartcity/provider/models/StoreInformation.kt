@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
 data class StoreInformation(
     @SerializedName("providerId")
     @Expose
-    var providerId:Long,
+    var providerId:Long?,
     @SerializedName("address")
     @Expose
     var address:String,

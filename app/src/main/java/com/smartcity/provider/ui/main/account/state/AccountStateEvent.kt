@@ -19,5 +19,8 @@ sealed class AccountStateEvent {
         var storeInformation: StoreInformation
     ):AccountStateEvent()
 
+    class GetStoreInformation(
+    ):AccountStateEvent()
+
     class None: AccountStateEvent()
 }

@@ -180,4 +180,62 @@ constructor(
 
         }.asLiveData()
     }
+
+    fun attemptGetStoreInformation(
+        id:Long
+    ): LiveData<DataState<AccountViewState>> {
+
+
+        return object :
+            NetworkBoundResource<StoreInformation, Any, AccountViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<StoreInformation>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = AccountViewState(
+                            storeInformation=response.body
+                        )
+                        ,
+                        response = Response(
+                            SuccessHandling.DONE_STORE_INFORMATION,
+                            ResponseType.None()
+                        )
+                    )
+                )
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<StoreInformation>> {
+
+                return openApiMainService.getStoreInformation(
+                    id = id
+                )
+            }
+
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetStoreInformation", job)
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+
+            }
+
+        }.asLiveData()
+    }
 }

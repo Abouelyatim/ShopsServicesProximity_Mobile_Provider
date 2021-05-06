@@ -76,6 +76,9 @@ constructor(
             saveStoreInformation()
         }
 
+        viewModel.setStateEvent(
+            AccountStateEvent.GetStoreInformation()
+        )
 
     }
 
@@ -107,15 +110,34 @@ constructor(
                             }
                         }
 
+                        if(!data.response.hasBeenHandled){
+                            if (response.message==SuccessHandling.DONE_STORE_INFORMATION){
+                                data.data?.let{
+                                    it.peekContent()?.let{
+                                        it.storeInformation?.let {
+                                            initUi(it)
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
                     }
                 }
             }
         })
     }
 
-    fun navAccount(){
+    private fun initUi(storeInformation: StoreInformation){
+        input_address.setText(storeInformation.address)
+        input_default_phone_number.setText(storeInformation.defaultTelephoneNumber)
+        input_phone_number.setText(storeInformation.telephoneNumber)
+    }
+
+    private fun navAccount(){
         findNavController().popBackStack()
     }
+
     private fun setTextInput(){
         defaultPhoneNumberKit = PhoneNumberKit(context!!)
         defaultPhoneNumberKit.attachToInput(phone_number, 213)

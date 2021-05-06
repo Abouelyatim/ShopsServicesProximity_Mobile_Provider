@@ -90,7 +90,7 @@ constructor(
             is None ->{
                 return liveData {
                     emit(
-                        DataState(
+                        DataState<OrderViewState>(
                             null,
                             Loading(false),
                             null

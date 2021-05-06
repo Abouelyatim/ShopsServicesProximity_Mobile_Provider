@@ -98,7 +98,7 @@ constructor(
             is None -> {
                 return liveData {
                     emit(
-                        DataState(
+                        DataState<CustomCategoryViewState>(
                             null,
                             Loading(false),
                             null
