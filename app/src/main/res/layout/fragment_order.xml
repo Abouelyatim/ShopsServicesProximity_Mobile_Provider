@@ -39,18 +39,65 @@
                     android:layout_height="3dp"
                     android:background="@color/new_default_background_color" />
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/swipe_refresh"
-                    >
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/orders_recyclerview"
+                    android:layout_height="wrap_content">
+                <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scrollbars="none" />
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/swipe_refresh"
+                            android:layout_weight="1"
+                            >
+                        <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/orders_recyclerview"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scrollbars="none" />
+
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
+                    <LinearLayout
+                            android:id="@+id/steps_btns"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                        <View
+                                android:layout_width="3dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_default_background_color"
+                                />
+
+                        <androidx.core.widget.NestedScrollView
+                                android:fillViewport="true"
+                                android:layout_width="75dp"
+                                android:layout_height="match_parent">
+
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/order_steps_recyclerview"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scrollbars="none"
+                                    />
+
+
+
+
+                        </androidx.core.widget.NestedScrollView>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 
         </LinearLayout>
 
@@ -59,7 +106,7 @@
                 android:id="@+id/order_date_range"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|left"
                 android:layout_margin="16dp"
                 android:visibility="gone"
                 app:backgroundTint="@color/bleu"
@@ -78,6 +125,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
             android:src="@drawable/empty_list"
+            android:layout_marginEnd="78dp"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

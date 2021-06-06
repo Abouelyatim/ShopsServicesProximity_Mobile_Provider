@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+<androidx.core.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        tools:context=".ui.main.order.ViewOrderFragment">
 
 
+<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+       >
 
     <LinearLayout
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+            android:orientation="horizontal">
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/order_type_delivery"
+                android:id="@+id/view_order_type_delivery"
                 android:layout_weight="1"
                 android:visibility="gone"
                 >
@@ -39,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/order_type_self_pickup"
+                android:id="@+id/view_order_type_self_pickup"
                 android:layout_weight="1"
                 android:visibility="gone"
                 >
@@ -55,12 +61,7 @@
                     />
 
         </LinearLayout>
-
     </LinearLayout>
-
-
-
-
 
     <LinearLayout
             android:layout_marginRight="16dp"
@@ -79,7 +80,7 @@
                 />
 
         <TextView
-                android:id="@+id/order_id"
+                android:id="@+id/view_order_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="12894"
@@ -107,7 +108,7 @@
                 />
 
         <TextView
-                android:id="@+id/order_time"
+                android:id="@+id/view_order_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="2021-03-31 14:59"
@@ -135,7 +136,7 @@
                 />
 
         <TextView
-                android:id="@+id/order_type"
+                android:id="@+id/view_order_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XXX"
@@ -163,7 +164,7 @@
                 />
 
         <TextView
-                android:id="@+id/order_receiver"
+                android:id="@+id/view_order_receiver"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XXX"
@@ -175,7 +176,7 @@
     </LinearLayout>
 
     <LinearLayout
-            android:id="@+id/order_delivery_address_container"
+            android:id="@+id/view_order_delivery_address_container"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
             android:layout_width="wrap_content"
@@ -192,7 +193,7 @@
                 />
 
         <TextView
-                android:id="@+id/order_delivery_address"
+                android:id="@+id/view_order_delivery_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XXX"
@@ -200,7 +201,6 @@
                 android:textColor="#000"
                 android:layout_gravity="center"
                 />
-
     </LinearLayout>
 
     <LinearLayout
@@ -214,55 +214,12 @@
         <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/products_order_recycler_view"
+                android:id="@+id/view_order_products_recycler_view"
                 android:scrollbars="none"
 
                 />
 
-        <LinearLayout
-                android:id="@+id/order_more_products"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:visibility="gone"
-                >
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                    android:layout_weight="1"
-                    android:layout_gravity="center">
-                <TextView
-                        android:textSize="14sp"
-                        android:textColor="#000"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Display "/>
-                <TextView
-                        android:id="@+id/order_remaining_products"
-                        android:textSize="14sp"
-                        android:textColor="#000"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="XX"/>
-                <TextView
-                        android:textSize="14sp"
-                        android:textColor="#000"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" items remaining"/>
-            </LinearLayout>
 
-            <Button
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/ic_baseline_keyboard_arrow_right_24_black"
-                    android:layout_gravity="center"
-                    />
-        </LinearLayout>
 
         <View
                 android:layout_width="match_parent"
@@ -285,7 +242,7 @@
                     />
 
             <TextView
-                    android:id="@+id/order_product_quantity"
+                    android:id="@+id/view_order_product_quantity"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:padding="3dp"
@@ -307,7 +264,7 @@
                     />
 
             <TextView
-                    android:id="@+id/order_product_total"
+                    android:id="@+id/view_order_product_total"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:padding="3dp"
@@ -330,7 +287,7 @@
                     />
 
             <TextView
-                    android:id="@+id/order_product_paid"
+                    android:id="@+id/view_order_product_paid"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:padding="3dp"
@@ -353,7 +310,7 @@
                     />
 
             <TextView
-                    android:id="@+id/order_product_rest"
+                    android:id="@+id/view_order_product_rest"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:padding="3dp"
@@ -364,10 +321,160 @@
 
     </LinearLayout>
 
-    <View
-            android:layout_marginTop="16dp"
+
+    <LinearLayout
+            android:id="@+id/view_order_NEW_ORDER_buttons"
             android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@color/default_background_color"
-            />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:layout_margin="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+        <Button
+                android:id="@+id/view_order_reject"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_white_border"
+                android:text="Reject"
+                android:textAllCaps="false"
+                android:textColor="@color/bleu"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"/>
+
+        <Button
+                android:id="@+id/view_order_accept"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_blue"
+                android:text="Accept"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/view_order_ACCEPT_ORDER_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:layout_margin="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_white_border"
+                android:text="Problem"
+                android:textAllCaps="false"
+                android:textColor="@color/bleu"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"/>
+
+        <Button
+                android:id="@+id/view_order_in_progress"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_blue"
+                android:text="In progress"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/view_order_PROGRESS_ORDER_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:layout_margin="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_white_border"
+                android:text="Problem"
+                android:textAllCaps="false"
+                android:textColor="@color/bleu"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"/>
+
+        <Button
+                android:id="@+id/view_order_ready"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_blue"
+                android:text="Ready"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/view_order_READY_ORDER_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:layout_margin="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_white_border"
+                android:text="Problem"
+                android:textAllCaps="false"
+                android:textColor="@color/bleu"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"/>
+
+        <Button
+                android:id="@+id/view_order_picked_up"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_blue"
+                android:text="Picked up"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:visibility="gone"/>
+
+        <Button
+                android:id="@+id/view_order_delivered"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/radius_button_blue"
+                android:text="Delivered"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:visibility="gone"/>
+    </LinearLayout>
+
 </LinearLayout>
+</androidx.core.widget.NestedScrollView>

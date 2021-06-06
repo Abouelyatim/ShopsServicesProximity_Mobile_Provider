@@ -11,23 +11,52 @@ data class Order(
     @Expose
     var id:Long,
 
+    @SerializedName("orderProductVariants")
+    @Expose
+    var orderProductVariants: List<OrderProductVariant>,
+
+    @SerializedName("bill")
+    @Expose
+    var bill:Bill,
+
+    @SerializedName("orderType")
+    @Expose
+    var orderType:OrderType,
+
+    @SerializedName("address")
+    @Expose
+    var address:Address,
+
+    @SerializedName("receiverFirstName")
+    @Expose
+    var firstName:String,
+
+    @SerializedName("receiverLastName")
+    @Expose
+    var lastName:String,
+
+    @SerializedName("receiverBirthDay")
+    @Expose
+    var birthDay:String,
+
     @SerializedName("createAt")
     @Expose
     var createAt:String,
 
-    @SerializedName("userId")
+    @SerializedName("validDuration")
     @Expose
-    var userId:Long,
-
-    @SerializedName("orderProductVariants")
-    @Expose
-    var orderProductVariants: List<OrderProductVariant>
+    var validDuration:Long
 
 ) : Parcelable {
     override fun toString(): String {
         return "Order(id=$id," +
+                "bill=$bill," +
+                "orderType=$orderType" +
+                "address=$address" +
+                "firstName=$firstName," +
+                "lastName=$lastName," +
+                "birthDay=$birthDay," +
                 "createAt=$createAt," +
-                "userId=$userId" +
-                "orderProductVariants=$orderProductVariants)"
+                "validDuration=$validDuration)"
     }
 }

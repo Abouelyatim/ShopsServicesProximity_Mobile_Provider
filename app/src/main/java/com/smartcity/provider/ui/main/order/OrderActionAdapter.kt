@@ -1,14 +1,11 @@
 package com.smartcity.provider.ui.main.order
 
-import android.content.res.ColorStateList
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.*
 import com.smartcity.provider.R
-import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter
 
 import kotlinx.android.synthetic.main.layout_view_order_actions_item.view.*
 
@@ -17,19 +14,19 @@ class OrderActionAdapter (
     private val interaction: Interaction? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object{
-        var selectedPosition = 0
+        var selectedActionPosition = 0
 
-        fun getSelectedPositions():Int{
-            return selectedPosition
+        fun getSelectedActionPositions():Int{
+            return selectedActionPosition
         }
 
-        fun setSelectedPositions(position:Int){
-            selectedPosition =position
+        fun setSelectedActionPositions(position:Int){
+            selectedActionPosition =position
         }
     }
 
-    fun resetSelectedPosition(){
-        selectedPosition =0
+    fun resetSelectedActionPosition(){
+        selectedActionPosition =0
     }
 
     val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Triple<String,Int,Int>>() {
@@ -107,7 +104,7 @@ class OrderActionAdapter (
 
         fun bind(item:Triple<String,Int,Int>,position: Int) = with(itemView) {
 
-            if(selectedPosition ==position){
+            if(selectedActionPosition ==position){
                 itemView.order_action_icon.background=androidx.core.content.res.ResourcesCompat.getDrawable(resources,
                     item.second,null)
 
@@ -129,8 +126,8 @@ class OrderActionAdapter (
             }
 
             itemView.setOnClickListener {
-                selectedPosition =position
-                interaction?.onItemSelected(bindingAdapterPosition,item.first)
+                selectedActionPosition =position
+                interaction?.onActionItemSelected(bindingAdapterPosition,item.first)
             }
             itemView.order_action_name.text=item.first
 
@@ -138,6 +135,6 @@ class OrderActionAdapter (
     }
 
     interface Interaction {
-        fun onItemSelected(position: Int, item: String)
+        fun onActionItemSelected(position: Int, item: String)
     }
 }

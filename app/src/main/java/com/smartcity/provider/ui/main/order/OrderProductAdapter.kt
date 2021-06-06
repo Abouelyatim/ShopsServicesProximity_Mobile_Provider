@@ -8,12 +8,14 @@ import androidx.recyclerview.widget.*
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.R
+import com.smartcity.provider.models.product.Order
 import com.smartcity.provider.models.product.OrderProductVariant
 import com.smartcity.provider.util.Constants
 import kotlinx.android.synthetic.main.layout_product_order_item.view.*
 
 class OrderProductAdapter (
-    private val requestManager: RequestManager
+    private val requestManager: RequestManager,
+    private val interaction: Interaction? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val DIFF_CALLBACK = object : DiffUtil.ItemCallback<OrderProductVariant>() {
@@ -62,7 +64,8 @@ class OrderProductAdapter (
         return OrderProductHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.layout_product_order_item, parent, false),
-            requestManager = requestManager
+            requestManager = requestManager,
+            interaction = interaction
         )
 
     }
@@ -86,7 +89,8 @@ class OrderProductAdapter (
 
     class OrderProductHolder(
         itemView: View,
-        val requestManager: RequestManager
+        val requestManager: RequestManager,
+        private val interaction: Interaction?
     ) : RecyclerView.ViewHolder(itemView) {
 
 
@@ -120,6 +124,14 @@ class OrderProductAdapter (
                 options=options+" , "+it.attributeValue.value+" "+it.attributeValue.attribute
             }
             itemView.order_product_variant.text=options.drop(2)
+
+            itemView.setOnClickListener {
+                interaction?.selectedProduct()
+            }
         }
+    }
+
+    interface Interaction {
+        fun selectedProduct()
     }
 }

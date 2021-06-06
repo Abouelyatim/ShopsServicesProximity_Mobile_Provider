@@ -60,7 +60,8 @@ constructor(
                     orderRepository.attemptGetOrders(
                         authToken.account_pk!!.toLong(),
                         getDateFilter(),
-                        getAmountFilter()
+                        getAmountFilter(),
+                        getOrderStepFilter()
                     )
                 }?: AbsentLiveData.create()
             }
@@ -70,7 +71,8 @@ constructor(
                     orderRepository.attemptGetTodayOrders(
                         authToken.account_pk!!.toLong(),
                         getDateFilter(),
-                        getAmountFilter()
+                        getAmountFilter(),
+                        getOrderStepFilter()
                     )
                 }?: AbsentLiveData.create()
             }
@@ -82,9 +84,46 @@ constructor(
                         getRangeDate().first,
                         getRangeDate().second,
                         getDateFilter(),
-                        getAmountFilter()
+                        getAmountFilter(),
+                        getOrderStepFilter()
                     )
                 }?: AbsentLiveData.create()
+            }
+
+            is SetOrderAcceptedEvent ->{
+                return orderRepository.attemptSetOrderAccepted(
+                    stateEvent.id
+                )
+            }
+
+            is SetOrderRejectedEvent ->{
+                return orderRepository.attemptSetOrderRejected(
+                    stateEvent.id
+                )
+            }
+
+            is SetOrderInProgressEvent ->{
+                return orderRepository.attemptSetOrderInProgress(
+                    stateEvent.id
+                )
+            }
+
+            is SetOrderReadyEvent ->{
+                return orderRepository.attemptSetOrderReady(
+                    stateEvent.id
+                )
+            }
+
+            is SetOrderDeliveredEvent ->{
+                return orderRepository.attemptSetOrderDelivered(
+                    stateEvent.id
+                )
+            }
+
+            is SetOrderPickedUpEvent ->{
+                return orderRepository.attemptSetOrderPickedUp(
+                    stateEvent.id
+                )
             }
 
             is None ->{
@@ -105,8 +144,6 @@ constructor(
         return OrderViewState()
     }
 
-
-
     fun cancelActiveJobs(){
         orderRepository.cancelActiveJobs() // cancel active jobs
         handlePendingData() // hide progress bar
@@ -121,8 +158,6 @@ constructor(
         cancelActiveJobs()
         Log.d(TAG, "CLEARED...")
     }
-
-
 }
 
 

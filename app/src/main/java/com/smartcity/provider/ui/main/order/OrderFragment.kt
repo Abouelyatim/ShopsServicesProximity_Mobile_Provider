@@ -1,18 +1,19 @@
 package com.smartcity.provider.ui.main.order
 
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -20,15 +21,27 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.bumptech.glide.RequestManager
+import com.google.android.flexbox.*
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.smartcity.provider.R
-import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedPositions
-import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedPositions
+import com.smartcity.provider.models.OrderStep
+import com.smartcity.provider.models.product.Order
+import com.smartcity.provider.models.product.OrderType
+import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedActionPositions
+import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedActionPositions
 import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.ALL
 import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.DATE
 import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.TODAY
+import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.ACCEPT
+import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.CONFIRMATION
+import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.NEW
+import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.PROBLEM
+import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.PROGRESS
+import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.READY
+import com.smartcity.provider.ui.main.order.OrderStepsAdapter.Companion.getSelectedStepPositions
+import com.smartcity.provider.ui.main.order.OrderStepsAdapter.Companion.setSelectedStepPositions
 import com.smartcity.provider.ui.main.order.notification.Events
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
@@ -39,8 +52,6 @@ import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
-import kotlinx.android.synthetic.main.fragment_order.swipe_refresh
-import kotlinx.android.synthetic.main.fragment_product.*
 import javax.inject.Inject
 
 
@@ -51,6 +62,8 @@ constructor(
     private val requestManager: RequestManager
 ): BaseOrderFragment(R.layout.fragment_order),
     OrderActionAdapter.Interaction,
+    OrderAdapter.Interaction,
+    OrderStepsAdapter.Interaction,
     SwipeRefreshLayout.OnRefreshListener
 {
     object ActionOrder {
@@ -59,8 +72,19 @@ constructor(
         val DATE = Pair<String,Int>("Record",2)
     }
 
+    private lateinit var recyclerOrderStepsAdapter: OrderStepsAdapter
     private lateinit var recyclerOrderActionAdapter: OrderActionAdapter
     private lateinit var recyclerOrderAdapter: OrderAdapter
+
+    object StepsOrder {
+        val NEW = Pair<String,Int>("new",0)
+        val ACCEPT= Pair<String,Int>("accept",1)
+        val PROGRESS = Pair<String,Int>("progress",2)
+        val READY = Pair<String,Int>("ready",3)
+        val CONFIRMATION = Pair<String,Int>("confirmation",4)
+        val PROBLEM = Pair<String,Int>("problem",5)
+    }
+
 
     val viewModel: OrderViewModel by viewModels{
         viewModelFactory
@@ -86,7 +110,7 @@ constructor(
         val viewState = viewModel.viewState.value
 
         //clear the list. Don't want to save a large list to bundle.
-        viewState?.orderFields?.orderList = ArrayList()
+        //viewState?.orderFields?.orderList = ArrayList()
 
         outState.putParcelable(
             ORDER_VIEW_STATE_BUNDLE_KEY,
@@ -107,15 +131,42 @@ constructor(
 
         initOrderRecyclerView()
         initOrderActionRecyclerView()
-        setOrderAction()
-        subscribeObservers()
-        initData(viewModel.getOrderActionRecyclerPosition())
+        initOrderStepsRecyclerView()
 
+        setOrderAction()
+        setOrderSteps()
+
+        subscribeObservers()
+        initData(viewModel.getOrderActionRecyclerPosition(),viewModel.getOrderStepsRecyclerPosition())
+
+        setEmptyListUi(viewModel.getOrderList().isEmpty())
     }
 
-    private fun initData(position: Int){
-        resetUI()
-        when(position){
+     fun initData(actionPosition: Int,stepPosition: Int){
+        //resetUI()
+        when(stepPosition){
+            NEW.second ->{
+                viewModel.setOrderStepFilter(OrderStep.NEW_ORDER)
+            }
+
+            ACCEPT.second ->{
+                viewModel.setOrderStepFilter(OrderStep.ACCEPT_ORDER)
+            }
+
+            PROGRESS.second ->{
+                viewModel.setOrderStepFilter(OrderStep.PROGRESS_ORDER)
+            }
+
+            READY.second ->{
+                viewModel.setOrderStepFilter(OrderStep.READY_ORDER)
+            }
+
+            CONFIRMATION.second ->{
+                viewModel.setOrderStepFilter(OrderStep.CONFIRMATION_ORDER)
+            }
+        }
+
+        when(actionPosition){
             ALL.second ->{
                 getAllOrders()
                 setDateRangeUi(false)
@@ -152,7 +203,8 @@ constructor(
 
             recyclerOrderAdapter =
                 OrderAdapter(
-                    requestManager
+                    requestManager,
+                    this@OrderFragment
                 )
             addOnScrollListener(object: RecyclerView.OnScrollListener(){
 
@@ -191,6 +243,33 @@ constructor(
         }
     }
 
+    fun initOrderStepsRecyclerView(){
+        order_steps_recyclerview.apply {
+
+            this.layoutManager =GridLayoutManager(this@OrderFragment.context, 6, GridLayoutManager.HORIZONTAL, false)
+
+            val rightSpacingDecorator = RightSpacingItemDecoration(0)
+            removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
+            addItemDecoration(rightSpacingDecorator)
+
+            recyclerOrderStepsAdapter =
+                OrderStepsAdapter(
+                    this@OrderFragment
+                )
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+
+                }
+            })
+            recyclerOrderStepsAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            adapter = recyclerOrderStepsAdapter
+        }
+    }
+
     private fun subscribeObservers(){
         viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
             stateChangeListener.onDataStateChange(dataState)
@@ -215,7 +294,7 @@ constructor(
         })
         //new order event
         Events.serviceEvent.observe(viewLifecycleOwner, Observer<String> { profile ->
-            if(getSelectedPositions()== TODAY.second){
+            if(getSelectedActionPositions()== TODAY.second){
                 getTodayOrders()
             }
         })
@@ -223,6 +302,12 @@ constructor(
         recyclerOrderActionAdapter.apply {
             submitList(
                 viewModel.getOrderAction()
+            )
+        }
+
+        recyclerOrderStepsAdapter.apply {
+            submitList(
+                viewModel.getOrderSteps()
             )
         }
     }
@@ -245,10 +330,24 @@ constructor(
         )
     }
 
-    override fun onItemSelected(position: Int, item: String) {
+    private fun setOrderSteps(){
+        val list= mutableListOf<Pair<String,Int>>()
+        list.add(NEW.second,Pair(NEW.first,R.drawable.ic_baseline_list_alt_24a))
+        list.add(ACCEPT.second,Pair(ACCEPT.first,R.drawable.ic_outline_fact_check_24))
+        list.add(PROGRESS.second,Pair(PROGRESS.first,R.drawable.ic_outline_settings_24))
+        list.add(READY.second,Pair(READY.first,R.drawable.ic_outline_shopping_bag_24))
+        list.add(CONFIRMATION.second,Pair(CONFIRMATION.first,R.drawable.ic_baseline_check_24))
+        list.add(PROBLEM.second,Pair(PROBLEM.first,R.drawable.ic_outline_report_problem_24))
+        viewModel.setOrderStepsList(
+            list
+        )
+    }
+
+    override fun onActionItemSelected(position: Int, item: String) {
         order_action_recyclerview.adapter!!.notifyDataSetChanged()
         resetUI()
         viewModel.clearOrderList()
+
         when(item){
             ALL.first->{
                 getAllOrders()
@@ -261,6 +360,51 @@ constructor(
             }
 
             DATE.first->{
+                showDatePicker()
+                setDateRangeUi(true)
+            }
+        }
+    }
+
+    override fun onStepItemSelected(position: Int, item: String) {
+        order_steps_recyclerview.adapter!!.notifyDataSetChanged()
+        resetUI()
+        viewModel.clearOrderList()
+
+        when(item){
+            NEW.first ->{
+                viewModel.setOrderStepFilter(OrderStep.NEW_ORDER)
+            }
+
+            ACCEPT.first ->{
+                viewModel.setOrderStepFilter(OrderStep.ACCEPT_ORDER)
+            }
+
+            PROGRESS.first ->{
+                viewModel.setOrderStepFilter(OrderStep.PROGRESS_ORDER)
+            }
+
+            READY.first ->{
+                viewModel.setOrderStepFilter(OrderStep.READY_ORDER)
+            }
+
+            CONFIRMATION.first ->{
+                viewModel.setOrderStepFilter(OrderStep.CONFIRMATION_ORDER)
+            }
+        }
+
+        when(getSelectedActionPositions()){
+            ALL.second->{
+                getAllOrders()
+                setDateRangeUi(false)
+            }
+
+            TODAY.second->{
+                getTodayOrders()
+                setDateRangeUi(false)
+            }
+
+            DATE.second->{
                 showDatePicker()
                 setDateRangeUi(true)
             }
@@ -388,7 +532,7 @@ constructor(
                 }
 
 
-                initData(getSelectedPositions())
+                initData(getSelectedActionPositions(), getSelectedStepPositions())
                 dialog.dismiss()
             }
 
@@ -403,21 +547,84 @@ constructor(
 
     override fun onResume() {
         super.onResume()
-        setSelectedPositions(viewModel.getOrderActionRecyclerPosition())
+        setSelectedActionPositions(viewModel.getOrderActionRecyclerPosition())
+        setSelectedStepPositions(viewModel.getOrderStepsRecyclerPosition())
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         // clear references (can leak memory)
-        viewModel.setOrderActionRecyclerPosition(getSelectedPositions())
-        recyclerOrderActionAdapter.resetSelectedPosition()
+        viewModel.setOrderActionRecyclerPosition(getSelectedActionPositions())
+        viewModel.setOrderStepsRecyclerPosition(getSelectedStepPositions())
+        recyclerOrderActionAdapter.resetSelectedActionPosition()
+        recyclerOrderStepsAdapter.resetSelectedStepPosition()
         orders_recyclerview.adapter=null
         order_action_recyclerview.adapter=null
+        order_steps_recyclerview.adapter=null
     }
 
     override fun onRefresh() {
-        initData(getSelectedPositions())
+        initData(getSelectedActionPositions(), getSelectedStepPositions())
         swipe_refresh.isRefreshing = false
+    }
+
+
+
+    private fun showConfirmDialog(order: Order) {
+        activity?.let {
+            val inflater: LayoutInflater = this.getLayoutInflater()
+            val dialogView: View = inflater.inflate(R.layout.dialog_confirm_processed, null)
+            val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context!!)
+            dialogBuilder.setView(dialogView)
+            val alertDialog = dialogBuilder.create()
+
+            val confirm=dialogView.findViewById<Button>(R.id.confirm)
+
+            val confirmPickedUp=dialogView.findViewById<TextView>(R.id.confirm_picked_up)
+            val confirmDelivered=dialogView.findViewById<TextView>(R.id.confirm_delivered)
+
+            when(order.orderType){
+                OrderType.DELIVERY ->{
+                    confirmDelivered.visibility=View.VISIBLE
+                }
+
+                OrderType.SELFPICKUP ->{
+                    confirmPickedUp.visibility=View.VISIBLE
+                }
+            }
+
+            confirm.setOnClickListener {
+                when(order.orderType){
+                    OrderType.DELIVERY ->{
+                        viewModel.setStateEvent(
+                            OrderStateEvent.SetOrderDeliveredEvent(
+                                id=order.id
+                            )
+                        )
+                    }
+
+                    OrderType.SELFPICKUP ->{
+                        viewModel.setStateEvent(
+                            OrderStateEvent.SetOrderPickedUpEvent(
+                                id=order.id
+                            )
+                        )
+                    }
+                }
+                alertDialog.dismiss()
+            }
+
+            alertDialog.show()
+        }
+    }
+
+    override fun selectedOrder(item: Order) {
+        viewModel.setSelectedOrder(item)
+        navViewOrder()
+    }
+
+    private fun navViewOrder(){
+        findNavController().navigate(R.id.action_orderFragment_to_viewOrderFragment)
     }
 }
 

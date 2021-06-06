@@ -4,19 +4,22 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.RelativeLayout
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Order
+import com.smartcity.provider.models.product.OrderType
 import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
-import com.smartcity.provider.util.DateUtils.Companion.convertServerStringDateToLong
 import com.smartcity.provider.util.DateUtils.Companion.convertStringToStringDate
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.layout_order_item_header.view.*
 
+
 class OrderAdapter (
-    private val requestManager: RequestManager
+    private val requestManager: RequestManager,
+    private val interaction: Interaction? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     private  var  orderProductRecyclerAdapter: OrderProductAdapter?=null
 
@@ -65,7 +68,8 @@ class OrderAdapter (
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.layout_order_item_header, parent, false),
             orderProductRecyclerAdapter = orderProductRecyclerAdapter,
-            requestManager = requestManager
+            requestManager = requestManager,
+            interaction=interaction
         )
 
     }
@@ -90,8 +94,12 @@ class OrderAdapter (
     class OrderHolder(
         itemView: View,
         private var orderProductRecyclerAdapter: OrderProductAdapter?,
-        val requestManager: RequestManager
-    ) : RecyclerView.ViewHolder(itemView){
+        val requestManager: RequestManager,
+        private val interaction: Interaction?
+    ) : RecyclerView.ViewHolder(itemView),
+        OrderProductAdapter.Interaction{
+
+        private lateinit var order:Order
 
         fun initProductsRecyclerView(recyclerview:RecyclerView){
             recyclerview.apply {
@@ -102,7 +110,8 @@ class OrderAdapter (
 
                 orderProductRecyclerAdapter =
                     OrderProductAdapter(
-                        requestManager
+                        requestManager,
+                        this@OrderHolder
                     )
                 addOnScrollListener(object: RecyclerView.OnScrollListener(){
 
@@ -118,25 +127,90 @@ class OrderAdapter (
 
         @SuppressLint("SetTextI18n")
         fun bind(item: Order) = with(itemView) {
+            order=item
 
             itemView.order_id.text=item.id.toString()
 
             itemView.order_time.text=convertStringToStringDate(item.createAt)
 
-            var total=0.0
-            item.orderProductVariants.map {
-                total=it.productVariant.price*it.quantity+total
-            }
-            itemView.order_product_total_price.text=total.toString()+ Constants.DINAR_ALGERIAN
+            itemView.order_type_delivery.visibility=View.GONE
+            itemView.order_type_self_pickup.visibility=View.GONE
+            when(item.orderType){
+                OrderType.DELIVERY ->{
+                    itemView.order_type.text="Delivery"
+                    itemView.order_type_delivery.visibility=View.VISIBLE
+                }
 
+                OrderType.SELFPICKUP ->{
+                    itemView.order_type.text="Self pickup"
+                    itemView.order_type_self_pickup.visibility=View.VISIBLE
+                    itemView.order_delivery_address_container.visibility=View.GONE
+                }
+            }
+
+            itemView.order_receiver.text="${item.firstName} ${item.lastName} born in ${item.birthDay}"
+
+            item.address?.let {item->
+                itemView.order_delivery_address.text="${item.city}, ${item.street}, ${item.houseNumber.toString()}, ${item.zipCode.toString()}"
+            }
 
             initProductsRecyclerView(itemView.products_order_recycler_view)
             orderProductRecyclerAdapter?.let {
                 it.submitList(
-                    item.orderProductVariants.sortedBy { it.productVariant.price }
+                    item.orderProductVariants.sortedBy { it.productVariant.price }.take(2)
                 )
             }
 
+            if(item.orderProductVariants.size>2){
+                itemView.order_more_products.visibility=View.VISIBLE
+                order_remaining_products.text=(item.orderProductVariants.size-2).toString()
+            }
+
+            itemView.order_product_quantity.text= item.orderProductVariants.size.toString()
+
+            itemView.order_product_total.text=item.bill!!.total.toString()+ Constants.DINAR_ALGERIAN
+            itemView.order_product_paid.text=item.bill!!.alreadyPaid.toString()+ Constants.DINAR_ALGERIAN
+            itemView.order_product_rest.text=(item.bill!!.total-item.bill!!.alreadyPaid).toString()+ Constants.DINAR_ALGERIAN
+
+
+            itemView.setOnClickListener {
+                interaction?.selectedOrder(item)
+            }
+            itemView.order_more_products.setOnClickListener{
+                interaction?.selectedOrder(item)
+            }
+
+            /*setPopUpWindow(item)
+            itemView.test.setOnClickListener {
+                mypopupWindow.showAsDropDown(it,-153,0)
+
+            }*/
+
+
         }
+
+        override fun selectedProduct() {
+            interaction?.selectedOrder(order)
+        }
+
+        lateinit var mypopupWindow:PopupWindow
+        fun setPopUpWindow(order: Order) {
+
+            val inflater: LayoutInflater = LayoutInflater.from(itemView.context)
+            val view: View = inflater.inflate(R.layout.dialog_popup, null)
+             mypopupWindow = PopupWindow(view,RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT,true)
+
+            val start=view.findViewById<RelativeLayout>(R.id.btn1)
+            start.setOnClickListener {
+
+            }
+        }
+
+
+
+    }
+
+    interface Interaction {
+        fun selectedOrder(item:Order)
     }
 }

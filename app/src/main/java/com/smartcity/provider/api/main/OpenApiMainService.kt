@@ -7,6 +7,7 @@ import com.smartcity.provider.api.auth.network_responses.StoreResponse
 import com.smartcity.provider.api.main.responses.*
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.models.AccountProperties
+import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.Policy
 import com.smartcity.provider.models.StoreInformation
 import com.smartcity.provider.models.product.Product
@@ -71,14 +72,16 @@ interface OpenApiMainService {
     fun getAllOrders(
         @Query("id") id: Long?,
         @Query("date") date: String?,
-        @Query("amount") amount: String?
+        @Query("amount") amount: String?,
+        @Query("step") step: OrderStep?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
 
     @GET("order/current-provider-today-orders")
     fun getTodayOrders(
         @Query("id") id: Long?,
         @Query("date") date: String?,
-        @Query("amount") amount: String?
+        @Query("amount") amount: String?,
+        @Query("step") step: OrderStep?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
 
     @GET("order/current-provider-dates-orders")
@@ -87,7 +90,8 @@ interface OpenApiMainService {
         @Query("startDate") startDate: String?,
         @Query("endDate") endDate: String?,
         @Query("date") date: String?,
-        @Query("amount") amount: String?
+        @Query("amount") amount: String?,
+        @Query("step") step: OrderStep?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
 
     @POST("policy/create")
@@ -104,6 +108,36 @@ interface OpenApiMainService {
     fun getStoreInformation(
         @Path(value = "id") id:Long
     ): LiveData<GenericApiResponse<StoreInformation>>
+
+    @PUT("order/current-store/{id}/accept")
+    fun setOrderAccepted(
+        @Path(value = "id") id:Long
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @PUT("order/current-store/{id}/reject")
+    fun setOrderRejected(
+        @Path(value = "id") id:Long
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @PUT("order/current-store/{id}/progress")
+    fun setOrderInProgress(
+        @Path(value = "id") id:Long
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @PUT("order/current-store/{id}/ready")
+    fun setOrderReady(
+        @Path(value = "id") id:Long
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @PUT("order/current-store/{id}/delivered")
+    fun setOrderDelivered(
+        @Path(value = "id") id:Long
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @PUT("order/current-store/{id}/pickedUp")
+    fun setOrderPickedUp(
+        @Path(value = "id") id:Long
+    ): LiveData<GenericApiResponse<GenericResponse>>
 }
 
 

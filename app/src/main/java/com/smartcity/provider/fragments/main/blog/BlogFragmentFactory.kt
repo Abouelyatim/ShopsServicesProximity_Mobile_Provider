@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.ui.main.order.OrderFragment
+import com.smartcity.provider.ui.main.order.ViewOrderFragment
 
 import javax.inject.Inject
 
@@ -25,7 +26,9 @@ constructor(
                 OrderFragment(viewModelFactory, requestManager)
             }
 
-
+            ViewOrderFragment::class.java.name -> {
+                ViewOrderFragment(viewModelFactory, requestManager)
+            }
 
             else -> {
                 OrderFragment(viewModelFactory, requestManager)
