@@ -559,53 +559,7 @@ constructor(
 
 
 
-    private fun showConfirmDialog(order: Order) {
-        activity?.let {
-            val inflater: LayoutInflater = this.getLayoutInflater()
-            val dialogView: View = inflater.inflate(R.layout.dialog_confirm_processed, null)
-            val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context!!)
-            dialogBuilder.setView(dialogView)
-            val alertDialog = dialogBuilder.create()
 
-            val confirm=dialogView.findViewById<Button>(R.id.confirm)
-
-            val confirmPickedUp=dialogView.findViewById<TextView>(R.id.confirm_picked_up)
-            val confirmDelivered=dialogView.findViewById<TextView>(R.id.confirm_delivered)
-
-            when(order.orderType){
-                OrderType.DELIVERY ->{
-                    confirmDelivered.visibility=View.VISIBLE
-                }
-
-                OrderType.SELFPICKUP ->{
-                    confirmPickedUp.visibility=View.VISIBLE
-                }
-            }
-
-            confirm.setOnClickListener {
-                when(order.orderType){
-                    OrderType.DELIVERY ->{
-                        viewModel.setStateEvent(
-                            OrderStateEvent.SetOrderDeliveredEvent(
-                                id=order.id
-                            )
-                        )
-                    }
-
-                    OrderType.SELFPICKUP ->{
-                        viewModel.setStateEvent(
-                            OrderStateEvent.SetOrderPickedUpEvent(
-                                id=order.id
-                            )
-                        )
-                    }
-                }
-                alertDialog.dismiss()
-            }
-
-            alertDialog.show()
-        }
-    }
 
     override fun selectedOrder(item: Order) {
         viewModel.setSelectedOrder(item)

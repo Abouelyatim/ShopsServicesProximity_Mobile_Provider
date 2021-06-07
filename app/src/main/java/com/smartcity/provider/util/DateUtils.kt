@@ -46,6 +46,16 @@ class DateUtils {
             }
         }
 
+        fun convertLongToStringDateTime(longDate: Long): String{
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
+            try {
+                val date = sdf.format(Date(longDate))
+                return date
+            } catch (e: Exception) {
+                throw Exception(e)
+            }
+        }
+
         fun convertStringToStringDate(date: String): String{
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.ENGLISH)
             try {

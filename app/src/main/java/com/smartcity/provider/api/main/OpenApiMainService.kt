@@ -126,12 +126,16 @@ interface OpenApiMainService {
 
     @PUT("order/current-store/{id}/delivered")
     fun setOrderDelivered(
-        @Path(value = "id") id:Long
+        @Path(value = "id") id:Long,
+        @Query("comment") comment:String?,
+        @Query("date") date: String?
     ): LiveData<GenericApiResponse<GenericResponse>>
 
     @PUT("order/current-store/{id}/pickedUp")
     fun setOrderPickedUp(
-        @Path(value = "id") id:Long
+        @Path(value = "id") id:Long,
+        @Query("comment") comment:String?,
+        @Query("date") date: String?
     ): LiveData<GenericApiResponse<GenericResponse>>
 }
 

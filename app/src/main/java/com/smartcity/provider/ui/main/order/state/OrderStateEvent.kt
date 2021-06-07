@@ -21,11 +21,15 @@ sealed class OrderStateEvent {
     ) : OrderStateEvent()
 
     class SetOrderDeliveredEvent(
-        var id:Long
+        var id:Long,
+        var comment:String?,
+        var date:String?
     ) : OrderStateEvent()
 
     class SetOrderPickedUpEvent(
-        var id:Long
+        var id:Long,
+        var comment:String?,
+        var date:String?
     ) : OrderStateEvent()
 
     class None: OrderStateEvent()

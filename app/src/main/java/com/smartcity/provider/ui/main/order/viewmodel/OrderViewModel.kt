@@ -110,13 +110,17 @@ constructor(
 
             is SetOrderDeliveredEvent ->{
                 return orderRepository.attemptSetOrderDelivered(
-                    stateEvent.id
+                    stateEvent.id,
+                    stateEvent.comment,
+                    stateEvent.date
                 )
             }
 
             is SetOrderPickedUpEvent ->{
                 return orderRepository.attemptSetOrderPickedUp(
-                    stateEvent.id
+                    stateEvent.id,
+                    stateEvent.comment,
+                    stateEvent.date
                 )
             }
 

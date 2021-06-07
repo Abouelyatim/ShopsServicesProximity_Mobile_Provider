@@ -399,7 +399,9 @@ constructor(
     }
 
     fun attemptSetOrderDelivered(
-        id:Long
+        id:Long,
+        comment:String?,
+        date:String?
     ): LiveData<DataState<OrderViewState>> {
 
         return object: NetworkBoundResource<GenericResponse, Any, OrderViewState>(
@@ -436,7 +438,9 @@ constructor(
 
             override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
                 return openApiMainService.setOrderDelivered(
-                    id= id
+                    id= id,
+                    comment = comment,
+                    date = date
                 )
             }
 
@@ -453,7 +457,9 @@ constructor(
     }
 
     fun attemptSetOrderPickedUp(
-        id:Long
+        id:Long,
+        comment:String?,
+        date:String?
     ): LiveData<DataState<OrderViewState>> {
 
         return object: NetworkBoundResource<GenericResponse, Any, OrderViewState>(
@@ -490,7 +496,9 @@ constructor(
 
             override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
                 return openApiMainService.setOrderPickedUp(
-                    id= id
+                    id= id,
+                    comment = comment,
+                    date = date
                 )
             }
 

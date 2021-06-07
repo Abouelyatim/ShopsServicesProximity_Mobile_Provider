@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -12,8 +15,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.smartcity.provider.R
 import com.smartcity.provider.models.OrderStep
+import com.smartcity.provider.models.product.Order
 import com.smartcity.provider.models.product.OrderType
 import com.smartcity.provider.ui.AreYouSureCallback
 import com.smartcity.provider.ui.UIMessage
@@ -24,11 +32,13 @@ import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.*
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.DateUtils
-import com.smartcity.provider.util.SuccessHandling
+import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
+import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDateTime
 import com.smartcity.provider.util.SuccessHandling.Companion.CUSTOM_CATEGORY_UPDATE_DONE
 import com.smartcity.provider.util.TopSpacingItemDecoration
+import kotlinx.android.synthetic.main.dialog_order_confirmation_delivery_pick_up.*
 import kotlinx.android.synthetic.main.fragment_view_order.*
-import kotlinx.android.synthetic.main.layout_order_item_header.view.*
+import java.util.*
 import javax.inject.Inject
 
 
@@ -188,46 +198,73 @@ constructor(
         }
 
         view_order_picked_up.setOnClickListener {
-            val callback: AreYouSureCallback = object: AreYouSureCallback {
-                override fun proceed() {
-                    viewModel.setStateEvent(
-                        OrderStateEvent.SetOrderPickedUpEvent(
-                            viewModel.getSelectedOrder()!!.id
-                        )
-                    )
-                }
-                override fun cancel() {
-                    // ignore
-                }
-            }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_picked_up),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
-            )
+            showOrderConfirmationDialog(viewModel.getSelectedOrder()!!)
         }
 
         view_order_delivered.setOnClickListener {
-            val callback: AreYouSureCallback = object: AreYouSureCallback {
-                override fun proceed() {
+            showOrderConfirmationDialog(viewModel.getSelectedOrder()!!)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showOrderConfirmationDialog(order: Order){
+        val dialog = BottomSheetDialog(context!!,R.style.BottomSheetDialogTheme)
+        dialog.behavior.state= BottomSheetBehavior.STATE_EXPANDED
+        val dialogView = layoutInflater.inflate(R.layout.dialog_order_confirmation_delivery_pick_up, null)
+        dialog.setCancelable(true)
+        dialog.setContentView(dialogView)
+
+        val confirmPickedUp=dialogView.findViewById<TextView>(R.id.confirm_picked_up)
+        val confirmDelivered=dialogView.findViewById<TextView>(R.id.confirm_delivered)
+
+        when(order.orderType){
+            OrderType.DELIVERY ->{
+                confirmDelivered.visibility=View.VISIBLE
+            }
+
+            OrderType.SELFPICKUP ->{
+                confirmPickedUp.visibility=View.VISIBLE
+            }
+        }
+
+        val singleDateAndTimePicker=dialogView.findViewById<SingleDateAndTimePicker>(R.id.single_day_picker)
+        singleDateAndTimePicker.setIsAmPm(false)
+
+        val backButton=dialogView.findViewById<Button>(R.id.back_order)
+        backButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val comment=dialogView.findViewById<EditText>(R.id.input_comment)
+
+        val confirmButton=dialogView.findViewById<Button>(R.id.confirm_order_button)
+        confirmButton.setOnClickListener {
+            when(order.orderType){
+
+                OrderType.DELIVERY ->{
                     viewModel.setStateEvent(
                         OrderStateEvent.SetOrderDeliveredEvent(
-                            viewModel.getSelectedOrder()!!.id
+                            viewModel.getSelectedOrder()!!.id,
+                            comment.text.toString(),
+                            convertLongToStringDateTime(singleDateAndTimePicker.date.time)
                         )
                     )
                 }
-                override fun cancel() {
-                    // ignore
+
+                OrderType.SELFPICKUP ->{
+                    viewModel.setStateEvent(
+                        OrderStateEvent.SetOrderPickedUpEvent(
+                            viewModel.getSelectedOrder()!!.id,
+                            comment.text.toString(),
+                            convertLongToStringDateTime(singleDateAndTimePicker.date.time)
+                        )
+                    )
                 }
+
             }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_delivered),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
-            )
+            dialog.dismiss()
         }
+        dialog.show()
     }
 
     private fun subscribeObservers() {

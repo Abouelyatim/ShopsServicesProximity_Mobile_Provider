@@ -59,6 +59,11 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
 
+    def lottieVersion = "3.6.1"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+
+    implementation 'com.github.florent37:singledateandtimepicker:2.2.7'
+
     implementation 'com.github.ibrahimsn98:PhoneNumberKit:1.6.2'
 
     implementation 'com.cepheuen.elegant-number-button:lib:1.0.2'
