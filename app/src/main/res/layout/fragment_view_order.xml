@@ -380,41 +380,6 @@
                 android:layout_marginEnd="10dp"/>
 
         <Button
-                android:id="@+id/view_order_in_progress"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/radius_button_blue"
-                android:text="In progress"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                android:layout_gravity="bottom"
-                android:layout_weight="1"/>
-    </LinearLayout>
-
-    <LinearLayout
-            android:id="@+id/view_order_PROGRESS_ORDER_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center|bottom"
-            android:layout_margin="16dp"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            >
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/radius_button_white_border"
-                android:text="Problem"
-                android:textAllCaps="false"
-                android:textColor="@color/bleu"
-                android:textSize="17sp"
-                android:layout_gravity="bottom"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"/>
-
-        <Button
                 android:id="@+id/view_order_ready"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"

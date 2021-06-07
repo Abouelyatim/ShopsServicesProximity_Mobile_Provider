@@ -88,7 +88,6 @@ constructor(
         setBillInformation()
         subscribeObservers()
         acceptRejectOrder()
-        inProgressOrder()
         readyOrder()
         deliveredPickedUpOrder()
         setButtonsUi()
@@ -102,10 +101,6 @@ constructor(
 
             OrderStep.ACCEPT_ORDER ->{
                 view_order_ACCEPT_ORDER_buttons.visibility=View.VISIBLE
-            }
-
-            OrderStep.PROGRESS_ORDER ->{
-                view_order_PROGRESS_ORDER_buttons.visibility=View.VISIBLE
             }
 
             OrderStep.READY_ORDER ->{
@@ -152,29 +147,6 @@ constructor(
             uiCommunicationListener.onUIMessageReceived(
                 UIMessage(
                     getString(R.string.are_you_sure_reject),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
-            )
-        }
-    }
-
-    private fun inProgressOrder() {
-        view_order_in_progress.setOnClickListener {
-            val callback: AreYouSureCallback = object: AreYouSureCallback {
-                override fun proceed() {
-                    viewModel.setStateEvent(
-                        OrderStateEvent.SetOrderInProgressEvent(
-                            viewModel.getSelectedOrder()!!.id
-                        )
-                    )
-                }
-                override fun cancel() {
-                    // ignore
-                }
-            }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_in_progress),
                     UIMessageType.AreYouSureDialog(callback)
                 )
             )
@@ -355,6 +327,7 @@ constructor(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setBillInformation() {
         viewModel.getSelectedOrder()?.let { order ->
             view_order_product_quantity.text= order.orderProductVariants.size.toString()

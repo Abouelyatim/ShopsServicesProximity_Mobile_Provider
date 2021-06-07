@@ -102,12 +102,6 @@ constructor(
                 )
             }
 
-            is SetOrderInProgressEvent ->{
-                return orderRepository.attemptSetOrderInProgress(
-                    stateEvent.id
-                )
-            }
-
             is SetOrderReadyEvent ->{
                 return orderRepository.attemptSetOrderReady(
                     stateEvent.id

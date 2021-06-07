@@ -344,60 +344,6 @@ constructor(
         }.asLiveData()
     }
 
-    fun attemptSetOrderInProgress(
-        id:Long
-    ): LiveData<DataState<OrderViewState>> {
-
-        return object: NetworkBoundResource<GenericResponse, Any, OrderViewState>(
-            sessionManager.isConnectedToTheInternet(),
-            true,
-            true,
-            false
-        ){
-
-
-            // not applicable
-            override suspend fun createCacheRequestAndReturn() {
-
-            }
-
-            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
-                Log.d(TAG, "handleApiSuccessResponse: ${response}")
-
-                onCompleteJob(
-                    DataState.data(
-                        data = null,
-                        response = Response(
-                            SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE,
-                            ResponseType.Toast()
-                        )
-                    )
-                )
-            }
-
-            // not applicable
-            override fun loadFromCache(): LiveData<OrderViewState> {
-                return AbsentLiveData.create()
-            }
-
-            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
-                return openApiMainService.setOrderInProgress(
-                    id= id
-                )
-            }
-
-            // not applicable
-            override suspend fun updateLocalDb(cacheObject: Any?) {
-            }
-
-            override fun setJob(job: Job) {
-                addJob("attemptSetOrderInProgress", job)
-            }
-
-
-        }.asLiveData()
-    }
-
     fun attemptSetOrderReady(
         id:Long
     ): LiveData<DataState<OrderViewState>> {

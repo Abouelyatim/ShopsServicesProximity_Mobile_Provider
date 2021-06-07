@@ -16,10 +16,6 @@ sealed class OrderStateEvent {
         var id:Long
     ) : OrderStateEvent()
 
-    class SetOrderInProgressEvent(
-        var id:Long
-    ) : OrderStateEvent()
-
     class SetOrderReadyEvent(
         var id:Long
     ) : OrderStateEvent()

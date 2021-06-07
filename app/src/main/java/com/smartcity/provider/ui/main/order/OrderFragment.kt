@@ -38,7 +38,6 @@ import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.ACCEPT
 import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.CONFIRMATION
 import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.NEW
 import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.PROBLEM
-import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.PROGRESS
 import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.READY
 import com.smartcity.provider.ui.main.order.OrderStepsAdapter.Companion.getSelectedStepPositions
 import com.smartcity.provider.ui.main.order.OrderStepsAdapter.Companion.setSelectedStepPositions
@@ -79,10 +78,9 @@ constructor(
     object StepsOrder {
         val NEW = Pair<String,Int>("new",0)
         val ACCEPT= Pair<String,Int>("accept",1)
-        val PROGRESS = Pair<String,Int>("progress",2)
-        val READY = Pair<String,Int>("ready",3)
-        val CONFIRMATION = Pair<String,Int>("confirmation",4)
-        val PROBLEM = Pair<String,Int>("problem",5)
+        val READY = Pair<String,Int>("ready",2)
+        val CONFIRMATION = Pair<String,Int>("confirmation",3)
+        val PROBLEM = Pair<String,Int>("problem",4)
     }
 
 
@@ -151,10 +149,6 @@ constructor(
 
             ACCEPT.second ->{
                 viewModel.setOrderStepFilter(OrderStep.ACCEPT_ORDER)
-            }
-
-            PROGRESS.second ->{
-                viewModel.setOrderStepFilter(OrderStep.PROGRESS_ORDER)
             }
 
             READY.second ->{
@@ -246,7 +240,7 @@ constructor(
     fun initOrderStepsRecyclerView(){
         order_steps_recyclerview.apply {
 
-            this.layoutManager =GridLayoutManager(this@OrderFragment.context, 6, GridLayoutManager.HORIZONTAL, false)
+            this.layoutManager =GridLayoutManager(this@OrderFragment.context, 5, GridLayoutManager.HORIZONTAL, false)
 
             val rightSpacingDecorator = RightSpacingItemDecoration(0)
             removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
@@ -334,7 +328,6 @@ constructor(
         val list= mutableListOf<Pair<String,Int>>()
         list.add(NEW.second,Pair(NEW.first,R.drawable.ic_baseline_list_alt_24a))
         list.add(ACCEPT.second,Pair(ACCEPT.first,R.drawable.ic_outline_fact_check_24))
-        list.add(PROGRESS.second,Pair(PROGRESS.first,R.drawable.ic_outline_settings_24))
         list.add(READY.second,Pair(READY.first,R.drawable.ic_outline_shopping_bag_24))
         list.add(CONFIRMATION.second,Pair(CONFIRMATION.first,R.drawable.ic_baseline_check_24))
         list.add(PROBLEM.second,Pair(PROBLEM.first,R.drawable.ic_outline_report_problem_24))
@@ -378,10 +371,6 @@ constructor(
 
             ACCEPT.first ->{
                 viewModel.setOrderStepFilter(OrderStep.ACCEPT_ORDER)
-            }
-
-            PROGRESS.first ->{
-                viewModel.setOrderStepFilter(OrderStep.PROGRESS_ORDER)
             }
 
             READY.first ->{

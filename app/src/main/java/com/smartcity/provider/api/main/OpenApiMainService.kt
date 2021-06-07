@@ -119,11 +119,6 @@ interface OpenApiMainService {
         @Path(value = "id") id:Long
     ): LiveData<GenericApiResponse<GenericResponse>>
 
-    @PUT("order/current-store/{id}/progress")
-    fun setOrderInProgress(
-        @Path(value = "id") id:Long
-    ): LiveData<GenericApiResponse<GenericResponse>>
-
     @PUT("order/current-store/{id}/ready")
     fun setOrderReady(
         @Path(value = "id") id:Long
