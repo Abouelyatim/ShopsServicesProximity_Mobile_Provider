@@ -175,7 +175,7 @@ class MainActivity : BaseActivity(),
     private fun subscribeNotificationTopic(sharedPreferences: SharedPreferences) {
         val previousAuthUserEmail: String? = sharedPreferences.getString(PreferenceKeys.PREVIOUS_AUTH_USER, null)
         previousAuthUserEmail?.let {
-            val topic=it.replace("@","")
+            val topic="provider-"+it.replace("@","")
             Log.d(TAG, topic)
             FirebaseMessaging.getInstance().subscribeToTopic(topic)
                 .addOnCompleteListener { task ->

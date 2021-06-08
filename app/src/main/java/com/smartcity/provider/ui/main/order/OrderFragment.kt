@@ -339,6 +339,7 @@ constructor(
     override fun onActionItemSelected(position: Int, item: String) {
         order_action_recyclerview.adapter!!.notifyDataSetChanged()
         resetUI()
+        viewModel.setOrderActionRecyclerPosition(position)
         viewModel.clearOrderList()
 
         when(item){
@@ -362,6 +363,7 @@ constructor(
     override fun onStepItemSelected(position: Int, item: String) {
         order_steps_recyclerview.adapter!!.notifyDataSetChanged()
         resetUI()
+        viewModel.setOrderStepsRecyclerPosition(position)
         viewModel.clearOrderList()
 
         when(item){
@@ -553,7 +555,7 @@ constructor(
     }
 
     override fun onRefresh() {
-        initData(getSelectedActionPositions(), getSelectedStepPositions())
+        initData(viewModel.getOrderActionRecyclerPosition(), viewModel.getOrderStepsRecyclerPosition())
         swipe_refresh.isRefreshing = false
     }
 
