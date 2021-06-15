@@ -4,10 +4,12 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.smartcity.provider.models.product.Address
+import com.smartcity.provider.models.product.Product
+import com.smartcity.provider.models.product.ProductVariants
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class Offer(
+data class Offer(
     @SerializedName("id")
     @Expose
     var id:Long?,
@@ -40,9 +42,17 @@ class Offer(
     @Expose
     var providerId:Long?,
 
-    @SerializedName("productVariants")
+    @SerializedName("productVariantsId")
     @Expose
-    var productVariants:List<Long>?
+    var productVariantsId:List<Long>?,
+
+    @SerializedName("products")
+    @Expose
+    var products:List<Product>?,
+
+    @SerializedName("offerState")
+    @Expose
+    var offerState:OfferState?
 ) : Parcelable {
 
     override fun toString(): String {
@@ -54,7 +64,9 @@ class Offer(
                 "startDate=$startDate," +
                 "endDate=$endDate," +
                 "providerId=$providerId," +
-                "productVariants=$productVariants)"
+                "productVariantsId=$productVariantsId," +
+                "offerState=$offerState," +
+                "products=$products)"
     }
 
 }

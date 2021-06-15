@@ -6,11 +6,15 @@ import androidx.lifecycle.LiveData
 import com.smartcity.provider.api.GenericResponse
 import com.smartcity.provider.api.main.OpenApiMainService
 import com.smartcity.provider.api.main.responses.ListCustomCategoryResponse
+import com.smartcity.provider.api.main.responses.ListGenericResponse
+import com.smartcity.provider.api.main.responses.ListOrderResponse
 import com.smartcity.provider.api.main.responses.ListProductResponse
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.Offer
+import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.StoreInformation
+import com.smartcity.provider.models.product.Order
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.repository.JobManager
 import com.smartcity.provider.repository.NetworkBoundResource
@@ -20,6 +24,7 @@ import com.smartcity.provider.ui.Response
 import com.smartcity.provider.ui.ResponseType
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
+import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.util.*
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_GET_NOTIFICATION_SETTINGS_DONE
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_SAVE_NOTIFICATION_SETTINGS_DONE
@@ -422,6 +427,63 @@ constructor(
             override fun setJob(job: Job) {
                 addJob("attemptCreateOffer", job)
             }
+
+        }.asLiveData()
+    }
+
+    fun attemptGetOffers(
+        id:Long
+    ): LiveData<DataState<AccountViewState>> {
+        return object: NetworkBoundResource<ListGenericResponse<Offer>, Offer, AccountViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            true,
+            true,
+            false
+        ){
+
+
+            // not applicable
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListGenericResponse<Offer>>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = AccountViewState(
+                            discountOfferList = AccountViewState.DiscountOfferList(
+                                offersList= response.body.results
+                            )
+                        ),
+                        response = Response(
+                            SuccessHandling.DONE_Offers,
+                            ResponseType.None()
+                        )
+                    )
+                )
+            }
+
+            // not applicable
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<ListGenericResponse<Offer>>> {
+                return openApiMainService.getAllOffers(
+                    id= id
+                )
+            }
+
+            // not applicable
+            override suspend fun updateLocalDb(cacheObject: Offer?) {
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetOffers", job)
+            }
+
 
         }.asLiveData()
     }

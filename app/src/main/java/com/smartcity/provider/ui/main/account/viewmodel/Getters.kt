@@ -1,9 +1,6 @@
 package com.smartcity.provider.ui.main.account.viewmodel
 
-import com.smartcity.provider.models.CustomCategory
-import com.smartcity.provider.models.OfferType
-import com.smartcity.provider.models.SelfPickUpOptions
-import com.smartcity.provider.models.TaxRange
+import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
 
@@ -94,5 +91,11 @@ fun AccountViewModel.getDiscountValuePercentage():String{
 fun AccountViewModel.getDiscountValueFixed():String{
     getCurrentViewStateOrNew().let {
         return it.discountFields.discountValueFixed
+    }
+}
+
+fun AccountViewModel.getOffersList():List<Offer>{
+    getCurrentViewStateOrNew().let {
+        return it.discountOfferList.offersList
     }
 }

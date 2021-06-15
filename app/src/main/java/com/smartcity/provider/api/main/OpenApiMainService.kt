@@ -135,10 +135,15 @@ interface OpenApiMainService {
         @Query("date") date: String?
     ): LiveData<GenericApiResponse<GenericResponse>>
 
-    @POST("Offer/create")
+    @POST("offer/create")
     fun createOffer(
         @Body offer:Offer
     ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @GET("offer/current-provider-offers")
+    fun getAllOffers(
+        @Query("id") id: Long?
+    ):LiveData<GenericApiResponse<ListGenericResponse<Offer>>>
 }
 
 

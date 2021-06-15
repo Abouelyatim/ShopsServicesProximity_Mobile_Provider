@@ -89,6 +89,15 @@ constructor(
 
                 }?: AbsentLiveData.create()
             }
+
+            is GetOffersEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    accountRepository.attemptGetOffers(
+                        authToken.account_pk!!.toLong()
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

@@ -1,5 +1,6 @@
 package com.smartcity.provider.util
 
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,6 +62,19 @@ class DateUtils {
             try {
                 val date = sdf.format(sdf.parse(date)).replace("T"," ")
                 return date
+            } catch (e: Exception) {
+                throw Exception(e)
+            }
+        }
+
+        fun convertStringToStringDateSimpleFormat(date: String): String{
+            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.ENGLISH)
+            val test=parser.parse(date)
+            val formatter  = SimpleDateFormat("d MMM", Locale.ENGLISH)
+            val result= formatter.format(test)
+            try {
+
+                return result
             } catch (e: Exception) {
                 throw Exception(e)
             }

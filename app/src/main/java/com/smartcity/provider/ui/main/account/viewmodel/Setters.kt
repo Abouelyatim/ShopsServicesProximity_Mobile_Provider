@@ -1,9 +1,6 @@
 package com.smartcity.provider.ui.main.account.viewmodel
 
-import com.smartcity.provider.models.CustomCategory
-import com.smartcity.provider.models.OfferType
-import com.smartcity.provider.models.SelfPickUpOptions
-import com.smartcity.provider.models.TaxRange
+import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.ui.main.account.state.AccountViewState
@@ -127,5 +124,11 @@ fun AccountViewModel.setDiscountValueFixed(value:String){
 fun AccountViewModel.clearDiscountFields(){
     val update = getCurrentViewStateOrNew()
     update.discountFields=AccountViewState.DiscountFields()
+    setViewState(update)
+}
+
+fun AccountViewModel.setOffersList(list:List<Offer>){
+    val update = getCurrentViewStateOrNew()
+    update.discountOfferList.offersList = list
     setViewState(update)
 }

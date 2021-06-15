@@ -12,7 +12,8 @@ class AccountViewState(
     var notificationSettings:List<String> = listOf(),
     var policyConfiguration:PolicyConfiguration=PolicyConfiguration(),
     var storeInformation: StoreInformation?=null,
-    var discountFields: DiscountFields =DiscountFields()
+    var discountFields: DiscountFields =DiscountFields(),
+    var discountOfferList :DiscountOfferList = DiscountOfferList()
 ) : Parcelable {
 
     @Parcelize
@@ -22,6 +23,11 @@ class AccountViewState(
         var validDuration:Long?=null,
         var tax:Int?=null,
         var taxRanges:List<TaxRange> = listOf()
+    ) : Parcelable
+
+    @Parcelize
+    data class DiscountOfferList(
+        var offersList:List<Offer> = listOf()
     ) : Parcelable
 
     @Parcelize

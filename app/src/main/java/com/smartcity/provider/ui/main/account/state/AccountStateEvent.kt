@@ -34,5 +34,7 @@ sealed class AccountStateEvent {
         val offer: Offer
     ) : AccountStateEvent()
 
+    class GetOffersEvent():AccountStateEvent()
+
     class None: AccountStateEvent()
 }

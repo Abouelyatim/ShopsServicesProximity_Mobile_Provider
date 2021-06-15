@@ -29,6 +29,9 @@
 
     <color name="amber">#c56000</color>
 
+    <color name="green_light">#995EFC82</color>
+    <color name="yellow_light">#99FDD835</color>
+
     <color name="bleu_dark">#0d47a1</color>
     <color name="bleu">#2979ff</color>
     <color name="bleu_light">#9475A7FF</color>

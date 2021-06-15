@@ -138,7 +138,9 @@ constructor(
                     viewModel.getRangeDiscountDate().first,
                     viewModel.getRangeDiscountDate().second,
                     -1,
-                    productVariantIds
+                    productVariantIds,
+                    listOf(),
+                    null
                 )
             )
         )
