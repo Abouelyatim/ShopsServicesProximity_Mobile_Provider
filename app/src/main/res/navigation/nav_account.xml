@@ -19,6 +19,9 @@
         <action
                 android:id="@+id/action_accountFragment_to_informationFragment"
                 app:destination="@id/informationFragment" />
+        <action
+                android:id="@+id/action_accountFragment_to_discountFragment"
+                app:destination="@id/discountFragment" />
     </fragment>
     <fragment
             android:id="@+id/notificationFragment"
@@ -65,4 +68,62 @@
             android:name="com.smartcity.provider.ui.main.account.information.InformationFragment"
             android:label="fragment_information"
             tools:layout="@layout/fragment_information" />
+    <fragment
+            android:id="@+id/discountFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.discount.DiscountFragment"
+            android:label="fragment_discount"
+            tools:layout="@layout/fragment_discount" >
+        <action
+                android:id="@+id/action_discountFragment_to_addDiscountFragment"
+                app:destination="@id/addDiscountFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/addDiscountFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.createDiscount.AddDiscountFragment"
+            android:label="fragment_add_discount"
+            tools:layout="@layout/fragment_add_discount" >
+        <action
+                android:id="@+id/action_addDiscountFragment_to_addProductDiscountFragment"
+                app:destination="@id/addProductDiscountFragment" />
+        <action
+                android:id="@+id/action_addDiscountFragment_to_pickDateDiscountFragment"
+                app:destination="@id/pickDateDiscountFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/addProductDiscountFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.addProductDiscount.AddProductDiscountFragment"
+            android:label="fragment_add_product_discount"
+            tools:layout="@layout/fragment_add_product_discount" >
+        <action
+                android:id="@+id/action_addProductDiscountFragment_to_customCategoryDiscountFragment"
+                app:destination="@id/customCategoryDiscountFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/customCategoryDiscountFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.addProductDiscount.CustomCategoryDiscountFragment"
+            android:label="fragment_custom_category_discount"
+            tools:layout="@layout/fragment_custom_category_discount" >
+        <action
+                android:id="@+id/action_customCategoryDiscountFragment_to_productDiscountFragment"
+                app:destination="@id/productDiscountFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/productDiscountFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.addProductDiscount.ProductDiscountFragment"
+            android:label="fragment_product_discount"
+            tools:layout="@layout/fragment_product_discount" >
+        <action
+                android:id="@+id/action_productDiscountFragment_to_selectVariantDiscountFragment"
+                app:destination="@id/selectVariantDiscountFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/selectVariantDiscountFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.addProductDiscount.SelectVariantDiscountFragment"
+            android:label="fragment_select_variant_discount"
+            tools:layout="@layout/fragment_select_variant_discount" />
+    <fragment
+            android:id="@+id/pickDateDiscountFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.pickDate.PickDateDiscountFragment"
+            android:label="fragment_pick_date_discount"
+            tools:layout="@layout/fragment_pick_date_discount" />
 </navigation>

@@ -162,7 +162,7 @@ constructor(
                         )
                     }
 
-                    productVariants.add(ProductVariants(productVariantAttributeValues,null,0.0,0,null))
+                    productVariants.add(ProductVariants(-1,productVariantAttributeValues,null,0.0,0,null))
 
                 }
                 viewModel.setProductVariantsList(productVariants)

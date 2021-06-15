@@ -1,7 +1,9 @@
 package com.smartcity.provider.ui.main.account.state
 
+import com.smartcity.provider.models.Offer
 import com.smartcity.provider.models.Policy
 import com.smartcity.provider.models.StoreInformation
+import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 
 sealed class AccountStateEvent {
 
@@ -21,6 +23,16 @@ sealed class AccountStateEvent {
 
     class GetStoreInformation(
     ):AccountStateEvent()
+
+    class GetCustomCategoriesEvent : AccountStateEvent()
+
+    class GetProductsEvent(
+        val id: Long
+    ) : AccountStateEvent()
+
+    class CreateOfferEvent(
+        val offer: Offer
+    ) : AccountStateEvent()
 
     class None: AccountStateEvent()
 }

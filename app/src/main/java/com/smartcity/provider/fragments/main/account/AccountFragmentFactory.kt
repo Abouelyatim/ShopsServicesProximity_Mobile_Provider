@@ -5,6 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.ui.main.account.*
+import com.smartcity.provider.ui.main.account.discount.addProductDiscount.AddProductDiscountFragment
+import com.smartcity.provider.ui.main.account.discount.addProductDiscount.CustomCategoryDiscountFragment
+import com.smartcity.provider.ui.main.account.discount.addProductDiscount.ProductDiscountFragment
+import com.smartcity.provider.ui.main.account.discount.addProductDiscount.SelectVariantDiscountFragment
+import com.smartcity.provider.ui.main.account.discount.createDiscount.AddDiscountFragment
+import com.smartcity.provider.ui.main.account.discount.discount.DiscountFragment
+import com.smartcity.provider.ui.main.account.discount.pickDate.PickDateDiscountFragment
 import com.smartcity.provider.ui.main.account.information.InformationFragment
 import com.smartcity.provider.ui.main.account.notification.NotificationFragment
 import com.smartcity.provider.ui.main.account.policy.PolicyFormFragment
@@ -60,6 +67,55 @@ constructor(
 
             InformationFragment::class.java.name -> {
                 InformationFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            DiscountFragment::class.java.name -> {
+                DiscountFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            AddDiscountFragment::class.java.name -> {
+                AddDiscountFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            AddProductDiscountFragment::class.java.name -> {
+                AddProductDiscountFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            CustomCategoryDiscountFragment::class.java.name -> {
+                CustomCategoryDiscountFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            ProductDiscountFragment::class.java.name -> {
+                ProductDiscountFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            SelectVariantDiscountFragment::class.java.name -> {
+                SelectVariantDiscountFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            PickDateDiscountFragment::class.java.name -> {
+                PickDateDiscountFragment(
                     viewModelFactory,
                     requestManager
                 )

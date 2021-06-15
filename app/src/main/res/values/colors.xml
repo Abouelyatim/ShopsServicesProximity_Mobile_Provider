@@ -27,6 +27,9 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
 
+    <color name="amber">#c56000</color>
+
+    <color name="bleu_dark">#0d47a1</color>
     <color name="bleu">#2979ff</color>
     <color name="bleu_light">#9475A7FF</color>
     <color name = "darkBlue">#110f63</color>

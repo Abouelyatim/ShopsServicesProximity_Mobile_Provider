@@ -5,8 +5,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.smartcity.provider.api.GenericResponse
 import com.smartcity.provider.api.main.OpenApiMainService
+import com.smartcity.provider.api.main.responses.ListCustomCategoryResponse
+import com.smartcity.provider.api.main.responses.ListProductResponse
 import com.smartcity.provider.di.main.MainScope
+import com.smartcity.provider.models.CustomCategory
+import com.smartcity.provider.models.Offer
 import com.smartcity.provider.models.StoreInformation
+import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.repository.JobManager
 import com.smartcity.provider.repository.NetworkBoundResource
 import com.smartcity.provider.session.SessionManager
@@ -14,10 +19,13 @@ import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Response
 import com.smartcity.provider.ui.ResponseType
 import com.smartcity.provider.ui.main.account.state.AccountViewState
+import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.util.*
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_GET_NOTIFICATION_SETTINGS_DONE
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_SAVE_NOTIFICATION_SETTINGS_DONE
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @MainScope
@@ -234,6 +242,185 @@ constructor(
 
             override suspend fun updateLocalDb(cacheObject: Any?) {
 
+            }
+
+        }.asLiveData()
+    }
+
+    fun attemptGetCustomCategories(
+        id: Long
+    ): LiveData<DataState<AccountViewState>> {
+        return object :
+            NetworkBoundResource<ListCustomCategoryResponse, List<CustomCategory>, AccountViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListCustomCategoryResponse>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+                val customCategoryList: ArrayList<CustomCategory> = ArrayList()
+
+                for (customCategoryResponse in response.body.results) {
+                    customCategoryList.add(
+                        CustomCategory(
+                            pk = customCategoryResponse.pk,
+                            name = customCategoryResponse.name,
+                            provider = customCategoryResponse.provider
+                        )
+                    )
+                }
+
+                onCompleteJob(
+                    DataState.data(
+                        data = AccountViewState(
+                            discountFields = AccountViewState.DiscountFields(customCategoryList)
+                        ),
+                        response = null
+                    )
+                )
+            }
+
+
+            override fun createCall(): LiveData<GenericApiResponse<ListCustomCategoryResponse>> {
+                return openApiMainService.getAllcustomCategory(
+                    id = id
+                )
+            }
+
+            // Ignore
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            // Ignore
+            override suspend fun updateLocalDb(cacheObject: List<CustomCategory>?) {
+
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetCustomCategories", job)
+            }
+
+        }.asLiveData()
+    }
+
+    fun attemptGetProducts(
+        id: Long
+    ): LiveData<DataState<AccountViewState>> {
+        return object :
+            NetworkBoundResource<ListProductResponse, List<Product>, AccountViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListProductResponse>) {
+                withContext(Dispatchers.Main){
+                    Log.d(TAG, "handleApiSuccessResponse: ${response}")
+                    Log.d(TAG,id.toString())
+                    onCompleteJob(
+                        DataState.data(
+                            data = AccountViewState(
+                                discountFields = AccountViewState.DiscountFields(
+                                    productsList = response.body.results
+                                )
+                            ),
+                            response = null
+                        )
+                    )
+                }
+
+            }
+
+
+            override fun createCall(): LiveData<GenericApiResponse<ListProductResponse>> {
+                return openApiMainService.getAllProductByCategory(
+                    id = id
+                )
+            }
+
+            // Ignore
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            // Ignore
+            override suspend fun updateLocalDb(cacheObject: List<Product>?) {
+
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetProducts", job)
+            }
+
+        }.asLiveData()
+    }
+
+    fun attemptCreateOffer(
+        offer: Offer
+    ): LiveData<DataState<AccountViewState>> {
+
+        return object :
+            NetworkBoundResource<GenericResponse, Any, AccountViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+
+                withContext(Dispatchers.Main){
+                    Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                    onCompleteJob(
+                        DataState.data(
+                            data = null
+                            ,
+                            response = Response(
+                                SuccessHandling.CREATION_DONE,
+                                ResponseType.Toast()
+                            )
+                        )
+                    )
+                }
+
+            }
+
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+                return openApiMainService.createOffer(
+                    offer = offer
+                )
+            }
+
+            // Ignore
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            // Ignore
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptCreateOffer", job)
             }
 
         }.asLiveData()

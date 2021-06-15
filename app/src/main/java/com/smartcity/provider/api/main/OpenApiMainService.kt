@@ -6,10 +6,7 @@ import com.smartcity.provider.api.GenericResponse
 import com.smartcity.provider.api.auth.network_responses.StoreResponse
 import com.smartcity.provider.api.main.responses.*
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.models.AccountProperties
-import com.smartcity.provider.models.OrderStep
-import com.smartcity.provider.models.Policy
-import com.smartcity.provider.models.StoreInformation
+import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.util.GenericApiResponse
 import okhttp3.MultipartBody
@@ -136,6 +133,11 @@ interface OpenApiMainService {
         @Path(value = "id") id:Long,
         @Query("comment") comment:String?,
         @Query("date") date: String?
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @POST("Offer/create")
+    fun createOffer(
+        @Body offer:Offer
     ): LiveData<GenericApiResponse<GenericResponse>>
 }
 

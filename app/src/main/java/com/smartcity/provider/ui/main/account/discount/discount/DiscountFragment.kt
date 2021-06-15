@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.account
+package com.smartcity.provider.ui.main.account.discount.discount
 
 import android.os.Bundle
 import android.view.View
@@ -8,19 +8,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
+import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
-import kotlinx.android.synthetic.main.fragment_account.*
+import com.smartcity.provider.ui.main.account.viewmodel.clearDiscountFields
+import kotlinx.android.synthetic.main.fragment_discount.*
 import javax.inject.Inject
 
-
-class AccountFragment
+class DiscountFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_account){
+): BaseAccountFragment(R.layout.fragment_discount){
 
     val viewModel: AccountViewModel by viewModels{
         viewModelFactory
@@ -33,7 +34,6 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -54,38 +54,19 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
         stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(true)
+        stateChangeListener.displayBottomNavigation(false)
 
-        notification_settings.setOnClickListener {
-            navNotification()
-        }
-
-        policy_settings.setOnClickListener {
-            navPolicy()
-        }
-
-        information_settings.setOnClickListener {
-            navInformation()
-        }
-
-        discounts_settings.setOnClickListener {
-            navDiscounts()
+        add_discount_button.setOnClickListener {
+            navAddDiscount()
         }
     }
 
-    fun navNotification(){
-        findNavController().navigate(R.id.action_accountFragment_to_notificationFragment)
+    fun navAddDiscount(){
+        findNavController().navigate(R.id.action_discountFragment_to_addDiscountFragment)
     }
 
-    fun navPolicy(){
-        findNavController().navigate(R.id.action_accountFragment_to_policyFragment)
-    }
-
-    fun navInformation(){
-        findNavController().navigate(R.id.action_accountFragment_to_informationFragment)
-    }
-
-    fun navDiscounts(){
-        findNavController().navigate(R.id.action_accountFragment_to_discountFragment)
+    override fun onResume() {
+        super.onResume()
+        viewModel.clearDiscountFields()
     }
 }

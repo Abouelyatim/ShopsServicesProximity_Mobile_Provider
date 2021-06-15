@@ -66,6 +66,29 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is GetCustomCategoriesEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    accountRepository.attemptGetCustomCategories(
+                        authToken.account_pk!!.toLong()
+                    )
+                }?: AbsentLiveData.create()
+            }
+
+            is GetProductsEvent ->{
+                return accountRepository.attemptGetProducts(
+                    stateEvent.id
+                )
+            }
+
+            is CreateOfferEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    stateEvent.offer.providerId=authToken.account_pk!!.toLong()
+                    accountRepository.attemptCreateOffer(
+                        stateEvent.offer
+                    )
+
+                }?: AbsentLiveData.create()
+            }
             is None ->{
                 return liveData {
                     emit(

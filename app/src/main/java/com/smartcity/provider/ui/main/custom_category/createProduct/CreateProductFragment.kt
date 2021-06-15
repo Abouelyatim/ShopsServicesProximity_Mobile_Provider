@@ -320,6 +320,7 @@ constructor(
     private fun constructProductObjectWithOutVariant(product: Product):Product{
         if(input_product_price.text.toString().isNotEmpty().and(input_product_quantity.text.toString().isNotEmpty())){
             val productVariant=ProductVariants(
+                -1,
                 listOf(),
                 null,
                 input_product_price.text.toString().toDouble(),
