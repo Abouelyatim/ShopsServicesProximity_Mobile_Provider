@@ -140,10 +140,18 @@ interface OpenApiMainService {
         @Body offer:Offer
     ): LiveData<GenericApiResponse<GenericResponse>>
 
+    @PUT("offer/update")
+    fun updateOffer(
+        @Body offer:Offer
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
     @GET("offer/current-provider-offers")
     fun getAllOffers(
         @Query("id") id: Long?
     ):LiveData<GenericApiResponse<ListGenericResponse<Offer>>>
+
+    @DELETE("offer/delete/{id}")
+    fun deleteOffer(@Path("id") id: Long?):LiveData<GenericApiResponse<GenericResponse>>
 }
 
 

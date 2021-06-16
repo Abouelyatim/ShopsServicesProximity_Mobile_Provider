@@ -76,6 +76,9 @@
         <action
                 android:id="@+id/action_discountFragment_to_addDiscountFragment"
                 app:destination="@id/addDiscountFragment" />
+        <action
+                android:id="@+id/action_discountFragment_to_viewOfferFragment"
+                app:destination="@id/viewOfferFragment" />
     </fragment>
     <fragment
             android:id="@+id/addDiscountFragment"
@@ -88,6 +91,12 @@
         <action
                 android:id="@+id/action_addDiscountFragment_to_pickDateDiscountFragment"
                 app:destination="@id/pickDateDiscountFragment" />
+        <action
+                android:id="@+id/action_addDiscountFragment_to_discountFragment"
+                app:destination="@id/discountFragment"
+                app:launchSingleTop="true"
+                app:popUpTo="@+id/discountFragment"
+                app:popUpToInclusive="true"/>
     </fragment>
     <fragment
             android:id="@+id/addProductDiscountFragment"
@@ -126,4 +135,13 @@
             android:name="com.smartcity.provider.ui.main.account.discount.pickDate.PickDateDiscountFragment"
             android:label="fragment_pick_date_discount"
             tools:layout="@layout/fragment_pick_date_discount" />
+    <fragment
+            android:id="@+id/viewOfferFragment"
+            android:name="com.smartcity.provider.ui.main.account.discount.discount.ViewOfferFragment"
+            android:label="fragment_view_offer"
+            tools:layout="@layout/fragment_view_offer" >
+        <action
+                android:id="@+id/action_viewOfferFragment_to_addDiscountFragment"
+                app:destination="@id/addDiscountFragment" />
+    </fragment>
 </navigation>

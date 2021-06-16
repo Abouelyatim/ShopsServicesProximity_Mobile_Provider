@@ -98,6 +98,22 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is DeleteOfferEvent ->{
+                return accountRepository.attemptDeleteOffer(
+                    stateEvent.id
+                )
+            }
+
+            is UpdateOfferEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    stateEvent.offer.providerId=authToken.account_pk!!.toLong()
+                    accountRepository.attemptUpdateOffer(
+                        stateEvent.offer
+                    )
+
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

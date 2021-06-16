@@ -99,3 +99,10 @@ fun AccountViewModel.getOffersList():List<Offer>{
         return it.discountOfferList.offersList
     }
 }
+
+fun AccountViewModel.getSelectedOffer():Offer?{
+    getCurrentViewStateOrNew().let {
+        return it.discountOfferList.selectedOffer
+    }
+}
+

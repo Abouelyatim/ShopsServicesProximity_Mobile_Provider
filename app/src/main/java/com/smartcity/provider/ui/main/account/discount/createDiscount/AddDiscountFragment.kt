@@ -39,6 +39,7 @@ constructor(
 
     var percentageTextWatcher:TextWatcher?=null
 
+    lateinit var offerResult:Offer
 
     val viewModel: AccountViewModel by viewModels{
         viewModelFactory
@@ -103,14 +104,41 @@ constructor(
 
                         if(!data.response.hasBeenHandled){
                             if (response.message== SuccessHandling.CREATION_DONE){
-                                findNavController().popBackStack()
+                                getOffers()
+                            }
+
+                            if (response.message== SuccessHandling.PRODUCT_UPDATE_DONE){
+                                getOffers()
+                            }
+
+                            if(response.message== SuccessHandling.DONE_Offers){
+                                data.data?.let{
+                                    it.getContentIfNotHandled()?.let{
+                                        it.discountOfferList.offersList.let {
+                                            viewModel.setOffersList(it)
+                                        }
+                                    }
+                                    if(viewModel.getSelectedOffer()==null){//create offer
+                                        findNavController().popBackStack()
+                                    }else {//update offer
+                                        findNavController().navigate(R.id.action_addDiscountFragment_to_discountFragment)
+                                    }
+                                }
                             }
                         }
 
                     }
                 }
+
+
             }
         })
+    }
+
+    private fun getOffers() {
+        viewModel.setStateEvent(
+            AccountStateEvent.GetOffersEvent()
+        )
     }
 
     private fun createOffer() {
@@ -127,23 +155,35 @@ constructor(
             }
         }
 
-        viewModel.setStateEvent(
-            AccountStateEvent.CreateOfferEvent(
-                Offer(
-                    -1,
-                    viewModel.getDiscountCode(),
-                    viewModel.getOfferType(),
-                    if(viewModel.getDiscountValueFixed().isEmpty())0.0 else viewModel.getDiscountValueFixed().toDouble(),
-                    if(viewModel.getDiscountValuePercentage().replace("%","").isEmpty())0 else viewModel.getDiscountValuePercentage().replace("%","").toInt(),
-                    viewModel.getRangeDiscountDate().first,
-                    viewModel.getRangeDiscountDate().second,
-                    -1,
-                    productVariantIds,
-                    listOf(),
-                    null
+        offerResult=Offer(
+            -1,
+            viewModel.getDiscountCode(),
+            viewModel.getOfferType(),
+            if(viewModel.getDiscountValueFixed().isEmpty())0.0 else viewModel.getDiscountValueFixed().toDouble(),
+            if(viewModel.getDiscountValuePercentage().replace("%","").isEmpty())0 else viewModel.getDiscountValuePercentage().replace("%","").toInt(),
+            viewModel.getRangeDiscountDate().first,
+            viewModel.getRangeDiscountDate().second,
+            -1,
+            productVariantIds,
+            listOf(),
+            null
+        )
+
+        if(viewModel.getSelectedOffer()==null){//create offer
+            viewModel.setStateEvent(
+                AccountStateEvent.CreateOfferEvent(
+                    offerResult
                 )
             )
-        )
+        }else{//update offer
+            val selected =viewModel.getSelectedOffer()!!
+            offerResult.id=selected.id
+            viewModel.setStateEvent(
+                AccountStateEvent.UpdateOfferEvent(
+                    offerResult
+                )
+            )
+        }
     }
 
     override fun onResume() {

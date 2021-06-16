@@ -11,6 +11,7 @@ import com.smartcity.provider.ui.main.account.discount.addProductDiscount.Produc
 import com.smartcity.provider.ui.main.account.discount.addProductDiscount.SelectVariantDiscountFragment
 import com.smartcity.provider.ui.main.account.discount.createDiscount.AddDiscountFragment
 import com.smartcity.provider.ui.main.account.discount.discount.DiscountFragment
+import com.smartcity.provider.ui.main.account.discount.discount.ViewOfferFragment
 import com.smartcity.provider.ui.main.account.discount.pickDate.PickDateDiscountFragment
 import com.smartcity.provider.ui.main.account.information.InformationFragment
 import com.smartcity.provider.ui.main.account.notification.NotificationFragment
@@ -116,6 +117,13 @@ constructor(
 
             PickDateDiscountFragment::class.java.name -> {
                 PickDateDiscountFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            ViewOfferFragment::class.java.name -> {
+                ViewOfferFragment(
                     viewModelFactory,
                     requestManager
                 )

@@ -36,5 +36,13 @@ sealed class AccountStateEvent {
 
     class GetOffersEvent():AccountStateEvent()
 
+    class DeleteOfferEvent(
+        val id:Long
+    ):AccountStateEvent()
+
+    class UpdateOfferEvent(
+        val offer: Offer
+    ) : AccountStateEvent()
+
     class None: AccountStateEvent()
 }

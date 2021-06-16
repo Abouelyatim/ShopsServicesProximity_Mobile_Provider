@@ -27,7 +27,8 @@ class AccountViewState(
 
     @Parcelize
     data class DiscountOfferList(
-        var offersList:List<Offer> = listOf()
+        var offersList:List<Offer> = listOf(),
+        var selectedOffer:Offer?=null
     ) : Parcelable
 
     @Parcelize

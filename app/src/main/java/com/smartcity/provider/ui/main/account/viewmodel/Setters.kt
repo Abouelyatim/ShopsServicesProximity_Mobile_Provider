@@ -132,3 +132,9 @@ fun AccountViewModel.setOffersList(list:List<Offer>){
     update.discountOfferList.offersList = list
     setViewState(update)
 }
+
+fun AccountViewModel.setSelectedOffer(offer:Offer?){
+    val update = getCurrentViewStateOrNew()
+    update.discountOfferList.selectedOffer = offer
+    setViewState(update)
+}

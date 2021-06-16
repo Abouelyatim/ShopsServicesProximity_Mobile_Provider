@@ -14,6 +14,7 @@ import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.DataStateChangeListener
+import com.smartcity.provider.ui.UICommunicationListener
 
 abstract class BaseAccountFragment constructor(
     @LayoutRes
@@ -24,6 +25,7 @@ abstract class BaseAccountFragment constructor(
 
     lateinit var stateChangeListener: DataStateChangeListener
 
+    lateinit var uiCommunicationListener: UICommunicationListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,5 +51,10 @@ abstract class BaseAccountFragment constructor(
             Log.e(TAG, "$context must implement DataStateChangeListener" )
         }
 
+        try{
+            uiCommunicationListener = context as UICommunicationListener
+        }catch(e: ClassCastException){
+            Log.e(TAG, "$context must implement UICommunicationListener" )
+        }
     }
 }

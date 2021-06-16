@@ -1,7 +1,6 @@
 package com.smartcity.provider.ui.main.account.discount.discount
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
+import com.smartcity.provider.models.Offer
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
@@ -26,7 +26,8 @@ class DiscountFragment
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_discount){
+): BaseAccountFragment(R.layout.fragment_discount),
+    OfferAdapter.Interaction{
 
     private lateinit var offerRecyclerAdapter: OfferAdapter
 
@@ -108,6 +109,7 @@ constructor(
     override fun onResume() {
         super.onResume()
         viewModel.clearDiscountFields()
+        viewModel.setSelectedOffer(null)
     }
 
     private fun initOfferRecyclerView(){
@@ -119,7 +121,7 @@ constructor(
 
             offerRecyclerAdapter =
                 OfferAdapter(
-                    //this@DiscountFragment
+                    this@DiscountFragment
                 )
             addOnScrollListener(object: RecyclerView.OnScrollListener(){
 
@@ -130,5 +132,10 @@ constructor(
             })
             adapter = offerRecyclerAdapter
         }
+    }
+
+    override fun onItemSelected(item: Offer) {
+        viewModel.setSelectedOffer(item)
+        findNavController().navigate(R.id.action_discountFragment_to_viewOfferFragment)
     }
 }

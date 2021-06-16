@@ -130,10 +130,14 @@ class OfferAdapter (
             itemView.discount_product_number.text="${item.products!!.size}"
 
             itemView.discount_date.text="${convertStringToStringDateSimpleFormat(item.startDate!!)} - ${convertStringToStringDateSimpleFormat(item.endDate!!)}"
+
+            itemView.setOnClickListener {
+                interaction?.onItemSelected(item)
+            }
         }
     }
 
     interface Interaction {
-        fun onItemSelected(item: ProductVariants)
+        fun onItemSelected(item: Offer)
     }
 }
