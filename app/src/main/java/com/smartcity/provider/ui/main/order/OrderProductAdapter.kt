@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.order
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,9 @@ import androidx.recyclerview.widget.*
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.R
+import com.smartcity.provider.models.OfferType
 import com.smartcity.provider.models.product.OrderProductVariant
+import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.util.Constants
 import kotlinx.android.synthetic.main.layout_product_order_item.view.*
 
@@ -103,8 +106,9 @@ class OrderProductAdapter (
             }else{
                 itemView.order_product_name.text=name
             }
-            itemView.order_product_price.text=item.productVariant.price.toString()+ Constants.DOLLAR
 
+            itemView.order_product_price.text=getPrice(item.productVariant)
+            
             itemView.order_product_quantity.text=item.quantity.toString()
 
             var image=item.productImage.image
@@ -127,6 +131,28 @@ class OrderProductAdapter (
             itemView.setOnClickListener {
                 interaction?.selectedProduct()
             }
+        }
+
+        private fun getPrice(productVariants: ProductVariants):String {
+            var prices = 0.0
+            productVariants.let {
+                val offer=it.offer
+                if (offer!=null){
+                    when(offer.type){
+                        OfferType.PERCENTAGE ->{
+                            prices=it.price-(it.price*offer.percentage!!/100)
+                        }
+
+                        OfferType.FIXED ->{
+                            prices=it.price-offer.newPrice!!
+                        }
+                        null -> {}
+                    }
+                }else{
+                    prices=it.price
+                }
+            }
+            return "${prices}${Constants.DOLLAR}"
         }
     }
 
