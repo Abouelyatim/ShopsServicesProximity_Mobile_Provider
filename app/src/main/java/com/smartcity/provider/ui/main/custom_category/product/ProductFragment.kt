@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.custom_category.product
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -114,8 +115,9 @@ constructor(
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
                 productRecyclerAdapter.submitList(viewModel.getProductList())
-
         })
+
+
     }
 
     private fun addProduct() {
@@ -156,6 +158,7 @@ constructor(
     override fun onItemSelected(item: Product,action:Int) {
         when (action){
             ActionConstants.SELECTED->{
+
                 viewModel.setViewProductFields(item)
                 findNavController().navigate(R.id.action_productFragment_to_viewProductFragment)
             }

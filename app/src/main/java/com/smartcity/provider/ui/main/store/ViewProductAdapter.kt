@@ -1,8 +1,6 @@
 package com.smartcity.provider.ui.main.store
 
 import android.annotation.SuppressLint
-import android.os.Build
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +8,14 @@ import androidx.recyclerview.widget.*
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.R
+import com.smartcity.provider.models.OfferType
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.util.ActionConstants
 
 import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.Constants.Companion.DINAR_ALGERIAN
-import kotlinx.android.synthetic.main.layout_product_list_item.view.*
+import com.smartcity.provider.util.Constants.Companion.DOLLAR
+import kotlinx.android.synthetic.main.layout_store_product_list_item.view.*
+
 
 class ViewProductAdapter (
     private val requestManager: RequestManager,
@@ -69,7 +69,7 @@ class ViewProductAdapter (
 
         return  ProductHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.layout_product_list_item, parent, false),
+                .inflate(R.layout.layout_store_product_list_item, parent, false),
             interaction = interaction,
             requestManager = requestManager
         )
@@ -116,7 +116,6 @@ class ViewProductAdapter (
             }
 
 
-            delete_product.visibility=View.GONE
             val name=item.name
             name.replace("\n","").replace("\r","")
             if(name.length>70){
@@ -125,9 +124,50 @@ class ViewProductAdapter (
                 itemView.product_name.text=name
             }
 
-            itemView.product_price.text=item.productVariants.first().price.toString()+DINAR_ALGERIAN
+            val allPrices = mutableListOf<Double>()
+            item.productVariants.map {
+                val offer=it.offer
+                if (offer!=null){
+                    when(offer.type){
+                        OfferType.PERCENTAGE ->{
+                            allPrices.add(it.price-(it.price*offer.percentage!!/100))
+                        }
+
+                        OfferType.FIXED ->{
+                            allPrices.add(it.price-offer.newPrice!!)
+                        }
+                        null -> {}
+                    }
+                }else{
+                    allPrices.add(it.price)
+                }
+            }
+            itemView.product_price.text=allPrices.minOrNull().toString()+DOLLAR
 
             itemView.product_quantity.text=item.productVariants.first().unit.toString()+" sold"
+
+            val percentages= mutableListOf<Int>()
+            val fixed = mutableListOf<Double>()
+            item.productVariants.map {
+                val offer=it.offer
+                if(offer!=null){
+                    when(offer.type){
+                        OfferType.PERCENTAGE ->{
+                            percentages.add(offer.percentage!!)
+                        }
+
+                        OfferType.FIXED ->{
+                            fixed.add(offer.newPrice!!)
+                        }
+                    }
+                }
+            }
+
+            sale_container.visibility=View.GONE
+
+            if(fixed.isNotEmpty() || percentages.isNotEmpty()){
+                sale_container.visibility=View.VISIBLE
+            }
         }
     }
 

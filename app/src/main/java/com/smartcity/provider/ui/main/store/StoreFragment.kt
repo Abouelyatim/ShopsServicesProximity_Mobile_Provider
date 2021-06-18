@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.store
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
@@ -205,6 +206,7 @@ constructor(
                     submitList(viewModel.getViewProductList().products)
                 }
 
+            Log.d("ii",viewModel.getViewProductList().products.toString())
 
         })
     }

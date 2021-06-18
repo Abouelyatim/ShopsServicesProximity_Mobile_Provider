@@ -168,9 +168,9 @@ class OrderAdapter (
 
             itemView.order_product_quantity.text= item.orderProductVariants.size.toString()
 
-            itemView.order_product_total.text=item.bill!!.total.toString()+ Constants.DINAR_ALGERIAN
-            itemView.order_product_paid.text=item.bill!!.alreadyPaid.toString()+ Constants.DINAR_ALGERIAN
-            itemView.order_product_rest.text=(item.bill!!.total-item.bill!!.alreadyPaid).toString()+ Constants.DINAR_ALGERIAN
+            itemView.order_product_total.text=item.bill!!.total.toString()+ Constants.DOLLAR
+            itemView.order_product_paid.text=item.bill!!.alreadyPaid.toString()+ Constants.DOLLAR
+            itemView.order_product_rest.text=(item.bill!!.total-item.bill!!.alreadyPaid).toString()+ Constants.DOLLAR
 
 
             itemView.setOnClickListener {

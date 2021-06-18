@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.models.product.Product
@@ -33,7 +32,6 @@ import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.Value
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.VariantImageAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ViewPagerAdapter
 import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.Constants.Companion.DINAR_ALGERIAN
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_product.*
 import javax.inject.Inject
@@ -85,13 +83,15 @@ constructor(
         setHasOptionsMenu(true)
         stateChangeListener.expandAppBar()
 
+
+
         viewModel.getViewProductFields()?.let {
             product=it
         }
 
         adaptViewToNavigate()
         initViewPager()
-        setPrice(product_price)
+        setPrice(product_new_price)
         setName()
         setOptions()
         setDescription()
@@ -172,14 +172,14 @@ constructor(
                         product.let {
                             val image= Constants.PRODUCT_IMAGE_URL +it.images.first().image
                             setVariantDialog(
-                                "${variant.price}${Constants.DINAR_ALGERIAN}",
+                                "${variant.price}${Constants.DOLLAR}",
                                 variant.unit.toString(),
                                 image
                             )
                         }
                     }else{
                         setVariantDialog(
-                            "${variant.price}${Constants.DINAR_ALGERIAN}",
+                            "${variant.price}${Constants.DOLLAR}",
                             variant.unit.toString(),
                             Constants.PRODUCT_IMAGE_URL +variant.image!!
                         )
@@ -405,9 +405,9 @@ constructor(
         val prices =product.productVariants.map { productVariant -> productVariant.price }
 
         if(prices.max() != prices.min()){
-            (view as TextView).text= "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
+            (view as TextView).text= "${prices.min()}${Constants.DOLLAR} - ${prices.max()}${Constants.DOLLAR}"
         }else{
-            (view as TextView).text= "${prices.max()}${Constants.DINAR_ALGERIAN}"
+            (view as TextView).text= "${prices.max()}${Constants.DOLLAR}"
         }
     }
 
@@ -416,9 +416,9 @@ constructor(
         val prices =product.productVariants.map { productVariant -> productVariant.price }
 
         if(prices.max() != prices.min()){
-            return "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
+            return "${prices.min()}${Constants.DOLLAR} - ${prices.max()}${Constants.DOLLAR}"
         }else{
-            return "${prices.max()}${Constants.DINAR_ALGERIAN}"
+            return "${prices.max()}${Constants.DOLLAR}"
         }
     }
 

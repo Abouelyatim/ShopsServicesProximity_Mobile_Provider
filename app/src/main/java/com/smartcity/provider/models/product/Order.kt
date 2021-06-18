@@ -25,19 +25,19 @@ data class Order(
 
     @SerializedName("address")
     @Expose
-    var address:Address,
+    var address:Address?,
 
     @SerializedName("receiverFirstName")
     @Expose
-    var firstName:String,
+    var firstName:String?,
 
     @SerializedName("receiverLastName")
     @Expose
-    var lastName:String,
+    var lastName:String?,
 
     @SerializedName("receiverBirthDay")
     @Expose
-    var birthDay:String,
+    var birthDay:String?,
 
     @SerializedName("createAt")
     @Expose

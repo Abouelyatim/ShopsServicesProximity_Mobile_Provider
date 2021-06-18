@@ -2,7 +2,6 @@ package com.smartcity.provider.ui.main.order
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.smartcity.provider.R
@@ -32,13 +30,10 @@ import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.*
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.DateUtils
-import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
 import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDateTime
 import com.smartcity.provider.util.SuccessHandling.Companion.CUSTOM_CATEGORY_UPDATE_DONE
 import com.smartcity.provider.util.TopSpacingItemDecoration
-import kotlinx.android.synthetic.main.dialog_order_confirmation_delivery_pick_up.*
 import kotlinx.android.synthetic.main.fragment_view_order.*
-import java.util.*
 import javax.inject.Inject
 
 
@@ -369,9 +364,9 @@ constructor(
         viewModel.getSelectedOrder()?.let { order ->
             view_order_product_quantity.text= order.orderProductVariants.size.toString()
 
-            view_order_product_total.text=order.bill!!.total.toString()+ Constants.DINAR_ALGERIAN
-            view_order_product_paid.text=order.bill!!.alreadyPaid.toString()+ Constants.DINAR_ALGERIAN
-            view_order_product_rest.text=(order.bill!!.total-order.bill!!.alreadyPaid).toString()+ Constants.DINAR_ALGERIAN
+            view_order_product_total.text=order.bill!!.total.toString()+ Constants.DOLLAR
+            view_order_product_paid.text=order.bill!!.alreadyPaid.toString()+ Constants.DOLLAR
+            view_order_product_rest.text=(order.bill!!.total-order.bill!!.alreadyPaid).toString()+ Constants.DOLLAR
         }
     }
 

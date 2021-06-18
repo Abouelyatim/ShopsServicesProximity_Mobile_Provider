@@ -107,7 +107,7 @@ class ProductVariantAdapter (
                     .into(itemView.product_image_simple)
             }
 
-            itemView.product_price.text=item.price.toString()+ Constants.DINAR_ALGERIAN
+            itemView.product_price.text=item.price.toString()+ Constants.DOLLAR
 
             var option=""
             item.productVariantAttributeValuesProductVariant.map {

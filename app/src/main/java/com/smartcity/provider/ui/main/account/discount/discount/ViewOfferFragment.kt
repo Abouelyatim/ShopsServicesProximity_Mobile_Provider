@@ -145,7 +145,7 @@ constructor(
                 }
 
                 OfferType.FIXED->{
-                    discount_value.text= "${this.newPrice}${Constants.DINAR_ALGERIAN}"
+                    discount_value.text= "${this.newPrice}${Constants.DOLLAR}"
                 }
             }
 

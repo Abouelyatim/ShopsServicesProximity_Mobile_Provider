@@ -56,7 +56,7 @@ data class Offer(
 ) : Parcelable {
 
     override fun toString(): String {
-        return "Address(id=$id," +
+        return "Offer(id=$id," +
                 "discountCode=$discountCode," +
                 "type=$type," +
                 "newPrice=$newPrice," +

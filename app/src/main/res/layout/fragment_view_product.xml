@@ -48,16 +48,65 @@
             android:layout_gravity="fill"
             android:layout_margin="16dp">
 
-        <TextView
+        <LinearLayout
+                android:id="@+id/test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/product_price"
-                android:text="$ 299.00"
-                android:textColor="#000"
-                android:textStyle="bold"
-                android:textSize="22sp"
+            android:orientation="vertical"
                 android:layout_marginBottom="16dp"
-                />
+                >
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/product_new_price"
+                    android:text="$ 299.00"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="21sp"
+                    />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                        android:visibility="gone"
+                        android:layout_marginStart="5dp"
+                        android:id="@+id/product_old_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$ 300.00"
+                        android:textSize="14sp"
+                        android:background="@drawable/strike"
+                        />
+
+                <TextView
+                        android:visibility="gone"
+                        android:id="@+id/discount_percentage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/red_sale"
+                        android:text="-20%"
+                        android:textSize="14sp"
+                        android:paddingStart="10dp"
+                        android:textStyle="bold"
+                        />
+
+                <TextView
+                        android:visibility="gone"
+                        android:id="@+id/discount_fixed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/red_sale"
+                        android:text="-20%"
+                        android:textSize="14sp"
+                        android:paddingStart="10dp"
+                        android:textStyle="bold"
+                        />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
 
         <TextView
                 android:layout_width="match_parent"

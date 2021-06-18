@@ -161,7 +161,7 @@ class ProductDiscountAdapter (
             }else{
                 itemView.product_name_simple.text=name
             }
-            itemView.product_price.text=item.productVariants.first().price.toString()+ Constants.DINAR_ALGERIAN
+            itemView.product_price.text=item.productVariants.first().price.toString()+ Constants.DOLLAR
 
             itemView.product_check_box_simple.isChecked = item.id in selectedProduct.map { it.id }
 

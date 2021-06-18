@@ -325,6 +325,7 @@ constructor(
                 null,
                 input_product_price.text.toString().toDouble(),
                 input_product_quantity.text.toString().toInt(),
+                null,
                 null
             )
             val productVariantList= listOf<ProductVariants>(productVariant)

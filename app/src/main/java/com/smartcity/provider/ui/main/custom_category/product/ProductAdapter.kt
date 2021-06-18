@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Product
-import com.smartcity.provider.ui.main.custom_category.customCategory.CustomCategoryFragment
 import com.smartcity.provider.util.ActionConstants
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.Constants.Companion.PRODUCT_IMAGE_URL
@@ -106,6 +104,7 @@ class ProductAdapter(
 
 
             itemView.setOnClickListener {
+
                 interaction?.onItemSelected(item, ActionConstants.SELECTED)
             }
 
@@ -129,7 +128,7 @@ class ProductAdapter(
                 itemView.product_name.text=name
             }
 
-            itemView.product_price.text=item.productVariants.first().price.toString()+ Constants.DINAR_ALGERIAN
+            itemView.product_price.text=item.productVariants.first().price.toString()+ Constants.DOLLAR
 
             itemView.product_quantity.text=item.productVariants.first().unit.toString()+" sold"
         }

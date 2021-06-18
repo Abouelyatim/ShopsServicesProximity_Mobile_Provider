@@ -19,15 +19,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.smartcity.provider.R
+import com.smartcity.provider.models.OfferType
 import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
-import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.OptionsAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ValuesAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.VariantImageAdapter
@@ -37,6 +35,7 @@ import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_product.*
 import javax.inject.Inject
+
 
 class ViewProductFragment
 @Inject
@@ -90,8 +89,10 @@ constructor(
         }
 
 
+
         initViewPager()
-        setPrice(product_price)
+        setNewPrice(product_new_price)
+        setDiscountValue()
         setName()
         setOptions()
         setDescription()
@@ -171,18 +172,63 @@ constructor(
                     if (variant.image.isNullOrEmpty()){//variant without images
                         product.let {
                             val image= Constants.PRODUCT_IMAGE_URL +it.images.first().image
-                            setVariantDialog(
-                                "${variant.price}${Constants.DINAR_ALGERIAN}",
-                                variant.unit.toString(),
-                                image
-                            )
+                            if (variant.offer==null){
+                                setVariantDialog(
+                                    "${variant.price}${Constants.DOLLAR}",
+                                    variant.unit.toString(),
+                                    image
+                                )
+                            }else{
+
+                                val offer=variant.offer
+                                var price=0.0
+                                when(offer!!.type){
+                                    OfferType.FIXED ->{
+                                        price=variant.price-offer.newPrice!!
+                                    }
+
+                                    OfferType.PERCENTAGE ->{
+                                        price=variant.price-(variant.price*offer.percentage!!/100)
+                                    }
+                                }
+
+                                setVariantDialog(
+                                    "${price}${Constants.DOLLAR}",
+                                    variant.unit.toString(),
+                                    image
+                                )
+
+                            }
+
                         }
                     }else{
-                        setVariantDialog(
-                            "${variant.price}${Constants.DINAR_ALGERIAN}",
-                            variant.unit.toString(),
-                            Constants.PRODUCT_IMAGE_URL +variant.image!!
-                        )
+                        if (variant.offer==null){
+                            setVariantDialog(
+                                "${variant.price}${Constants.DOLLAR}",
+                                variant.unit.toString(),
+                                Constants.PRODUCT_IMAGE_URL +variant.image!!
+                            )
+                        }else{
+                            val offer=variant.offer
+                            var price=0.0
+                            when(offer!!.type){
+                                OfferType.FIXED ->{
+                                    price=variant.price-offer.newPrice!!
+                                }
+
+                                OfferType.PERCENTAGE ->{
+                                    price=variant.price-(variant.price*offer.percentage!!/100)
+                                }
+                            }
+
+                            setVariantDialog(
+                                "${price}${Constants.DOLLAR}",
+                                variant.unit.toString(),
+                                Constants.PRODUCT_IMAGE_URL +variant.image!!
+                            )
+                        }
+
+
                     }
 
                     return@let
@@ -319,9 +365,6 @@ constructor(
             viewModel.clearChoisesMap()
         }
 
-
-
-
         dialog.show()
     }
 
@@ -403,24 +446,104 @@ constructor(
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setPrice(view: View) {
+    private fun setNewPrice(view: View) {
+        val prices = mutableListOf<Double>()
+        product.productVariants.map {
+            val offer=it.offer
+            if (offer!=null){
+                when(offer.type){
+                    OfferType.PERCENTAGE ->{
+                        prices.add(it.price-(it.price*offer.percentage!!/100))
+                    }
+
+                    OfferType.FIXED ->{
+                        prices.add(it.price-offer.newPrice!!)
+                    }
+                    null -> {}
+                }
+            }else{
+                prices.add(it.price)
+            }
+        }
+
+
+        if(prices.maxOrNull() != prices.minOrNull()){
+            (view as TextView).text= "${Constants.DOLLAR} ${prices.minOrNull()} - ${prices.maxOrNull()}"
+        }else{
+            (view as TextView).text= "${prices.maxOrNull()}${Constants.DOLLAR}"
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setOldPrice(){
+        product_old_price.visibility=View.VISIBLE
         val prices =product.productVariants.map { productVariant -> productVariant.price }
 
-        if(prices.max() != prices.min()){
-            (view as TextView).text= "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
+        if(prices.maxOrNull() != prices.minOrNull()){
+            product_old_price.text= "${Constants.DOLLAR} ${prices.minOrNull()} - ${prices.maxOrNull()}"
         }else{
-            (view as TextView).text= "${prices.max()}${Constants.DINAR_ALGERIAN}"
+            product_old_price.text= "${prices.maxOrNull()}${Constants.DOLLAR}"
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setDiscountValue(){
+        val percentages= mutableListOf<Int>()
+        val fixed = mutableListOf<Double>()
+        product.productVariants.map {
+            val offer=it.offer
+            if(offer!=null){
+                when(offer.type){
+                    OfferType.PERCENTAGE ->{
+                        percentages.add(offer.percentage!!)
+                    }
+
+                    OfferType.FIXED ->{
+                        fixed.add(offer.newPrice!!)
+                    }
+                }
+            }
+        }
+
+        if(percentages.isNotEmpty()){
+            discount_percentage.visibility=View.VISIBLE
+            discount_percentage.text="-${percentages.maxOrNull()}%"
+            setOldPrice()
+        }
+
+
+        if(fixed.isNotEmpty()){
+            discount_fixed.visibility=View.VISIBLE
+            discount_fixed.text="-${fixed.maxOrNull()} ${Constants.DOLLAR}"
+            setOldPrice()
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun getPrice():String {
-        val prices =product.productVariants.map { productVariant -> productVariant.price }
+        val prices = mutableListOf<Double>()
+        product.productVariants.map {
+            val offer=it.offer
+            if (offer!=null){
+                when(offer.type){
+                    OfferType.PERCENTAGE ->{
+                        prices.add(it.price-(it.price*offer.percentage!!/100))
+                    }
 
-        if(prices.max() != prices.min()){
-            return "${prices.min()}${Constants.DINAR_ALGERIAN} - ${prices.max()}${Constants.DINAR_ALGERIAN}"
+                    OfferType.FIXED ->{
+                        prices.add(it.price-offer.newPrice!!)
+                    }
+                    null -> {}
+                }
+            }else{
+                prices.add(it.price)
+            }
+        }
+
+        if(prices.maxOrNull() != prices.minOrNull()){
+            return "${Constants.DOLLAR} ${prices.minOrNull()} - ${prices.maxOrNull()}"
         }else{
-            return "${prices.max()}${Constants.DINAR_ALGERIAN}"
+            return "${prices.maxOrNull()}${Constants.DOLLAR}"
         }
     }
 

@@ -9,8 +9,7 @@ import com.smartcity.provider.R
 import com.smartcity.provider.models.Offer
 import com.smartcity.provider.models.OfferState
 import com.smartcity.provider.models.OfferType
-import com.smartcity.provider.models.product.ProductVariants
-import com.smartcity.provider.util.Constants.Companion.DINAR_ALGERIAN
+import com.smartcity.provider.util.Constants.Companion.DOLLAR
 import com.smartcity.provider.util.DateUtils.Companion.convertStringToStringDateSimpleFormat
 import kotlinx.android.synthetic.main.layout_offer_list_item.view.*
 
@@ -123,7 +122,7 @@ class OfferAdapter (
                 }
 
                 OfferType.FIXED->{
-                    itemView.discount_value.text= "${item.newPrice}${DINAR_ALGERIAN}"
+                    itemView.discount_value.text= "${item.newPrice}${DOLLAR}"
                 }
             }
 

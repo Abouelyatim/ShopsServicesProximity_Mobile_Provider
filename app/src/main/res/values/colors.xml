@@ -24,10 +24,14 @@
     <color name="default_background_color">#EEEEEE</color>
     <color name="new_default_background_color">#FAFAFA</color>
 
+    <color name="red_sale">#d40a00</color>
+
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
 
     <color name="amber">#c56000</color>
+
+    <color name="yellow">#ffd600</color>
 
     <color name="green_light">#995EFC82</color>
     <color name="yellow_light">#99FDD835</color>
