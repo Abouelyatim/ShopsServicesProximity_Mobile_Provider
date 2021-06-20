@@ -3,6 +3,7 @@ package com.smartcity.provider.models.product
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.smartcity.provider.models.Offer
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -26,7 +27,11 @@ data class OrderProductVariant(
 
     @SerializedName("productName")
     @Expose
-    var productName: String
+    var productName: String,
+
+    @SerializedName("offer")
+    @Expose
+    var offer: Offer
 
 ) : Parcelable {
     override fun toString(): String {
@@ -34,6 +39,7 @@ data class OrderProductVariant(
                 "productVariant=$productVariant," +
                 "unit=$quantity" +
                 "productImage=$productImage" +
+                "offer=$offer" +
                 "productName=$productName)"
     }
 }
