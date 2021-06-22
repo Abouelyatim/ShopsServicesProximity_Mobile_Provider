@@ -30,7 +30,7 @@ class OrderAdapter (
         }
 
         override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
-            return oldItem == newItem
+            return false
         }
     }
 
