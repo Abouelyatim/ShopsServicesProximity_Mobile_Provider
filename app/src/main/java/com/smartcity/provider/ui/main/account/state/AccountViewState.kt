@@ -11,10 +11,19 @@ const val ACCOUNT_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.a
 class AccountViewState(
     var notificationSettings:List<String> = listOf(),
     var policyConfiguration:PolicyConfiguration=PolicyConfiguration(),
-    var storeInformation: StoreInformation?=null,
+    var storeInformationFields: StoreInformationFields=StoreInformationFields(),
     var discountFields: DiscountFields =DiscountFields(),
     var discountOfferList :DiscountOfferList = DiscountOfferList()
 ) : Parcelable {
+
+    @Parcelize
+    data class StoreInformationFields(
+        var storeInformation: StoreInformation?=null,
+        var categoryList:List<Category> = listOf(),
+        var selectedCategory:Category? = null,
+
+        var selectedCategories:MutableList<Category> = mutableListOf()
+    ) : Parcelable
 
     @Parcelize
     data class PolicyConfiguration(

@@ -152,6 +152,9 @@ interface OpenApiMainService {
 
     @DELETE("offer/delete/{id}")
     fun deleteOffer(@Path("id") id: Long?):LiveData<GenericApiResponse<GenericResponse>>
+
+    @GET("category")
+    fun getAllCategory(): LiveData<GenericApiResponse<ListGenericResponse<Category>>>
 }
 
 

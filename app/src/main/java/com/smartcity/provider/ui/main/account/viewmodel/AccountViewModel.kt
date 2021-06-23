@@ -114,6 +114,10 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is AllCategoriesEvent ->{
+                return accountRepository.attemptAllCategory()
+            }
+
             is None ->{
                 return liveData {
                     emit(

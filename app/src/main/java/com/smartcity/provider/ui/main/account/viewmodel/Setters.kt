@@ -138,3 +138,28 @@ fun AccountViewModel.setSelectedOffer(offer:Offer?){
     update.discountOfferList.selectedOffer = offer
     setViewState(update)
 }
+
+fun AccountViewModel.setSelectedCategoriesList(list: MutableList<Category>){
+    val update = getCurrentViewStateOrNew()
+    update.storeInformationFields.selectedCategories = list
+    setViewState(update)
+}
+
+fun AccountViewModel.setCategoriesList(list: List<Category>){
+    val update = getCurrentViewStateOrNew()
+    update.storeInformationFields.categoryList = list
+    setViewState(update)
+}
+
+fun AccountViewModel.setStoreInformation(storeInformation: StoreInformation){
+    val update = getCurrentViewStateOrNew()
+    update.storeInformationFields.storeInformation = storeInformation
+    setViewState(update)
+}
+
+fun AccountViewModel.setSelectedCategory(category: Category){
+    val update = getCurrentViewStateOrNew()
+    update.storeInformationFields.selectedCategory = category
+    setViewState(update)
+}
+

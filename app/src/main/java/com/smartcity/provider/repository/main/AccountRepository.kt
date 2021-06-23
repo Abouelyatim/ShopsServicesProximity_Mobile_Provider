@@ -9,6 +9,7 @@ import com.smartcity.provider.api.main.responses.ListCustomCategoryResponse
 import com.smartcity.provider.api.main.responses.ListGenericResponse
 import com.smartcity.provider.api.main.responses.ListProductResponse
 import com.smartcity.provider.di.main.MainScope
+import com.smartcity.provider.models.Category
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.Offer
 import com.smartcity.provider.models.StoreInformation
@@ -212,7 +213,9 @@ constructor(
                 onCompleteJob(
                     DataState.data(
                         data = AccountViewState(
-                            storeInformation=response.body
+                            storeInformationFields= AccountViewState.StoreInformationFields(
+                                storeInformation = response.body
+                            )
                         )
                         ,
                         response = Response(
@@ -242,6 +245,62 @@ constructor(
 
             override suspend fun updateLocalDb(cacheObject: Any?) {
 
+            }
+
+        }.asLiveData()
+    }
+
+    fun attemptAllCategory(
+    ): LiveData<DataState<AccountViewState>> {
+        return object :
+            NetworkBoundResource<ListGenericResponse<Category>, List<Category>, AccountViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListGenericResponse<Category>>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+
+                onCompleteJob(
+                    DataState.data(
+                        data = AccountViewState(
+                            storeInformationFields = AccountViewState.StoreInformationFields(
+                                categoryList = response.body.results
+                            )
+                        ),
+                        response = Response(
+                            SuccessHandling.DONE_ALL_CATEGORIES,
+                            ResponseType.None()
+                        )
+                    )
+
+                )
+            }
+
+
+            override fun createCall(): LiveData<GenericApiResponse<ListGenericResponse<Category>>> {
+                return openApiMainService.getAllCategory()
+            }
+
+            // Ignore
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            // Ignore
+            override suspend fun updateLocalDb(cacheObject: List<Category>?) {
+
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptAllCategory", job)
             }
 
         }.asLiveData()

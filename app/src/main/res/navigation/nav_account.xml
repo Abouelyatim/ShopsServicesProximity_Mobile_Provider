@@ -67,7 +67,11 @@
             android:id="@+id/informationFragment"
             android:name="com.smartcity.provider.ui.main.account.information.InformationFragment"
             android:label="fragment_information"
-            tools:layout="@layout/fragment_information" />
+            tools:layout="@layout/fragment_information" >
+        <action
+                android:id="@+id/action_informationFragment_to_categoryFragment"
+                app:destination="@id/categoryFragment" />
+    </fragment>
     <fragment
             android:id="@+id/discountFragment"
             android:name="com.smartcity.provider.ui.main.account.discount.discount.DiscountFragment"
@@ -144,4 +148,18 @@
                 android:id="@+id/action_viewOfferFragment_to_addDiscountFragment"
                 app:destination="@id/addDiscountFragment" />
     </fragment>
+    <fragment
+            android:id="@+id/categoryFragment"
+            android:name="com.smartcity.provider.ui.main.account.information.CategoryFragment"
+            android:label="fragment_category"
+            tools:layout="@layout/fragment_category" >
+        <action
+                android:id="@+id/action_categoryFragment_to_categoryValueFragment"
+                app:destination="@id/categoryValueFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/categoryValueFragment"
+            android:name="com.smartcity.provider.ui.main.account.information.CategoryValueFragment"
+            android:label="fragment_category_value"
+            tools:layout="@layout/fragment_category_value" />
 </navigation>

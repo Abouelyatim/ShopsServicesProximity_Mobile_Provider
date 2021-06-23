@@ -20,6 +20,14 @@ data class StoreInformation(
 
     @SerializedName("defaultTelephoneNumber")
     @Expose
-    var defaultTelephoneNumber:String
+    var defaultTelephoneNumber:String,
+
+    @SerializedName("defaultCategories")
+    @Expose
+    var defaultCategories:List<String>?,
+
+    @SerializedName("defaultCategoriesList")
+    @Expose
+    var defaultCategoriesList:List<Category>?
 ) : Parcelable {
 }

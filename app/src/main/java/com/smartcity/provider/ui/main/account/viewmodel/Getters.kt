@@ -106,3 +106,26 @@ fun AccountViewModel.getSelectedOffer():Offer?{
     }
 }
 
+fun AccountViewModel.getSelectedCategoriesList():MutableList<Category>{
+    getCurrentViewStateOrNew().let {
+        return it.storeInformationFields.selectedCategories
+    }
+}
+
+fun AccountViewModel.getCategoriesList():List<Category>{
+    getCurrentViewStateOrNew().let {
+        return it.storeInformationFields.categoryList
+    }
+}
+
+fun AccountViewModel.getStoreInformation():StoreInformation?{
+    getCurrentViewStateOrNew().let {
+        return it.storeInformationFields.storeInformation
+    }
+}
+
+fun AccountViewModel.getSelectedCategory(): Category?{
+    getCurrentViewStateOrNew().let {
+        return it.storeInformationFields.selectedCategory
+    }
+}

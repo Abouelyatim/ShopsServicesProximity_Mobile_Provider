@@ -24,6 +24,9 @@ sealed class AccountStateEvent {
     class GetStoreInformation(
     ):AccountStateEvent()
 
+    class AllCategoriesEvent:AccountStateEvent()
+
+
     class GetCustomCategoriesEvent : AccountStateEvent()
 
     class GetProductsEvent(
