@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.account.information
+package com.smartcity.provider.ui.main.account.information.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

@@ -1,10 +1,7 @@
 package com.smartcity.provider.ui.main.account.information
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -19,6 +16,7 @@ import com.google.android.flexbox.JustifyContent
 import com.smartcity.provider.R
 import com.smartcity.provider.models.Category
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
+import com.smartcity.provider.ui.main.account.information.adapters.CategoriesAdapter
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
@@ -26,7 +24,6 @@ import com.smartcity.provider.ui.main.account.viewmodel.*
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_category.*
-import kotlinx.android.synthetic.main.fragment_information.*
 import javax.inject.Inject
 
 

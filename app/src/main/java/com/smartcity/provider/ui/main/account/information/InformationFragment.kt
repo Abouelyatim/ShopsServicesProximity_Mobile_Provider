@@ -1,7 +1,6 @@
 package com.smartcity.provider.ui.main.account.information
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
@@ -18,6 +17,7 @@ import com.smartcity.provider.R
 import com.smartcity.provider.models.StoreInformation
 import com.smartcity.provider.ui.*
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
+import com.smartcity.provider.ui.main.account.information.adapters.SelectedCategoriesValueAdapter
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
