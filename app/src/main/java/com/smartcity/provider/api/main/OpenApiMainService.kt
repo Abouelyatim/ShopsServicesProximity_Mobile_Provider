@@ -151,10 +151,22 @@ interface OpenApiMainService {
     ):LiveData<GenericApiResponse<ListGenericResponse<Offer>>>
 
     @DELETE("offer/delete/{id}")
-    fun deleteOffer(@Path("id") id: Long?):LiveData<GenericApiResponse<GenericResponse>>
+    fun deleteOffer(
+        @Path("id") id: Long?
+    ):LiveData<GenericApiResponse<GenericResponse>>
 
     @GET("category")
     fun getAllCategory(): LiveData<GenericApiResponse<ListGenericResponse<Category>>>
+
+    @POST("flashDeal/create")
+    fun createFlashDeal(
+        @Body flashDeal:FlashDeal
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @GET("flashDeal/current-provider-flash/{id}")
+    fun getFlashDeals(
+        @Path("id") id: Long?
+    ): LiveData<GenericApiResponse<ListGenericResponse<FlashDeal>>>
 }
 
 

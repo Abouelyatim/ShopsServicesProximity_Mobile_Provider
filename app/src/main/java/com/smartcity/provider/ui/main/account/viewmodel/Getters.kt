@@ -129,3 +129,9 @@ fun AccountViewModel.getSelectedCategory(): Category?{
         return it.storeInformationFields.selectedCategory
     }
 }
+
+fun AccountViewModel.getFlashDealsList(): List<FlashDeal>{
+    getCurrentViewStateOrNew().let {
+        return it.flashDealsFields.flashDealsList
+    }
+}

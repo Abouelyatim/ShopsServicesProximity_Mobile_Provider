@@ -13,6 +13,8 @@ import com.smartcity.provider.ui.main.account.discount.createDiscount.AddDiscoun
 import com.smartcity.provider.ui.main.account.discount.discount.DiscountFragment
 import com.smartcity.provider.ui.main.account.discount.discount.ViewOfferFragment
 import com.smartcity.provider.ui.main.account.discount.pickDate.PickDateDiscountFragment
+import com.smartcity.provider.ui.main.account.flashdeals.CreateFlashDealFragment
+import com.smartcity.provider.ui.main.account.flashdeals.FlashDealsFragment
 import com.smartcity.provider.ui.main.account.information.CategoryFragment
 import com.smartcity.provider.ui.main.account.information.CategoryValueFragment
 import com.smartcity.provider.ui.main.account.information.InformationFragment
@@ -140,6 +142,20 @@ constructor(
 
             CategoryValueFragment::class.java.name -> {
                 CategoryValueFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            FlashDealsFragment::class.java.name -> {
+                FlashDealsFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            CreateFlashDealFragment::class.java.name -> {
+                CreateFlashDealFragment(
                     viewModelFactory,
                     requestManager
                 )

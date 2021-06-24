@@ -22,6 +22,9 @@
         <action
                 android:id="@+id/action_accountFragment_to_discountFragment"
                 app:destination="@id/discountFragment" />
+        <action
+                android:id="@+id/action_accountFragment_to_flashDealsFragment"
+                app:destination="@id/flashDealsFragment" />
     </fragment>
     <fragment
             android:id="@+id/notificationFragment"
@@ -162,4 +165,18 @@
             android:name="com.smartcity.provider.ui.main.account.information.CategoryValueFragment"
             android:label="fragment_category_value"
             tools:layout="@layout/fragment_category_value" />
+    <fragment
+            android:id="@+id/flashDealsFragment"
+            android:name="com.smartcity.provider.ui.main.account.flashdeals.FlashDealsFragment"
+            android:label="fragment_flash_deals"
+            tools:layout="@layout/fragment_flash_deals" >
+        <action
+                android:id="@+id/action_flashDealsFragment_to_createFlashDealFragment"
+                app:destination="@id/createFlashDealFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/createFlashDealFragment"
+            android:name="com.smartcity.provider.ui.main.account.flashdeals.CreateFlashDealFragment"
+            android:label="fragment_create_flash_deal"
+            tools:layout="@layout/fragment_create_flash_deal" />
 </navigation>

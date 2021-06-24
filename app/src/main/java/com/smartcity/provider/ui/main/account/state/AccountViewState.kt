@@ -13,8 +13,14 @@ class AccountViewState(
     var policyConfiguration:PolicyConfiguration=PolicyConfiguration(),
     var storeInformationFields: StoreInformationFields=StoreInformationFields(),
     var discountFields: DiscountFields =DiscountFields(),
-    var discountOfferList :DiscountOfferList = DiscountOfferList()
+    var discountOfferList :DiscountOfferList = DiscountOfferList(),
+    var flashDealsFields:FlashDealsFields = FlashDealsFields()
 ) : Parcelable {
+
+    @Parcelize
+    data class FlashDealsFields(
+        var flashDealsList:List<FlashDeal> = listOf()
+    ) : Parcelable
 
     @Parcelize
     data class StoreInformationFields(

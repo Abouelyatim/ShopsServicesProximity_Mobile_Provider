@@ -9,10 +9,7 @@ import com.smartcity.provider.api.main.responses.ListCustomCategoryResponse
 import com.smartcity.provider.api.main.responses.ListGenericResponse
 import com.smartcity.provider.api.main.responses.ListProductResponse
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.models.Category
-import com.smartcity.provider.models.CustomCategory
-import com.smartcity.provider.models.Offer
-import com.smartcity.provider.models.StoreInformation
+import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.repository.JobManager
 import com.smartcity.provider.repository.NetworkBoundResource
@@ -21,6 +18,7 @@ import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Response
 import com.smartcity.provider.ui.ResponseType
 import com.smartcity.provider.ui.main.account.state.AccountViewState
+import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.util.*
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_GET_NOTIFICATION_SETTINGS_DONE
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_SAVE_NOTIFICATION_SETTINGS_DONE
@@ -663,5 +661,143 @@ constructor(
             }
 
         }.asLiveData()
+    }
+
+    fun attemptCreateFlashDeal(
+        flashDeal: FlashDeal
+    ): LiveData<DataState<AccountViewState>> {
+
+        val flashDealErrors = flashDeal.isValidForCreation()
+
+        if(flashDealErrors != FlashDeal.CreateFlashError.none()){
+            return returnErrorResponse(flashDealErrors, ResponseType.Dialog())
+        }
+
+        return object :
+            NetworkBoundResource<GenericResponse, Any, AccountViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+
+                withContext(Dispatchers.Main){
+                    Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                    onCompleteJob(
+                        DataState.data(
+                            data = null
+                            ,
+                            response = Response(
+                                SuccessHandling.CREATION_DONE,
+                                ResponseType.Toast()
+                            )
+                        )
+                    )
+                }
+
+            }
+
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+                return openApiMainService.createFlashDeal(
+                    flashDeal = flashDeal
+                )
+            }
+
+            // Ignore
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            // Ignore
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptCreateFlashDeal", job)
+            }
+
+        }.asLiveData()
+    }
+
+    fun attemptGetFlashDeals(
+        id:Long
+    ): LiveData<DataState<AccountViewState>> {
+        return object: NetworkBoundResource<ListGenericResponse<FlashDeal>, FlashDeal, AccountViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            true,
+            true,
+            false
+        ){
+
+
+            // not applicable
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListGenericResponse<FlashDeal>>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = AccountViewState(
+                            flashDealsFields = AccountViewState.FlashDealsFields(
+                                flashDealsList= response.body.results
+                            )
+                        ),
+                        response = Response(
+                            SuccessHandling.DONE_Flashes,
+                            ResponseType.None()
+                        )
+                    )
+                )
+            }
+
+            // not applicable
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<ListGenericResponse<FlashDeal>>> {
+                return openApiMainService.getFlashDeals(
+                    id= id
+                )
+            }
+
+            // not applicable
+            override suspend fun updateLocalDb(cacheObject: FlashDeal?) {
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetFlashDeals", job)
+            }
+
+
+        }.asLiveData()
+    }
+
+    private fun returnErrorResponse(errorMessage: String, responseType: ResponseType): LiveData<DataState<AccountViewState>>{
+        Log.d(TAG, "returnErrorResponse: ${errorMessage}")
+
+        return object: LiveData<DataState<AccountViewState>>(){
+            override fun onActive() {
+                super.onActive()
+                value = DataState.error(
+                    Response(
+                        errorMessage,
+                        responseType
+                    )
+                )
+            }
+        }
     }
 }

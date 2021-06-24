@@ -71,6 +71,10 @@ constructor(
         discounts_settings.setOnClickListener {
             navDiscounts()
         }
+
+        flash_settings.setOnClickListener {
+            navFlashDeals()
+        }
     }
 
     fun navNotification(){
@@ -87,5 +91,9 @@ constructor(
 
     fun navDiscounts(){
         findNavController().navigate(R.id.action_accountFragment_to_discountFragment)
+    }
+
+    private fun navFlashDeals() {
+        findNavController().navigate(R.id.action_accountFragment_to_flashDealsFragment)
     }
 }

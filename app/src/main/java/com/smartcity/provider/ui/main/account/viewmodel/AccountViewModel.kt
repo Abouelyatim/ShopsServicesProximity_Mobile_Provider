@@ -118,6 +118,23 @@ constructor(
                 return accountRepository.attemptAllCategory()
             }
 
+            is CreateFlashDealEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    stateEvent.flashDeal.providerId=authToken.account_pk!!.toLong()
+                    accountRepository.attemptCreateFlashDeal(
+                        stateEvent.flashDeal
+                    )
+                }?: AbsentLiveData.create()
+            }
+
+            is GetFlashDealsEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    accountRepository.attemptGetFlashDeals(
+                        authToken.account_pk!!.toLong()
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

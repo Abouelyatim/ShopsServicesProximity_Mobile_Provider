@@ -1,5 +1,6 @@
 package com.smartcity.provider.ui.main.account.state
 
+import com.smartcity.provider.models.FlashDeal
 import com.smartcity.provider.models.Offer
 import com.smartcity.provider.models.Policy
 import com.smartcity.provider.models.StoreInformation
@@ -46,6 +47,12 @@ sealed class AccountStateEvent {
     class UpdateOfferEvent(
         val offer: Offer
     ) : AccountStateEvent()
+
+    class CreateFlashDealEvent(
+        val flashDeal: FlashDeal
+    ): AccountStateEvent()
+
+    class GetFlashDealsEvent():AccountStateEvent()
 
     class None: AccountStateEvent()
 }

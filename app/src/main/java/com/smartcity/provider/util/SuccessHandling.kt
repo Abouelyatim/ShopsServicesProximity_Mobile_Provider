@@ -35,6 +35,7 @@ class SuccessHandling {
 
         const val DONE_Orders ="Done GetOrder"
         const val DONE_Offers ="Done GetOffer"
+        const val DONE_Flashes ="Done GetFlashes"
 
     }
 }
