@@ -96,17 +96,18 @@ constructor(
                             }
                         }
 
-                        if(response.message== SuccessHandling.DONE_Flashes){
-                            data.data?.let{
-                                it.getContentIfNotHandled()?.let{
-                                    it.flashDealsFields.flashDealsList.let {
-                                        viewModel.setFlashDealsList(it)
+                        if(!data.response.hasBeenHandled) {
+                            if (response.message == SuccessHandling.DONE_Flashes) {
+                                data.data?.let {
+                                    it.getContentIfNotHandled()?.let {
+                                        it.flashDealsFields.flashDealsList.let {
+                                            viewModel.setFlashDealsList(it)
+                                        }
                                     }
+                                    findNavController().popBackStack()
                                 }
-                                findNavController().popBackStack()
                             }
                         }
-
                     }
                 }
             }

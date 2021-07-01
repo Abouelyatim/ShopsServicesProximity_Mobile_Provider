@@ -557,6 +557,7 @@ constructor(
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 }
             })
+            varianteRecyclerAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             adapter = varianteRecyclerAdapter
         }
 

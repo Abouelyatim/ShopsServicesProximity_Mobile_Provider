@@ -1,5 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.product
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -99,6 +100,7 @@ class ProductAdapter(
     ) : RecyclerView.ViewHolder(itemView) {
 
         val TAG: String = "AppDebug"
+        @SuppressLint("SetTextI18n")
         fun bind(item: Product) = with(itemView) {
 
 
@@ -113,7 +115,6 @@ class ProductAdapter(
             }
 
             val image=PRODUCT_IMAGE_URL+item.images.first().image
-            Log.d(TAG,image)
             requestManager
                 .load(image)
                 .transition(DrawableTransitionOptions.withCrossFade())
