@@ -74,8 +74,12 @@ constructor(
         initProductRecyclerView()
         ProductMain()
         subscribeObservers()
+        setToolBareText(viewModel.getSelectedCustomCategory()!!.name)
     }
 
+    private fun setToolBareText(text:String){
+        toolbarTitle.text=text
+    }
 
     fun ProductMain(){
         viewModel.setStateEvent(
@@ -203,6 +207,6 @@ constructor(
         //viewModel.clearProductList()
         viewModel.clearProductFields()
         product_recyclerview.adapter = null
-
+        setToolBareText("")
     }
 }

@@ -63,6 +63,11 @@ constructor(
         createOptionValue()
         initvRecyclerView()
         subscribeObservers()
+        setToolBareText(viewModel.getNewOption()!!.name)
+    }
+
+    private fun setToolBareText(text:String){
+        toolbarTitle.text=text
     }
 
     private fun subscribeObservers() {
@@ -161,5 +166,6 @@ constructor(
         // clear references (can leak memory)
         option_value_recyclerview.adapter = null
         viewModel.setNewOption(null)
+        setToolBareText("")
     }
 }
