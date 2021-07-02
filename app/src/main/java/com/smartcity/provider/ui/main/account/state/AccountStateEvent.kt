@@ -54,5 +54,7 @@ sealed class AccountStateEvent {
 
     class GetFlashDealsEvent():AccountStateEvent()
 
+    class GetSearchFlashDealsEvent():AccountStateEvent()
+
     class None: AccountStateEvent()
 }

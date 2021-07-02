@@ -785,6 +785,67 @@ constructor(
         }.asLiveData()
     }
 
+    fun attemptGetSearchFlashDeals(
+        id:Long,
+        startDate: String?,
+        endDate: String?
+    ): LiveData<DataState<AccountViewState>> {
+        return object: NetworkBoundResource<ListGenericResponse<FlashDeal>, FlashDeal, AccountViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            true,
+            true,
+            false
+        ){
+
+
+            // not applicable
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListGenericResponse<FlashDeal>>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = AccountViewState(
+                            flashDealsFields = AccountViewState.FlashDealsFields(
+                                searchFlashDealsList= response.body.results
+                            )
+                        ),
+                        response = Response(
+                            SuccessHandling.DONE_Flashes,
+                            ResponseType.None()
+                        )
+                    )
+                )
+            }
+
+            // not applicable
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                return AbsentLiveData.create()
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<ListGenericResponse<FlashDeal>>> {
+                return openApiMainService.getSearchFlashDeals(
+                    id= id,
+                    startDate = startDate,
+                    endDate = endDate
+                )
+            }
+
+            // not applicable
+            override suspend fun updateLocalDb(cacheObject: FlashDeal?) {
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetSearchFlashDeals", job)
+            }
+
+
+        }.asLiveData()
+    }
+
     private fun returnErrorResponse(errorMessage: String, responseType: ResponseType): LiveData<DataState<AccountViewState>>{
         Log.d(TAG, "returnErrorResponse: ${errorMessage}")
 

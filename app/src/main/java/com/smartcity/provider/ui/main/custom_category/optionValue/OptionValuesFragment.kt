@@ -1,8 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.optionValue
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -63,10 +61,10 @@ constructor(
         createOptionValue()
         initvRecyclerView()
         subscribeObservers()
-        setToolBareText(viewModel.getNewOption()!!.name)
+        setToolBarText(viewModel.getNewOption()!!.name)
     }
 
-    private fun setToolBareText(text:String){
+    private fun setToolBarText(text:String){
         toolbarTitle.text=text
     }
 
@@ -166,6 +164,6 @@ constructor(
         // clear references (can leak memory)
         option_value_recyclerview.adapter = null
         viewModel.setNewOption(null)
-        setToolBareText("")
+        setToolBarText("")
     }
 }

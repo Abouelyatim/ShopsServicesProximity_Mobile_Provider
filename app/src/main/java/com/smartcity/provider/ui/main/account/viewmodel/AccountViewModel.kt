@@ -135,6 +135,16 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is GetSearchFlashDealsEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    accountRepository.attemptGetSearchFlashDeals(
+                        authToken.account_pk!!.toLong(),
+                        getSearchFlashDealRangeDate().first,
+                        getSearchFlashDealRangeDate().second
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

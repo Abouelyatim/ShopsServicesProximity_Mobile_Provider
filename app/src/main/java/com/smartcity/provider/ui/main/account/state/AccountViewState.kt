@@ -19,7 +19,9 @@ class AccountViewState(
 
     @Parcelize
     data class FlashDealsFields(
-        var flashDealsList:List<FlashDeal> = listOf()
+        var flashDealsList:List<FlashDeal> = listOf(),
+        var searchFlashDealsList:List<FlashDeal> = listOf(),
+        var rangeDate:Pair<String?,String?> =Pair(null,null)
     ) : Parcelable
 
     @Parcelize

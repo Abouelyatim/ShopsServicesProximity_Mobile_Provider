@@ -7,6 +7,7 @@
         tools:context=".ui.main.account.flashdeals.FlashDealsFragment">
 
 
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,17 +20,60 @@
                 android:id="@+id/focusable_view_custom_category">
         </View>
 
-        <Button
-                android:id="@+id/add_flash_button"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:background="@drawable/main_button_drawable"
-                android:text="Add Flash   +"
-                android:textAllCaps="false"
-                android:textColor="#fff"
-                android:textSize="16sp"
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+            android:orientation="horizontal"
                 android:layout_margin="16dp"
-                />
+                >
+            <Button
+                    android:id="@+id/add_flash_button"
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/main_button_drawable"
+                    android:text="Add Flash   +"
+                    android:textAllCaps="false"
+                    android:textColor="#fff"
+                    android:textSize="16sp"
+
+                    />
+
+            <LinearLayout
+                    android:id="@+id/search_flash_container"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/raduis_selector_white">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp">
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Search"
+                            android:textSize="16sp"
+                            android:layout_weight="1"
+                            />
+                    <ImageButton
+                            android:id="@+id/search_flash_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_baseline_search_24"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
+                            />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
         <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

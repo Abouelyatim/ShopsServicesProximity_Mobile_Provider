@@ -84,7 +84,7 @@ constructor(
 
         val builder= MaterialDatePicker.Builder.datePicker()
         builder.setTitleText(R.string.select_date)
-        builder.setTheme(R.style.CustomThemeOverlay_MaterialCalendar_Fullscreen)
+        builder.setTheme(R.style.CustomThemeOverlay_MaterialCalendar)
         builder.setCalendarConstraints(calendarConstraints.build())
 
         when(step){

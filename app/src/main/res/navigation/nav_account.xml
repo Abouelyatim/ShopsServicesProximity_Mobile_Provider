@@ -173,10 +173,18 @@
         <action
                 android:id="@+id/action_flashDealsFragment_to_createFlashDealFragment"
                 app:destination="@id/createFlashDealFragment" />
+        <action
+                android:id="@+id/action_flashDealsFragment_to_searchFlashDealFragment"
+                app:destination="@id/searchFlashDealFragment" />
     </fragment>
     <fragment
             android:id="@+id/createFlashDealFragment"
             android:name="com.smartcity.provider.ui.main.account.flashdeals.CreateFlashDealFragment"
             android:label="fragment_create_flash_deal"
             tools:layout="@layout/fragment_create_flash_deal" />
+    <fragment
+            android:id="@+id/searchFlashDealFragment"
+            android:name="com.smartcity.provider.ui.main.account.flashdeals.SearchFlashDealFragment"
+            android:label="fragment_search_flash_deal"
+            tools:layout="@layout/fragment_search_flash_deal" />
 </navigation>

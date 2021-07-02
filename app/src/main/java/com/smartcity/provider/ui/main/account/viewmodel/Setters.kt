@@ -168,3 +168,15 @@ fun AccountViewModel.setFlashDealsList(list: List<FlashDeal>){
     update.flashDealsFields.flashDealsList = list
     setViewState(update)
 }
+
+fun AccountViewModel.setSearchFlashDealRangeDate(range: Pair<String?,String?>){
+    val update = getCurrentViewStateOrNew()
+    update.flashDealsFields.rangeDate = range
+    setViewState(update)
+}
+
+fun AccountViewModel.setSearchFlashDealsList(list: List<FlashDeal>){
+    val update = getCurrentViewStateOrNew()
+    update.flashDealsFields.searchFlashDealsList = list
+    setViewState(update)
+}

@@ -1,11 +1,9 @@
 package com.smartcity.provider.ui.main.order
 
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -21,14 +19,12 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.bumptech.glide.RequestManager
-import com.google.android.flexbox.*
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.smartcity.provider.R
 import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.product.Order
-import com.smartcity.provider.models.product.OrderType
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedActionPositions
 import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedActionPositions
 import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.ALL
@@ -408,7 +404,7 @@ constructor(
 
        val builder= MaterialDatePicker.Builder.dateRangePicker()
         builder.setTitleText(R.string.select_date)
-        builder.setTheme(R.style.CustomThemeOverlay_MaterialCalendar_Fullscreen)
+        builder.setTheme(R.style.CustomThemeOverlay_MaterialCalendar)
         builder.setCalendarConstraints(calendarConstraints.build())
 
         if (!viewModel.getRangeDate().first.isNullOrEmpty() && !viewModel.getRangeDate().second.isNullOrEmpty()){

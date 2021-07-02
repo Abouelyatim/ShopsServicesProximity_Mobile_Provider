@@ -135,3 +135,15 @@ fun AccountViewModel.getFlashDealsList(): List<FlashDeal>{
         return it.flashDealsFields.flashDealsList
     }
 }
+
+fun AccountViewModel.getSearchFlashDealRangeDate(): Pair<String?,String?>{
+    getCurrentViewStateOrNew().let {
+        return it.flashDealsFields.rangeDate
+    }
+}
+
+fun AccountViewModel.getSearchFlashDealsList(): List<FlashDeal>{
+    getCurrentViewStateOrNew().let {
+        return it.flashDealsFields.searchFlashDealsList
+    }
+}

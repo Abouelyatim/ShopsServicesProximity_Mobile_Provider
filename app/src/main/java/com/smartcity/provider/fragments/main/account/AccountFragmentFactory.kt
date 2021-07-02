@@ -15,6 +15,7 @@ import com.smartcity.provider.ui.main.account.discount.discount.ViewOfferFragmen
 import com.smartcity.provider.ui.main.account.discount.pickDate.PickDateDiscountFragment
 import com.smartcity.provider.ui.main.account.flashdeals.CreateFlashDealFragment
 import com.smartcity.provider.ui.main.account.flashdeals.FlashDealsFragment
+import com.smartcity.provider.ui.main.account.flashdeals.SearchFlashDealFragment
 import com.smartcity.provider.ui.main.account.information.CategoryFragment
 import com.smartcity.provider.ui.main.account.information.CategoryValueFragment
 import com.smartcity.provider.ui.main.account.information.InformationFragment
@@ -156,6 +157,13 @@ constructor(
 
             CreateFlashDealFragment::class.java.name -> {
                 CreateFlashDealFragment(
+                    viewModelFactory,
+                    requestManager
+                )
+            }
+
+            SearchFlashDealFragment::class.java.name -> {
+                SearchFlashDealFragment(
                     viewModelFactory,
                     requestManager
                 )

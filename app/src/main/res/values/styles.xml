@@ -24,7 +24,15 @@
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
-    <style name="CustomThemeOverlay_MaterialCalendar_Fullscreen"
+    <style name="CustomThemeOverlay_MaterialCalendar_Fullscreen" parent="@style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen">
+        <item name="colorPrimary">@color/bleu</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/bleu</item>
+        <item name="md_color_button_text">@color/tealDark</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <style name="CustomThemeOverlay_MaterialCalendar"
             parent="@style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen">
 
         <item name="colorPrimary">@color/bleu</item>

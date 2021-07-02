@@ -167,6 +167,13 @@ interface OpenApiMainService {
     fun getFlashDeals(
         @Path("id") id: Long?
     ): LiveData<GenericApiResponse<ListGenericResponse<FlashDeal>>>
+
+    @GET("flashDeal/current-provider-search-flash")
+    fun getSearchFlashDeals(
+        @Query("id") id: Long?,
+        @Query("startDate") startDate: String?,
+        @Query("endDate") endDate: String?
+    ): LiveData<GenericApiResponse<ListGenericResponse<FlashDeal>>>
 }
 
 
