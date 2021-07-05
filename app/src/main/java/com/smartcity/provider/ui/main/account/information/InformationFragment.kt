@@ -115,7 +115,7 @@ constructor(
 
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
-                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
                 }
             })
             adapter = selectedCategoriesValueAdapter

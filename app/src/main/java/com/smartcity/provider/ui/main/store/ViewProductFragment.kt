@@ -34,6 +34,8 @@ import com.smartcity.provider.ui.main.store.state.StoreViewState
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_product.*
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 
@@ -188,7 +190,7 @@ constructor(
                                     }
 
                                     OfferType.PERCENTAGE ->{
-                                        price=variant.price-(variant.price*offer.percentage!!/100)
+                                        price=BigDecimal(variant.price-(variant.price*offer.percentage!!/100)).setScale(2, RoundingMode.HALF_EVEN).toDouble()
                                     }
                                 }
 
@@ -217,7 +219,7 @@ constructor(
                                 }
 
                                 OfferType.PERCENTAGE ->{
-                                    price=variant.price-(variant.price*offer.percentage!!/100)
+                                    price=BigDecimal(variant.price-(variant.price*offer.percentage!!/100)).setScale(2, RoundingMode.HALF_EVEN).toDouble()
                                 }
                             }
 
@@ -453,7 +455,7 @@ constructor(
             if (offer!=null){
                 when(offer.type){
                     OfferType.PERCENTAGE ->{
-                        prices.add(it.price-(it.price*offer.percentage!!/100))
+                        prices.add(BigDecimal(it.price-(it.price*offer.percentage!!/100)).setScale(2, RoundingMode.HALF_EVEN).toDouble())
                     }
 
                     OfferType.FIXED ->{
@@ -527,7 +529,7 @@ constructor(
             if (offer!=null){
                 when(offer.type){
                     OfferType.PERCENTAGE ->{
-                        prices.add(it.price-(it.price*offer.percentage!!/100))
+                        prices.add(BigDecimal(it.price-(it.price*offer.percentage!!/100)).setScale(2, RoundingMode.HALF_EVEN).toDouble())
                     }
 
                     OfferType.FIXED ->{
