@@ -1,6 +1,9 @@
 package com.smartcity.provider.ui.auth.state
 
+import com.smartcity.provider.models.Store
+import com.smartcity.provider.models.StoreAddress
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 sealed class AuthStateEvent{
 
@@ -19,10 +22,7 @@ sealed class AuthStateEvent{
     class CheckPreviousAuthEvent(): AuthStateEvent()
 
     data class CreateStoreAttemptEvent(
-        val name: String,
-        val description: String,
-        val address: String,
-        val category:List<String>,
+        val store: Store,
         val image: MultipartBody.Part
     ): AuthStateEvent()
 

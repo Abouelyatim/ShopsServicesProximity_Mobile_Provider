@@ -2,8 +2,10 @@ package com.smartcity.provider.ui.auth
 
 import android.net.Uri
 import androidx.lifecycle.*
+import com.google.gson.Gson
 import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.models.AuthToken
+import com.smartcity.provider.models.StoreAddress
 import com.smartcity.provider.repository.auth.AuthRepository
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
@@ -12,6 +14,8 @@ import com.smartcity.provider.ui.Loading
 import com.smartcity.provider.ui.auth.state.*
 import com.smartcity.provider.ui.auth.state.AuthStateEvent.*
 import com.smartcity.provider.util.AbsentLiveData
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 @AuthScope
@@ -48,20 +52,15 @@ constructor(
 
             is CreateStoreAttemptEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
-
-                    /*val map = HashMap<String, Any>()
-                    map.put("name", stateEvent.name)
-                    map.put("description", stateEvent.description)
-                    map.put("address", stateEvent.address)
-                    map.put("provider", )
-                    map.put("categories", stateEvent.category)*/
-
+                    stateEvent.store.provider=authToken.account_pk!!.toLong()
+                    val gson = Gson()
+                    val productJson: String = gson.toJson(stateEvent.store)
+                    val requestBody= RequestBody.create(
+                        MediaType.parse("application/json"),
+                        productJson
+                    )
                     authRepository.attemptCreateStore(
-                        stateEvent.name,
-                        stateEvent.description,
-                        stateEvent.address,
-                        authToken.account_pk!!.toLong(),
-                        stateEvent.category,
+                        requestBody,
                         stateEvent.image
                     )
                 }?: AbsentLiveData.create()
@@ -146,7 +145,7 @@ constructor(
     }
     fun setNewStoreFields( name: String? ,
                            description: String?,
-                           address: String?,
+                           address: StoreAddress?,
                            category: List<String>?,
                            newImageUri: Uri? ){
 

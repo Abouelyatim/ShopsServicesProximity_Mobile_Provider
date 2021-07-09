@@ -10,7 +10,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
             android:usesCleartextTraffic="true"
@@ -22,6 +23,14 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyBNUYxdpTI2uq_h44OI32ZWM-W2BfwPuCI" />
+
+        <activity
+                android:name="com.sucho.placepicker.PlacePickerActivity"
+                android:theme="@style/PlacePickerTheme"/>
+
         <activity android:name="com.smartcity.provider.ui.main.MainActivity"
                 android:windowSoftInputMode="adjustResize"
                 >

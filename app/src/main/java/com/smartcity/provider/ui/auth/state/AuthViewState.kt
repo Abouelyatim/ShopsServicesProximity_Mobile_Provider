@@ -3,6 +3,7 @@ package com.smartcity.provider.ui.auth.state
 import android.net.Uri
 import android.os.Parcelable
 import com.smartcity.provider.models.AuthToken
+import com.smartcity.provider.models.StoreAddress
 import kotlinx.android.parcel.Parcelize
 
 const val AUTH_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.auth.state.AuthViewState"
@@ -36,7 +37,7 @@ data class CategoryStore(
 data class StoreFields(
     var store_name: String? = null,
     var store_description: String? = null,
-    var store_address: String? = null,
+    var store_address: StoreAddress? = null,
     var store_category: List<String>?=null,
     var newImageUri: Uri? = null
 ) : Parcelable {
@@ -57,8 +58,7 @@ data class StoreFields(
     fun isValidForLogin(): String{
 
         if(store_name.isNullOrEmpty()
-            || store_description.isNullOrEmpty()
-            || store_address.isNullOrEmpty()){
+            || store_description.isNullOrEmpty()){
 
             return LoginError.mustFillAllFields()
         }

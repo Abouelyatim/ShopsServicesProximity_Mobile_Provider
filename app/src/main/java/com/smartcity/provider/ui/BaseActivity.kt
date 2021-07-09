@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.smartcity.provider.BaseApplication
 import com.smartcity.provider.session.SessionManager
+import com.smartcity.provider.util.Constants.Companion.PERMISSIONS_REQUEST_FINE_LOCATION
 import com.smartcity.provider.util.Constants.Companion.PERMISSIONS_REQUEST_READ_STORAGE
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
@@ -161,6 +162,26 @@ abstract class BaseActivity: AppCompatActivity(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ),
                 PERMISSIONS_REQUEST_READ_STORAGE
+            )
+
+            return false
+        } else {
+            // Permission has already been granted
+            return true
+        }
+    }
+
+    override fun isFineLocationPermissionGranted(): Boolean {
+        if (
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED  ) {
+
+            ActivityCompat.requestPermissions(this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ),
+                PERMISSIONS_REQUEST_FINE_LOCATION
             )
 
             return false

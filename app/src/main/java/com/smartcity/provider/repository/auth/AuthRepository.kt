@@ -11,6 +11,7 @@ import com.smartcity.provider.api.auth.network_responses.StoreResponse
 import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.models.AccountProperties
 import com.smartcity.provider.models.AuthToken
+import com.smartcity.provider.models.StoreAddress
 import com.smartcity.provider.persistence.AccountPropertiesDao
 import com.smartcity.provider.persistence.AuthTokenDao
 import com.smartcity.provider.repository.JobManager
@@ -31,6 +32,7 @@ import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_CHECK_PREV
 import com.smartcity.provider.util.SuccessHandling.Companion.STORE_CREATION_DONE
 import kotlinx.coroutines.Job
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 @AuthScope
@@ -130,17 +132,13 @@ constructor(
         }.asLiveData()
     }
     fun attemptCreateStore(
-        name: String,
-        description: String,
-        address: String,
-        provider:Long,
-        category: List<String>,
+        store: RequestBody,
         image: MultipartBody.Part?
     ): LiveData<DataState<AuthViewState>> {
-        val storeFieldErrors = StoreFields(name,description,address,category).isValidForLogin()
+       /* val storeFieldErrors = StoreFields(name,description,address,category).isValidForLogin()
         if(!storeFieldErrors.equals(RegistrationFields.RegistrationError.none())){
             return returnErrorResponse(storeFieldErrors, ResponseType.Dialog())
-        }
+        }*/
 
         return object: NetworkBoundResource<StoreResponse, Any, AuthViewState>(
             sessionManager.isConnectedToTheInternet(),
@@ -180,7 +178,7 @@ constructor(
                 )
             }
             override fun createCall(): LiveData<GenericApiResponse<StoreResponse>> {
-                return openApiAuthService.createStore(name,description,address,provider,category,image)
+                return openApiAuthService.createStore(store,image)
             }
 
             override fun setJob(job: Job) {

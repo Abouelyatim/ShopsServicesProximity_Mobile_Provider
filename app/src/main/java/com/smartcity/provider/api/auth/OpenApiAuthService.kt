@@ -7,6 +7,7 @@ import com.smartcity.provider.api.auth.network_responses.LoginResponse
 import com.smartcity.provider.api.auth.network_responses.RegistrationResponse
 import com.smartcity.provider.api.auth.network_responses.StoreResponse
 import com.smartcity.provider.di.auth.AuthScope
+import com.smartcity.provider.models.StoreAddress
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -33,11 +34,7 @@ interface OpenApiAuthService {
     @Multipart
     @POST("store/create")
     fun createStore(
-        @Part("name") name: String,
-        @Part("description") description: String,
-        @Part("address") address: String,
-        @Part("provider") provider:Long,
-        @Part("category") category: List<String>,
+        @Part("store")  store: RequestBody,
         @Part image: MultipartBody.Part?
     ): LiveData<GenericApiResponse<StoreResponse>>
 

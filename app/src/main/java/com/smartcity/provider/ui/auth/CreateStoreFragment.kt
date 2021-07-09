@@ -2,6 +2,8 @@ package com.smartcity.provider.ui.auth
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Address
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -10,14 +12,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.google.android.flexbox.JustifyContent
+import com.google.gson.Gson
 import com.smartcity.provider.R
 import com.smartcity.provider.di.auth.AuthScope
+import com.smartcity.provider.models.Store
+import com.smartcity.provider.models.StoreAddress
 import com.smartcity.provider.ui.*
 import com.smartcity.provider.ui.auth.state.AuthStateEvent
 import com.smartcity.provider.ui.auth.state.CategoryStore
@@ -25,13 +32,14 @@ import com.smartcity.provider.ui.auth.state.StoreFields
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.ErrorHandling
 import com.smartcity.provider.util.SuccessHandling
+import com.sucho.placepicker.AddressData
+import com.sucho.placepicker.MapType
+import com.sucho.placepicker.PlacePicker
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-
 import kotlinx.android.synthetic.main.fragment_create_store.*
 import nl.bryanderidder.themedtogglebuttongroup.ThemedButton
 import nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup
-
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -63,36 +71,80 @@ constructor(
         getCategoryStore()
         subscribeObservers()
 
+
         store_image.setOnClickListener {
-            if(stateChangeListener.isStoragePermissionGranted()){
-                pickFromGallery()
+               if(stateChangeListener.isStoragePermissionGranted()){
+                   pickFromGallery()
+               }
+           }
+
+           update_textview_store.setOnClickListener {
+               if(stateChangeListener.isStoragePermissionGranted()){
+                   pickFromGallery()
+               }
+           }
+
+
+        val applicationInfo = activity!!.packageManager.getApplicationInfo( activity!!.packageName, PackageManager.GET_META_DATA)
+        input_address.setOnClickListener {
+            val gpsTracker = GpsTracker(context!!)
+            if(stateChangeListener.isFineLocationPermissionGranted()){
+                gpsTracker.getCurrentLocation()
+                val latitude: Double = gpsTracker.getLatitude()
+                val longitude: Double = gpsTracker.getLongitude()
+
+                val intent = PlacePicker.IntentBuilder()
+                    .setLatLong(latitude, longitude)
+                    .showLatLong(true)
+                    .setMapZoom(16.0f)
+                    .setMapRawResourceStyle(R.raw.map_style)
+                    .setMapType(MapType.NORMAL)
+                    .setPlaceSearchBar(false, applicationInfo.metaData.getString("com.google.android.geo.API_KEY"))
+                    .setMarkerImageImageColor(R.color.bleu)
+                    .setFabColor(R.color.bleu)
+                    .setPrimaryTextColor(R.color.black)
+                    .setSecondaryTextColor(R.color.dark)
+                    .build(activity!!)
+                startActivityForResult(intent, com.sucho.placepicker.Constants.PLACE_PICKER_REQUEST)
+            }else{
+                stateChangeListener.isFineLocationPermissionGranted()
             }
         }
+           next_button.setOnClickListener {
+               val callback: AreYouSureCallback = object: AreYouSureCallback {
 
-        update_textview_store.setOnClickListener {
-            if(stateChangeListener.isStoragePermissionGranted()){
-                pickFromGallery()
-            }
+                   override fun proceed() {
+                       create()
+                   }
+
+                   override fun cancel() {
+                       // ignore
+                   }
+
+               }
+               uiCommunicationListener.onUIMessageReceived(
+                   UIMessage(
+                       getString(R.string.are_you_sure_publish),
+                       UIMessageType.AreYouSureDialog(callback)
+                   )
+               )
+           }
+    }
+
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        val permissionsToRequest = ArrayList<String>();
+        var i = 0;
+        while (i < grantResults.size) {
+            permissionsToRequest.add(permissions[i]);
+            i++;
         }
-
-        next_button.setOnClickListener {
-            val callback: AreYouSureCallback = object: AreYouSureCallback {
-
-                override fun proceed() {
-                    create()
-                }
-
-                override fun cancel() {
-                    // ignore
-                }
-
-            }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_publish),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
-            )
+        if (permissionsToRequest.size > 0) {
+            ActivityCompat.requestPermissions(
+                activity!!,
+                permissionsToRequest.toTypedArray(),
+                122);
         }
     }
 
@@ -106,9 +158,9 @@ constructor(
     }
 
     private fun getCategoryStore() {
-        viewModel.setStateEvent(
+       /* viewModel.setStateEvent(
             AuthStateEvent.GetCategoryStore()
-        )
+        )*/
     }
 
 
@@ -158,6 +210,7 @@ constructor(
         }*/
 
     }
+
     override fun cancelActiveJobs() {
         viewModel.cancelActiveJobs()
     }
@@ -185,12 +238,17 @@ constructor(
             }
         }
         multipartBody?.let {
+            val store=Store(
+                input_name.text.toString(),
+                input_description.text.toString(),
+                viewModel.viewState.value!!.storeFields.store_address!!,
+                -1
+            )
+
+
             viewModel.setStateEvent(
                 AuthStateEvent.CreateStoreAttemptEvent(
-                    input_name.text.toString(),
-                    input_description.text.toString(),
-                    input_address.text.toString(),
-                    buttonGroup!!.selectedButtons.map { btn -> btn.text },
+                    store,
                     it
                 )
             )
@@ -227,7 +285,7 @@ constructor(
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             viewState.categoryStore.listCategoryStore?.let {
-                initButtonGroup(it)
+               // initButtonGroup(it)
             }
 
         })
@@ -243,9 +301,10 @@ constructor(
             }
         })
     }
+
     fun setStoreProperties(name: String? ,
                            description: String?,
-                           address: String?,
+                           address: StoreAddress?,
                            newImageUri: Uri?){
         if(newImageUri != null){
             requestManager
@@ -259,7 +318,10 @@ constructor(
         }
         input_name.setText(name)
         input_description.setText(description)
-        input_address.setText(address)
+        address?.let {
+            input_address.setText(it.addressLine())
+        }
+
 
     }
 
@@ -295,6 +357,48 @@ constructor(
                     Log.d(TAG, "CROP: ERROR")
                     showErrorDialog(ErrorHandling.ERROR_SOMETHING_WRONG_WITH_IMAGE)
                 }
+
+                com.sucho.placepicker.Constants.PLACE_PICKER_REQUEST ->{
+                    val addressData = data?.getParcelableExtra<AddressData>(com.sucho.placepicker.Constants.ADDRESS_INTENT)
+                    var address:Address?=null
+                    addressData?.let {
+                        it.addressList?.let {
+                            address=it.first()
+                        }
+                    }
+
+                    address?.let {
+
+                        val storeAddress=StoreAddress(
+                            it.featureName,
+                            it.adminArea,
+                            it.subAdminArea,
+                            it.locality,
+                            it.thoroughfare,
+                            it.postalCode,
+                            it.countryCode,
+                            it.countryName,
+                            addressData!!.latitude,
+                            addressData!!.longitude,
+                            it.getAddressLine(0)
+                        )
+
+                        viewModel.setNewStoreFields(
+                            name = null,
+                            description = null,
+                            address = storeAddress,
+                            category = null,
+                            newImageUri = null
+                        )
+
+                        Log.d("ii",storeAddress.toString())
+                    }
+
+
+
+
+
+                }
             }
         }
     }
@@ -324,7 +428,7 @@ constructor(
             StoreFields(
                 input_name.text.toString(),
                 input_description.text.toString(),
-                input_address.text.toString()
+                null
             )
         )
     }
