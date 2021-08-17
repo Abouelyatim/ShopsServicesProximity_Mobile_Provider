@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Product
@@ -14,6 +15,7 @@ import com.smartcity.provider.util.ActionConstants
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.Constants.Companion.PRODUCT_IMAGE_URL
 import kotlinx.android.synthetic.main.layout_product_list_item.view.*
+import java.lang.Exception
 
 class ProductAdapter(
     private val requestManager: RequestManager,
@@ -114,11 +116,22 @@ class ProductAdapter(
                 interaction?.onItemSelected(item, ActionConstants.DELETE)
             }
 
-            val image=PRODUCT_IMAGE_URL+item.images.first().image
-            requestManager
-                .load(image)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(itemView.product_image)
+            try {
+                val image=PRODUCT_IMAGE_URL+item.images.first().image
+                requestManager
+                    .load(image)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(itemView.product_image)
+            }catch (exception:Exception){
+                /*val image=PRODUCT_IMAGE_URL+item.images.first().image
+                requestManager
+                    .load(image)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(itemView.product_image)*/
+            }
+
 
             val name=item.name
             name.replace("\n","").replace("\r","")

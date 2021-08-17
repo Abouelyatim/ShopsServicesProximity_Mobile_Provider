@@ -31,7 +31,7 @@ data class OrderProductVariant(
 
     @SerializedName("offer")
     @Expose
-    var offer: Offer
+    var offer: Offer?
 
 ) : Parcelable {
     override fun toString(): String {

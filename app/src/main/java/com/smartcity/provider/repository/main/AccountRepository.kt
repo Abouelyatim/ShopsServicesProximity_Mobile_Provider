@@ -484,7 +484,8 @@ constructor(
     }
 
     fun attemptGetOffers(
-        id:Long
+        id:Long,
+        offerState: OfferState?
     ): LiveData<DataState<AccountViewState>> {
         return object: NetworkBoundResource<ListGenericResponse<Offer>, Offer, AccountViewState>(
             sessionManager.isConnectedToTheInternet(),
@@ -524,7 +525,8 @@ constructor(
 
             override fun createCall(): LiveData<GenericApiResponse<ListGenericResponse<Offer>>> {
                 return openApiMainService.getAllOffers(
-                    id= id
+                    id= id,
+                    status= offerState
                 )
             }
 

@@ -123,7 +123,9 @@ fun AccountViewModel.setDiscountValueFixed(value:String){
 
 fun AccountViewModel.clearDiscountFields(){
     val update = getCurrentViewStateOrNew()
+    val filter = update.discountFields.selectedOfferFilter
     update.discountFields=AccountViewState.DiscountFields()
+    update.discountFields.selectedOfferFilter = filter
     setViewState(update)
 }
 
@@ -178,5 +180,11 @@ fun AccountViewModel.setSearchFlashDealRangeDate(range: Pair<String?,String?>){
 fun AccountViewModel.setSearchFlashDealsList(list: List<FlashDeal>){
     val update = getCurrentViewStateOrNew()
     update.flashDealsFields.searchFlashDealsList = list
+    setViewState(update)
+}
+
+fun AccountViewModel.setSelectedOfferFilter(value:  Pair<String,OfferState>?){
+    val update = getCurrentViewStateOrNew()
+    update.discountFields.selectedOfferFilter = value
     setViewState(update)
 }

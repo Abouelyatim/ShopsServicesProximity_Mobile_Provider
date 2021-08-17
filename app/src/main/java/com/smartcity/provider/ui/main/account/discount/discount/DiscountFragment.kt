@@ -1,7 +1,9 @@
 package com.smartcity.provider.ui.main.account.discount.discount
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -10,8 +12,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.smartcity.provider.R
 import com.smartcity.provider.models.Offer
+import com.smartcity.provider.models.OfferState
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
@@ -27,9 +31,14 @@ constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
 ): BaseAccountFragment(R.layout.fragment_discount),
-    OfferAdapter.Interaction{
+    OfferAdapter.Interaction,
+    DiscountFilterAdapter.Interaction{
 
     private lateinit var offerRecyclerAdapter: OfferAdapter
+
+    private lateinit var dialogView: View
+
+    private var statusRecyclerDiscountsAdapter: DiscountFilterAdapter? = null
 
     val viewModel: AccountViewModel by viewModels{
         viewModelFactory
@@ -70,6 +79,68 @@ constructor(
         subscribeObservers()
         getOffers()
         initOfferRecyclerView()
+        setOfferFilter()
+        viewModel.setSelectedOfferFilter(null)
+    }
+
+    private fun setOfferFilter() {
+        filter_button.setOnClickListener {
+            showFilterDialog()
+        }
+    }
+
+    private fun initFilterDiscountRecyclerView(recyclerView: RecyclerView,recyclerAdapter:DiscountFilterAdapter) {
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@DiscountFragment.context,LinearLayoutManager.HORIZONTAL,false)
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+
+                }
+            })
+            adapter = recyclerAdapter
+        }
+    }
+
+    private val statusFilter = listOf(
+        Pair("Active", OfferState.ACTIVE),
+        Pair("Expired",OfferState.EXPIRED),
+        Pair("Planned",OfferState.PLANNED)
+    )
+
+    private fun showFilterDialog(){
+        val dialog = BottomSheetDialog(requireContext(),R.style.BottomSheetDialogTheme)
+        dialogView = layoutInflater.inflate(R.layout.dialog_filter_dscount, null)
+        dialog.setCancelable(true)
+        dialog.setContentView(dialogView)
+
+        val statusRecyclerView = dialogView.findViewById<RecyclerView>(R.id.filter_type_discounts)
+        statusRecyclerDiscountsAdapter = DiscountFilterAdapter(this@DiscountFragment)
+        initFilterDiscountRecyclerView(statusRecyclerView,statusRecyclerDiscountsAdapter!!)
+        statusRecyclerDiscountsAdapter!!.submitList(
+            statusFilter.map { it.first },
+            if (viewModel.getSelectedOfferFilter() == null) "" else viewModel.getSelectedOfferFilter()!!.first
+        )
+        Log.d("ii",viewModel.getSelectedOfferFilter().toString())
+        val viewDiscountsButton = dialogView.findViewById<Button>(R.id.view_discounts_button)
+        viewDiscountsButton.setOnClickListener {
+            getOffers()
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    override fun onItemSelected(item: String) {
+        viewModel.setSelectedOfferFilter(statusFilter.find { it.first == item })
+        statusRecyclerDiscountsAdapter!!.notifyDataSetChanged()
+    }
+
+    override fun onItemDeSelected(item: String) {
+        viewModel.setSelectedOfferFilter(null)
+        statusRecyclerDiscountsAdapter!!.notifyDataSetChanged()
     }
 
     private fun getOffers() {
@@ -98,6 +169,12 @@ constructor(
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             offerRecyclerAdapter.submitList(viewModel.getOffersList())
+
+            statusRecyclerDiscountsAdapter?.submitList(
+                statusFilter.map { it.first },
+                if (viewModel.getSelectedOfferFilter() == null) "" else viewModel.getSelectedOfferFilter()!!.first
+            )
+
         })
     }
 

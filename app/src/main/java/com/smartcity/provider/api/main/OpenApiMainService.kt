@@ -147,7 +147,8 @@ interface OpenApiMainService {
 
     @GET("offer/current-provider-offers")
     fun getAllOffers(
-        @Query("id") id: Long?
+        @Query("id") id: Long?,
+        @Query("status") status: OfferState?
     ):LiveData<GenericApiResponse<ListGenericResponse<Offer>>>
 
     @DELETE("offer/delete/{id}")

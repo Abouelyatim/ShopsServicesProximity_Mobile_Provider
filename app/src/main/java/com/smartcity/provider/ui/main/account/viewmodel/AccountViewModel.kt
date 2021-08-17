@@ -93,7 +93,8 @@ constructor(
             is GetOffersEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
                     accountRepository.attemptGetOffers(
-                        authToken.account_pk!!.toLong()
+                        authToken.account_pk!!.toLong(),
+                        getSelectedOfferFilter()?.second
                     )
                 }?: AbsentLiveData.create()
             }

@@ -147,3 +147,9 @@ fun AccountViewModel.getSearchFlashDealsList(): List<FlashDeal>{
         return it.flashDealsFields.searchFlashDealsList
     }
 }
+
+fun AccountViewModel.getSelectedOfferFilter(): Pair<String,OfferState>?{
+    getCurrentViewStateOrNew().let {
+        return it.discountFields.selectedOfferFilter
+    }
+}

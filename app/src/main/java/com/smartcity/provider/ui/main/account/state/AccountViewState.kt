@@ -5,6 +5,7 @@ import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
 import kotlinx.android.parcel.Parcelize
+import java.util.logging.Filter
 
 const val ACCOUNT_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.account.state.AccountViewState"
 @Parcelize
@@ -60,7 +61,9 @@ class AccountViewState(
         var discountCode:String="",
         var offerType:OfferType=OfferType.PERCENTAGE,
         var discountValuePercentage:String="%",
-        var discountValueFixed:String=""
+        var discountValueFixed:String="",
+
+        var selectedOfferFilter: Pair<String,OfferState>? = null
     ) : Parcelable{
         class CreateOfferError {
 

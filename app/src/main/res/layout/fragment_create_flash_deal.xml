@@ -41,8 +41,9 @@
                     android:id="@+id/input_flash_content"
                     android:textColor="#000"
                     android:hint="Content"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
                     android:textSize="18sp"
+                    android:maxLines="4"
                     />
 
         </com.google.android.material.textfield.TextInputLayout>
