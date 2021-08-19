@@ -2,10 +2,11 @@ package com.smartcity.provider.ui.main.order
 
 
 import android.os.Bundle
-import android.util.Log
-import android.view.*
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -15,10 +16,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.bumptech.glide.RequestManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -59,7 +58,8 @@ constructor(
     OrderActionAdapter.Interaction,
     OrderAdapter.Interaction,
     OrderStepsAdapter.Interaction,
-    SwipeRefreshLayout.OnRefreshListener
+    SwipeRefreshLayout.OnRefreshListener,
+    OrderFilterAdapter.Interaction
 {
     object ActionOrder {
         val ALL = Pair<String,Int>("All orders",0)
@@ -70,6 +70,10 @@ constructor(
     private lateinit var recyclerOrderStepsAdapter: OrderStepsAdapter
     private lateinit var recyclerOrderActionAdapter: OrderActionAdapter
     private lateinit var recyclerOrderAdapter: OrderAdapter
+
+    private var sortRecyclerOrdersAdapter: OrderFilterAdapter? = null
+    private var typeRecyclerOrdersAdapter: OrderFilterAdapter? = null
+    private lateinit var dialogView: View
 
     object StepsOrder {
         val NEW = Pair<String,Int>("new",0)
@@ -137,7 +141,6 @@ constructor(
     }
 
      fun initData(actionPosition: Int,stepPosition: Int){
-        //resetUI()
         when(stepPosition){
             NEW.second ->{
                 viewModel.setOrderStepFilter(OrderStep.NEW_ORDER)
@@ -281,6 +284,16 @@ constructor(
             recyclerOrderAdapter.submitList(
                 viewModel.getOrderList()
             )
+
+            sortRecyclerOrdersAdapter?.submitList(
+                sortFilter.map { it.first },
+                if (viewModel.getSelectedSortFilter() == null) "" else viewModel.getSelectedSortFilter()!!.first
+            )
+
+            typeRecyclerOrdersAdapter?.submitList(
+                typeFilter.map { it.first },
+                if (viewModel.getSelectedTypeFilter() == null) "" else viewModel.getSelectedTypeFilter()!!.first
+            )
         })
         //new order event
         Events.serviceEvent.observe(viewLifecycleOwner, Observer<String> { profile ->
@@ -338,6 +351,8 @@ constructor(
         viewModel.setOrderActionRecyclerPosition(position)
         viewModel.clearOrderList()
 
+        viewModel.setSelectedSortFilter(null)
+        viewModel.setSelectedTypeFilter(null)
         when(item){
             ALL.first->{
                 getAllOrders()
@@ -362,6 +377,8 @@ constructor(
         viewModel.setOrderStepsRecyclerPosition(position)
         viewModel.clearOrderList()
 
+        viewModel.setSelectedSortFilter(null)
+        viewModel.setSelectedTypeFilter(null)
         when(item){
             NEW.first ->{
                 viewModel.setOrderStepFilter(OrderStep.NEW_ORDER)
@@ -470,65 +487,90 @@ constructor(
         return super.onOptionsItemSelected(item)
     }
 
+    private fun initFilterOrderRecyclerView(recyclerView: RecyclerView,recyclerAdapter:OrderFilterAdapter) {
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@OrderFragment.context,LinearLayoutManager.HORIZONTAL,false)
+
+            val rightSpacingDecorator = RightSpacingItemDecoration(0)
+            removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
+            addItemDecoration(rightSpacingDecorator)
+
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+
+                }
+            })
+            recyclerOrderActionAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            adapter = recyclerAdapter
+        }
+    }
+
+    private val sortFilter= listOf(
+        Triple("Date : Oldest first","date","ASC"),
+        Triple("Date : Recent first","date","DESC"),
+        Triple("Total : Lowest first","amount","ASC"),
+        Triple("Total : Highest first","amount","DESC"),
+    )
+
+    private val typeFilter = listOf(
+        Triple("Pick up","type","SELFPICKUP"),
+        Triple("delivery","type","DELIVERY")
+    )
+
     private fun showFilterDialog() {
-        activity?.let {
-            val dialog = MaterialDialog(it)
-                .noAutoDismiss()
-                .customView(R.layout.layout_order_filter)
+        val dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+        dialogView = layoutInflater.inflate(R.layout.dialog_filter_order, null)
+        dialog.setCancelable(true)
+        dialog.setContentView(dialogView)
 
-            val view = dialog.getCustomView()
+        val sortRecyclerView = dialogView.findViewById<RecyclerView>(R.id.filter_sort_orders)
+        sortRecyclerOrdersAdapter = OrderFilterAdapter(this@OrderFragment)
+        initFilterOrderRecyclerView(sortRecyclerView, sortRecyclerOrdersAdapter!!)
+        sortRecyclerOrdersAdapter!!.submitList(
+            sortFilter.map { it.first },
+            if (viewModel.getSelectedSortFilter() == null) "" else viewModel.getSelectedSortFilter()!!.first
+        )
 
-            val dateFilter = viewModel.getDateFilter()
-            val amountFilter = viewModel.getAmountFilter()
+        val typeRecyclerView = dialogView.findViewById<RecyclerView>(R.id.filter_type_orders)
+        typeRecyclerOrdersAdapter = OrderFilterAdapter(this@OrderFragment)
+        initFilterOrderRecyclerView(typeRecyclerView, typeRecyclerOrdersAdapter!!)
+        typeRecyclerOrdersAdapter!!.submitList(
+            typeFilter.map { it.first },
+            if (viewModel.getSelectedTypeFilter() == null) "" else viewModel.getSelectedTypeFilter()!!.first
+        )
 
-            view.findViewById<RadioGroup>(R.id.date_filter_group).apply {
-                when (dateFilter) {
-                    "ASC" -> check(R.id.date_filter_asc)
-                    "DESC" -> check(R.id.date_filter_desc)
-                }
-            }
+        val viewOrdersButton = dialogView.findViewById<Button>(R.id.view_orders_button)
+        viewOrdersButton.setOnClickListener {
+            resetUI()
+            initData(getSelectedActionPositions(), getSelectedStepPositions())
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 
-            view.findViewById<RadioGroup>(R.id.amount_filter_group).apply {
-                when (amountFilter) {
-                    "ASC" -> check(R.id.amount_filter_asc)
-                    "DESC" -> check(R.id.amount_filter_desc)
-                }
-            }
+    override fun onItemSelected(item: String) {
+        if(item in sortFilter.map { it.first }){
+            viewModel.setSelectedSortFilter(sortFilter.find { it.first == item }!!)
+            sortRecyclerOrdersAdapter!!.notifyDataSetChanged()
+        }
+        if(item in typeFilter.map { it.first }){
+            viewModel.setSelectedTypeFilter(typeFilter.find { it.first == item }!!)
+            typeRecyclerOrdersAdapter!!.notifyDataSetChanged()
+        }
+    }
 
-            view.findViewById<TextView>(R.id.positive_button).setOnClickListener {
-                Log.d(TAG, "FilterDialog: apply filter.")
-
-                val newDateFilter =
-                    when (view.findViewById<RadioGroup>(R.id.date_filter_group).checkedRadioButtonId) {
-                        R.id.date_filter_asc -> "ASC"
-                        R.id.date_filter_desc -> "DESC"
-                        else -> "DESC"
-                    }
-
-                val newAmountFilter =
-                    when (view.findViewById<RadioGroup>(R.id.amount_filter_group).checkedRadioButtonId) {
-                        R.id.amount_filter_asc -> "ASC"
-                        R.id.amount_filter_desc -> "DESC"
-                        else -> "ASC"
-                    }
-
-                viewModel.apply {
-                    saveFilterOptions(newDateFilter, newAmountFilter)
-                    setDateFilter(newDateFilter)
-                    setAmountFilter(newAmountFilter)
-                }
-
-
-                initData(getSelectedActionPositions(), getSelectedStepPositions())
-                dialog.dismiss()
-            }
-
-            view.findViewById<TextView>(R.id.negative_button).setOnClickListener {
-                Log.d(TAG, "FilterDialog: cancelling filter.")
-                dialog.dismiss()
-            }
-
-            dialog.show()
+    override fun onItemDeSelected(item: String) {
+        if(item in sortFilter.map { it.first }){
+            viewModel.setSelectedSortFilter(null)
+            sortRecyclerOrdersAdapter!!.notifyDataSetChanged()
+        }
+        if(item in typeFilter.map { it.first }){
+            viewModel.setSelectedTypeFilter(null)
+            typeRecyclerOrdersAdapter!!.notifyDataSetChanged()
         }
     }
 
@@ -554,10 +596,6 @@ constructor(
         initData(viewModel.getOrderActionRecyclerPosition(), viewModel.getOrderStepsRecyclerPosition())
         swipe_refresh.isRefreshing = false
     }
-
-
-
-
 
     override fun selectedOrder(item: Order) {
         viewModel.setSelectedOrder(item)

@@ -14,8 +14,6 @@ import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent.*
 import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.util.AbsentLiveData
-import com.smartcity.provider.util.PreferenceKeys.Companion.ORDER_AMOUNT_FILTER
-import com.smartcity.provider.util.PreferenceKeys.Companion.ORDER_DATE_FILTER
 import javax.inject.Inject
 
 @MainScope
@@ -28,29 +26,6 @@ constructor(
     private val editor: SharedPreferences.Editor
 ): BaseViewModel<OrderStateEvent, OrderViewState>(){
 
-    init {
-        setDateFilter(
-            sharedPreferences.getString(
-                ORDER_DATE_FILTER,
-                "DESC"
-            )
-        )
-        setAmountFilter(
-            sharedPreferences.getString(
-                ORDER_AMOUNT_FILTER,
-                "ASC"
-            )
-        )
-    }
-
-    fun saveFilterOptions(dateFilter: String, amountFilter: String){
-        editor.putString(ORDER_DATE_FILTER, dateFilter)
-        editor.apply()
-
-        editor.putString(ORDER_AMOUNT_FILTER, amountFilter)
-        editor.apply()
-    }
-
     override fun handleStateEvent(stateEvent: OrderStateEvent): LiveData<DataState<OrderViewState>> {
         when(stateEvent){
 
@@ -59,9 +34,10 @@ constructor(
                 return sessionManager.cachedToken.value?.let { authToken ->
                     orderRepository.attemptGetOrders(
                         authToken.account_pk!!.toLong(),
-                        getDateFilter(),
-                        getAmountFilter(),
-                        getOrderStepFilter()
+                        if (getSelectedSortFilter() == null) "DESC" else (if(getSelectedSortFilter()!!.second == "date") getSelectedSortFilter()!!.third else ""),
+                        if (getSelectedSortFilter() == null) "" else (if(getSelectedSortFilter()!!.second == "amount") getSelectedSortFilter()!!.third else ""),
+                        getOrderStepFilter(),
+                        if (getSelectedTypeFilter() == null) "" else getSelectedTypeFilter()!!.third
                     )
                 }?: AbsentLiveData.create()
             }
@@ -70,9 +46,10 @@ constructor(
                 return sessionManager.cachedToken.value?.let { authToken ->
                     orderRepository.attemptGetTodayOrders(
                         authToken.account_pk!!.toLong(),
-                        getDateFilter(),
-                        getAmountFilter(),
-                        getOrderStepFilter()
+                        if (getSelectedSortFilter() == null) "DESC" else (if(getSelectedSortFilter()!!.second == "date") getSelectedSortFilter()!!.third else ""),
+                        if (getSelectedSortFilter() == null) "" else (if(getSelectedSortFilter()!!.second == "amount") getSelectedSortFilter()!!.third else ""),
+                        getOrderStepFilter(),
+                        if (getSelectedTypeFilter() == null) "" else getSelectedTypeFilter()!!.third
                     )
                 }?: AbsentLiveData.create()
             }
@@ -83,9 +60,10 @@ constructor(
                         authToken.account_pk!!.toLong(),
                         getRangeDate().first,
                         getRangeDate().second,
-                        getDateFilter(),
-                        getAmountFilter(),
-                        getOrderStepFilter()
+                        if (getSelectedSortFilter() == null) "DESC" else (if(getSelectedSortFilter()!!.second == "date") getSelectedSortFilter()!!.third else ""),
+                        if (getSelectedSortFilter() == null) "" else (if(getSelectedSortFilter()!!.second == "amount") getSelectedSortFilter()!!.third else ""),
+                        getOrderStepFilter(),
+                        if (getSelectedTypeFilter() == null) "" else getSelectedTypeFilter()!!.third
                     )
                 }?: AbsentLiveData.create()
             }

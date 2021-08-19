@@ -2,6 +2,7 @@ package com.smartcity.provider.ui.main.order.viewmodel
 
 import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.product.Order
+import com.smartcity.provider.models.product.OrderType
 
 
 fun OrderViewModel.getOrderList(): List<Order> {
@@ -40,15 +41,15 @@ fun OrderViewModel.getOrderStepsRecyclerPosition():Int{
     }
 }
 
-fun OrderViewModel.getDateFilter(): String {
+fun OrderViewModel.getSelectedSortFilter(): Triple<String,String,String>? {
     getCurrentViewStateOrNew().let {
-        return it.orderFields.dateFilter
+        return it.orderFields.selectedSortFilter
     }
 }
 
-fun OrderViewModel.getAmountFilter(): String {
+fun OrderViewModel.getSelectedTypeFilter():Triple<String,String,String>? {
     getCurrentViewStateOrNew().let {
-        return it.orderFields.amountFilter
+        return it.orderFields.selectedTypeFilter
     }
 }
 

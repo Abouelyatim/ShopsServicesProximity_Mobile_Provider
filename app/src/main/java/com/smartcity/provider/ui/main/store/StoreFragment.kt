@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.*
 import com.bumptech.glide.RequestManager
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Product
@@ -119,7 +122,9 @@ constructor(
 
     fun initCustomCategoryRecyclerView(){
         view_custom_category_recyclerview.apply {
-            layoutManager = LinearLayoutManager(this@StoreFragment.context,LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = FlexboxLayoutManager(context)
+            (layoutManager as FlexboxLayoutManager).justifyContent = JustifyContent.FLEX_START
+            (layoutManager as FlexboxLayoutManager).flexWrap= FlexWrap.WRAP
 
             val rightSpacingDecorator = RightSpacingItemDecoration(16)
             removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already

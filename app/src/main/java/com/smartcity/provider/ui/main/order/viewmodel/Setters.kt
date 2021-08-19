@@ -47,17 +47,15 @@ fun OrderViewModel.clearOrderList(){
     setViewState(update)
 }
 
-fun OrderViewModel.setDateFilter(filter: String?){
-    filter?.let{
-        val update = getCurrentViewStateOrNew()
-        update.orderFields.dateFilter = filter
-        setViewState(update)
-    }
+fun OrderViewModel.setSelectedTypeFilter(value: Triple<String,String,String>?){
+    val update = getCurrentViewStateOrNew()
+    update.orderFields.selectedTypeFilter = value
+    setViewState(update)
 }
 
-fun OrderViewModel.setAmountFilter(filter: String?){
+fun OrderViewModel.setSelectedSortFilter(value: Triple<String,String,String>?){
     val update = getCurrentViewStateOrNew()
-    update.orderFields.amountFilter = filter!!
+    update.orderFields.selectedSortFilter = value
     setViewState(update)
 }
 

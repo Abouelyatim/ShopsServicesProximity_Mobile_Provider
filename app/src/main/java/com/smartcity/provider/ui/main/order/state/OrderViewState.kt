@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.product.Order
+import com.smartcity.provider.models.product.OrderType
 import kotlinx.android.parcel.Parcelize
 
 const val ORDER_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.blog.state.OrderViewState"
@@ -23,8 +24,8 @@ data class OrderViewState (
         var orderSteps: List<Pair<String,Int>> = listOf(),
         var orderActionRecyclerPosition: Int =0,
         var orderStepsRecyclerPosition: Int =0,
-        var dateFilter:String="DESC",
-        var amountFilter:String="ASC",
+        var selectedSortFilter:Triple<String,String,String> ?=null,
+        var selectedTypeFilter:Triple<String,String,String> ?=null,
         var rangeDate:Pair<String?,String?> =Pair(null,null),
         var orderStepFilter: OrderStep = OrderStep.NEW_ORDER
     ) : Parcelable

@@ -7,6 +7,7 @@ import com.smartcity.provider.api.auth.network_responses.StoreResponse
 import com.smartcity.provider.api.main.responses.*
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.models.*
+import com.smartcity.provider.models.product.OrderType
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.util.GenericApiResponse
 import okhttp3.MultipartBody
@@ -70,7 +71,8 @@ interface OpenApiMainService {
         @Query("id") id: Long?,
         @Query("date") date: String?,
         @Query("amount") amount: String?,
-        @Query("step") step: OrderStep?
+        @Query("step") step: OrderStep?,
+        @Query("type") type: String?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
 
     @GET("order/current-provider-today-orders")
@@ -78,7 +80,8 @@ interface OpenApiMainService {
         @Query("id") id: Long?,
         @Query("date") date: String?,
         @Query("amount") amount: String?,
-        @Query("step") step: OrderStep?
+        @Query("step") step: OrderStep?,
+        @Query("type") type: String?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
 
     @GET("order/current-provider-dates-orders")
@@ -88,7 +91,8 @@ interface OpenApiMainService {
         @Query("endDate") endDate: String?,
         @Query("date") date: String?,
         @Query("amount") amount: String?,
-        @Query("step") step: OrderStep?
+        @Query("step") step: OrderStep?,
+        @Query("type") type: String?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
 
     @POST("policy/create")

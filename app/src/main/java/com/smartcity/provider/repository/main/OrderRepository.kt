@@ -8,6 +8,7 @@ import com.smartcity.provider.api.main.responses.ListOrderResponse
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.product.Order
+import com.smartcity.provider.models.product.OrderType
 import com.smartcity.provider.repository.JobManager
 import com.smartcity.provider.repository.NetworkBoundResource
 import com.smartcity.provider.session.SessionManager
@@ -39,7 +40,8 @@ constructor(
         id:Long,
         dateFilter:String,
         amountFilter:String,
-        orderStep: OrderStep
+        orderStep: OrderStep,
+        type: String
     ): LiveData<DataState<OrderViewState>> {
         return object: NetworkBoundResource<ListOrderResponse, Order, OrderViewState>(
             sessionManager.isConnectedToTheInternet(),
@@ -82,7 +84,8 @@ constructor(
                     id= id,
                     date = dateFilter,
                     amount = amountFilter,
-                    step =orderStep
+                    step =orderStep,
+                    type = type
                 )
             }
 
@@ -103,7 +106,8 @@ constructor(
         id:Long,
         dateFilter:String,
         amountFilter:String,
-        orderStep: OrderStep
+        orderStep: OrderStep,
+        type: String
     ): LiveData<DataState<OrderViewState>> {
         return object: NetworkBoundResource<ListOrderResponse, Order, OrderViewState>(
             sessionManager.isConnectedToTheInternet(),
@@ -146,7 +150,8 @@ constructor(
                     id= id,
                     date = dateFilter,
                     amount = amountFilter,
-                    step = orderStep
+                    step = orderStep,
+                    type = type
                 )
             }
 
@@ -169,7 +174,8 @@ constructor(
         endDate: String?,
         dateFilter:String,
         amountFilter:String,
-        orderStep: OrderStep
+        orderStep: OrderStep,
+        type: String
     ): LiveData<DataState<OrderViewState>> {
 
         if(startDate.isNullOrEmpty() || endDate.isNullOrEmpty()){
@@ -220,7 +226,8 @@ constructor(
                     endDate = endDate,
                     date = dateFilter,
                     amount = amountFilter,
-                    step = orderStep
+                    step = orderStep,
+                    type = type
                 )
             }
 
