@@ -33,7 +33,8 @@ class SuccessHandling {
         const val DONE_STORE_INFORMATION ="Done storeInformation"
         const val DONE_ALL_CATEGORIES ="Done allCategories"
 
-        const val DONE_Orders ="Done GetOrder"
+        const val DONE_Order ="Done GetOrder"
+        const val DONE_Orders ="Done GetOrders"
         const val DONE_Offers ="Done GetOffer"
         const val DONE_Flashes ="Done GetFlashes"
 

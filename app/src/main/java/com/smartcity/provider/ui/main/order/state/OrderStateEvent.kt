@@ -32,5 +32,9 @@ sealed class OrderStateEvent {
         var date:String?
     ) : OrderStateEvent()
 
+    class GetOrderByIdEvent(
+        var orderId : Long
+    ) : OrderStateEvent()
+
     class None: OrderStateEvent()
 }

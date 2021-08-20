@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.smartcity.provider.BaseApplication
 import com.smartcity.provider.session.SessionManager
+import com.smartcity.provider.util.Constants.Companion.PERMISSIONS_REQUEST_CAMERA
 import com.smartcity.provider.util.Constants.Companion.PERMISSIONS_REQUEST_FINE_LOCATION
 import com.smartcity.provider.util.Constants.Companion.PERMISSIONS_REQUEST_READ_STORAGE
 import kotlinx.coroutines.Dispatchers.Main
@@ -182,6 +183,26 @@ abstract class BaseActivity: AppCompatActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ),
                 PERMISSIONS_REQUEST_FINE_LOCATION
+            )
+
+            return false
+        } else {
+            // Permission has already been granted
+            return true
+        }
+    }
+
+    override fun isCameraPermissionGranted(): Boolean {
+        if (
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED  ) {
+
+            ActivityCompat.requestPermissions(this,
+                arrayOf(
+                    Manifest.permission.CAMERA
+                ),
+                PERMISSIONS_REQUEST_CAMERA
             )
 
             return false

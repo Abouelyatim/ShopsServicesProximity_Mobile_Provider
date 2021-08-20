@@ -11,7 +11,13 @@ fun OrderViewModel.setOrderListData(orderList: List<Order>){
     setViewState(update)
 }
 
-fun OrderViewModel.setSelectedOrder(order: Order){
+fun OrderViewModel.setSearchOrderListData(orderList: List<Order>){
+    val update = getCurrentViewStateOrNew()
+    update.orderFields.searchOrderList = orderList
+    setViewState(update)
+}
+
+fun OrderViewModel.setSelectedOrder(order: Order?){
     val update = getCurrentViewStateOrNew()
     update.orderFields.selectedOrder = order
     setViewState(update)

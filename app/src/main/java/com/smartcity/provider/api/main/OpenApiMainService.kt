@@ -179,6 +179,12 @@ interface OpenApiMainService {
         @Query("startDate") startDate: String?,
         @Query("endDate") endDate: String?
     ): LiveData<GenericApiResponse<ListGenericResponse<FlashDeal>>>
+
+    @GET("order/current-provider-search-orders-id")
+    fun getOrderById(
+        @Query("id") id: Long?,
+        @Query("orderId") orderId: Long?
+    ):LiveData<GenericApiResponse<ListOrderResponse>>
 }
 
 

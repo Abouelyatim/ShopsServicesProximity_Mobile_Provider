@@ -18,6 +18,7 @@ data class OrderViewState (
 
     @Parcelize
     data class OrderFields(
+        var searchOrderList: List<Order> = listOf(),
         var orderList: List<Order> = listOf(),
         var selectedOrder:Order?=null,
         var orderAction: List<Triple<String,Int,Int>> = listOf(),

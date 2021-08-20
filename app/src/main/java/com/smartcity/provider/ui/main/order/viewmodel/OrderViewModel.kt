@@ -102,6 +102,15 @@ constructor(
                 )
             }
 
+            is GetOrderByIdEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    orderRepository.attemptGetOrderById(
+                        authToken.account_pk!!.toLong(),
+                        stateEvent.orderId
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

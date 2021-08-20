@@ -101,7 +101,6 @@ constructor(
         }.asLiveData()
     }
 
-
     fun attemptGetTodayOrders(
         id:Long,
         dateFilter:String,
@@ -515,6 +514,65 @@ constructor(
 
             override fun setJob(job: Job) {
                 addJob("attemptSetOrderPickedUp", job)
+            }
+
+
+        }.asLiveData()
+    }
+
+    fun attemptGetOrderById(
+        id:Long,
+        orderId:Long
+    ): LiveData<DataState<OrderViewState>> {
+        return object: NetworkBoundResource<ListOrderResponse, Order, OrderViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            true,
+            true,
+            false
+        ){
+
+
+            // not applicable
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListOrderResponse>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = OrderViewState(
+                            orderFields = OrderFields(
+                                searchOrderList = response.body.results
+                            )
+                        ),
+                        response = Response(
+                            SuccessHandling.DONE_Order,
+                            ResponseType.None()
+                        )
+                    )
+                )
+            }
+
+            // not applicable
+            override fun loadFromCache(): LiveData<OrderViewState> {
+                return AbsentLiveData.create()
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<ListOrderResponse>> {
+                return openApiMainService.getOrderById(
+                    id= id,
+                    orderId = orderId
+                )
+            }
+
+            // not applicable
+            override suspend fun updateLocalDb(cacheObject: Order?) {
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetOrderById", job)
             }
 
 

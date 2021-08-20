@@ -11,6 +11,12 @@ fun OrderViewModel.getOrderList(): List<Order> {
     }
 }
 
+fun OrderViewModel.getSearchOrderList(): List<Order> {
+    getCurrentViewStateOrNew().let {
+        return it.orderFields.searchOrderList
+    }
+}
+
 fun OrderViewModel.getSelectedOrder(): Order? {
     getCurrentViewStateOrNew().let {
         return it.orderFields.selectedOrder

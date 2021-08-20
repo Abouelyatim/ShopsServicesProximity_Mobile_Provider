@@ -471,6 +471,10 @@ constructor(
             order_date_range.visibility=View.GONE
     }
 
+    private fun navSearch(){
+        findNavController().navigate(R.id.action_orderFragment_to_searchOrdersFragment)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.search_menu, menu)
@@ -481,6 +485,11 @@ constructor(
         when(item.itemId){
             R.id.action_filter_settings -> {
                 showFilterDialog()
+                return true
+            }
+
+            R.id.action_search_settings -> {
+                navSearch()
                 return true
             }
         }

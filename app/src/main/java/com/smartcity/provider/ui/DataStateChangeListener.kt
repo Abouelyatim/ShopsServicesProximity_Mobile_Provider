@@ -13,4 +13,6 @@ interface DataStateChangeListener{
     fun isStoragePermissionGranted(): Boolean
 
     fun isFineLocationPermissionGranted(): Boolean
+
+    fun isCameraPermissionGranted(): Boolean
 }
