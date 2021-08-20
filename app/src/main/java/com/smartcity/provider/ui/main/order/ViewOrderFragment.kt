@@ -98,18 +98,43 @@ constructor(
         setButtonsUi()
     }
 
+    private fun getStepFromOrder(order:Order):OrderStep?{
+        if(order.orderState.newOrder){
+            return OrderStep.NEW_ORDER
+        }
+
+        if(order.orderState.accepted &&
+            !order.orderState.ready &&
+            !order.orderState.delivered &&
+            !order.orderState.pickedUp &&
+            !order.orderState.received){
+            return OrderStep.ACCEPT_ORDER
+        }
+
+        if (order.orderState.accepted &&
+            order.orderState.ready &&
+            !order.orderState.delivered &&
+            !order.orderState.pickedUp &&
+            !order.orderState.received){
+            return OrderStep.READY_ORDER
+        }
+        return null
+    }
+
     private fun setButtonsUi() {
-        when(viewModel.getOrderStepFilter()){
-            OrderStep.NEW_ORDER ->{
-                view_order_NEW_ORDER_buttons.visibility=View.VISIBLE
-            }
+        getStepFromOrder(viewModel.getSelectedOrder()!!)?.let {
+            when(it){
+                OrderStep.NEW_ORDER ->{
+                    view_order_NEW_ORDER_buttons.visibility=View.VISIBLE
+                }
 
-            OrderStep.ACCEPT_ORDER ->{
-                view_order_ACCEPT_ORDER_buttons.visibility=View.VISIBLE
-            }
+                OrderStep.ACCEPT_ORDER ->{
+                    view_order_ACCEPT_ORDER_buttons.visibility=View.VISIBLE
+                }
 
-            OrderStep.READY_ORDER ->{
-                view_order_READY_ORDER_buttons.visibility=View.VISIBLE
+                OrderStep.READY_ORDER ->{
+                    view_order_READY_ORDER_buttons.visibility=View.VISIBLE
+                }
             }
         }
     }
