@@ -6,10 +6,7 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.ui.main.order.OrderFragment
 import com.smartcity.provider.ui.main.order.ViewOrderFragment
-import com.smartcity.provider.ui.main.order.search.ReceiverNameFragment
-import com.smartcity.provider.ui.main.order.search.ScanQrCodeFragment
-import com.smartcity.provider.ui.main.order.search.SearchOrdersFragment
-import com.smartcity.provider.ui.main.order.search.ViewSearchOrdersFragment
+import com.smartcity.provider.ui.main.order.search.*
 import javax.inject.Inject
 
 @MainScope
@@ -47,6 +44,11 @@ constructor(
             ViewSearchOrdersFragment::class.java.name -> {
                 ViewSearchOrdersFragment(viewModelFactory, requestManager)
             }
+
+            PickDateFragment::class.java.name -> {
+                PickDateFragment(viewModelFactory, requestManager)
+            }
+
             else -> {
                 OrderFragment(viewModelFactory, requestManager)
             }

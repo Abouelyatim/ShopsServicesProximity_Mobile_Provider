@@ -41,5 +41,9 @@ sealed class OrderStateEvent {
         var lastName :String
     ) : OrderStateEvent()
 
+    class SearchOrderByDateEvent(
+        var date : String
+    ) : OrderStateEvent()
+
     class None: OrderStateEvent()
 }

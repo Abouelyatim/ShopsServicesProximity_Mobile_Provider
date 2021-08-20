@@ -34,6 +34,9 @@
         <action
                 android:id="@+id/action_searchOrdersFragment_to_receiverNameFragment"
                 app:destination="@id/receiverNameFragment" />
+        <action
+                android:id="@+id/action_searchOrdersFragment_to_pickDateFragment"
+                app:destination="@id/pickDateFragment" />
     </fragment>
     <fragment
             android:id="@+id/scanQrCodeFragment"
@@ -61,6 +64,15 @@
         <action
                 android:id="@+id/action_viewSearchOrdersFragment_to_viewOrderFragment"
                 app:destination="@id/viewOrderFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/pickDateFragment"
+            android:name="com.smartcity.provider.ui.main.order.search.PickDateFragment"
+            android:label="fragment_pick_date"
+            tools:layout="@layout/fragment_pick_date" >
+        <action
+                android:id="@+id/action_pickDateFragment_to_viewSearchOrdersFragment"
+                app:destination="@id/viewSearchOrdersFragment" />
     </fragment>
 
 </navigation>

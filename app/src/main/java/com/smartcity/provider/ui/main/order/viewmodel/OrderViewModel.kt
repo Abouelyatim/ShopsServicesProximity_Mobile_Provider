@@ -121,6 +121,15 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is SearchOrderByDateEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    orderRepository.attemptSearchOrderByDate(
+                        authToken.account_pk!!.toLong(),
+                        stateEvent.date
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

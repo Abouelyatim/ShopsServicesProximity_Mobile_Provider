@@ -72,6 +72,13 @@ constructor(
 
         scanQrCode()
         searchByReceiver()
+        searchByDate()
+    }
+
+    private fun searchByDate() {
+        search_order_date.setOnClickListener {
+            findNavController().navigate(R.id.action_searchOrdersFragment_to_pickDateFragment)
+        }
     }
 
     private fun searchByReceiver() {

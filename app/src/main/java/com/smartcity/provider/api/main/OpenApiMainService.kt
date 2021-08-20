@@ -192,6 +192,12 @@ interface OpenApiMainService {
         @Query("firstName") firstName: String?,
         @Query("lastName") lastName: String?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
+
+    @GET("order/current-provider-search-orders-date")
+    fun searchOrderByDate(
+        @Query("id") id: Long?,
+        @Query("date") date: String?
+    ):LiveData<GenericApiResponse<ListOrderResponse>>
 }
 
 

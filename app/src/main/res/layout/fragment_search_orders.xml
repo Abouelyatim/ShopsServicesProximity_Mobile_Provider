@@ -181,7 +181,7 @@
             />
 
     <LinearLayout
-            android:id="@+id/stores_configure_sgearch_adgfddress"
+            android:id="@+id/search_order_date"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -224,7 +224,6 @@
                 </LinearLayout>
 
                 <TextView
-                        android:id="@+id/stores_searchr_addregfdss"
                         android:layout_marginStart="16dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
