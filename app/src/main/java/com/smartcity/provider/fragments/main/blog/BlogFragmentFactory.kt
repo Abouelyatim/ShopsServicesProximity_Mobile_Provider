@@ -6,8 +6,10 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.ui.main.order.OrderFragment
 import com.smartcity.provider.ui.main.order.ViewOrderFragment
+import com.smartcity.provider.ui.main.order.search.ReceiverNameFragment
 import com.smartcity.provider.ui.main.order.search.ScanQrCodeFragment
 import com.smartcity.provider.ui.main.order.search.SearchOrdersFragment
+import com.smartcity.provider.ui.main.order.search.ViewSearchOrdersFragment
 import javax.inject.Inject
 
 @MainScope
@@ -38,6 +40,13 @@ constructor(
                 ScanQrCodeFragment(viewModelFactory, requestManager)
             }
 
+            ReceiverNameFragment::class.java.name -> {
+                ReceiverNameFragment(viewModelFactory, requestManager)
+            }
+
+            ViewSearchOrdersFragment::class.java.name -> {
+                ViewSearchOrdersFragment(viewModelFactory, requestManager)
+            }
             else -> {
                 OrderFragment(viewModelFactory, requestManager)
             }

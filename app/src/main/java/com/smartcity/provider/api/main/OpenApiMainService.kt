@@ -185,6 +185,13 @@ interface OpenApiMainService {
         @Query("id") id: Long?,
         @Query("orderId") orderId: Long?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
+
+    @GET("order/current-provider-search-orders-receiver")
+    fun searchOrderByReceiver(
+        @Query("id") id: Long?,
+        @Query("firstName") firstName: String?,
+        @Query("lastName") lastName: String?
+    ):LiveData<GenericApiResponse<ListOrderResponse>>
 }
 
 

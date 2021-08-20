@@ -111,6 +111,16 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is SearchOrderByReceiverEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    orderRepository.attemptSearchOrderByReceiver(
+                        authToken.account_pk!!.toLong(),
+                        stateEvent.firstName,
+                        stateEvent.lastName
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

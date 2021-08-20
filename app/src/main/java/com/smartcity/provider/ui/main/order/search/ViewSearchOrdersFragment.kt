@@ -5,9 +5,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.budiyev.android.codescanner.CodeScanner
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Order
@@ -16,8 +16,10 @@ import com.smartcity.provider.ui.main.order.OrderAdapter
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
+import com.smartcity.provider.ui.main.order.viewmodel.getSearchOrderList
+import com.smartcity.provider.ui.main.order.viewmodel.setSelectedOrder
 import com.smartcity.provider.util.TopSpacingItemDecoration
-import kotlinx.android.synthetic.main.fragment_order.*
+import kotlinx.android.synthetic.main.fragment_view_search_orders.*
 import javax.inject.Inject
 
 
@@ -77,7 +79,7 @@ constructor(
     }
 
     private fun initOrderRecyclerView() {
-        orders_recyclerview.apply {
+        search_orders_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@ViewSearchOrdersFragment.context)
             val topSpacingDecorator = TopSpacingItemDecoration(0)
             removeItemDecoration(topSpacingDecorator) // does nothing if not applied already
@@ -97,11 +99,17 @@ constructor(
             })
             adapter = recyclerOrderAdapter
         }
+        recyclerOrderAdapter.submitList(
+            viewModel.getSearchOrderList()
+        )
     }
 
     override fun selectedOrder(item: Order) {
-
+        viewModel.setSelectedOrder(item)
+        navViewOrder()
     }
 
-
+    private fun navViewOrder() {
+        findNavController().navigate(R.id.action_viewSearchOrdersFragment_to_viewOrderFragment)
+    }
 }

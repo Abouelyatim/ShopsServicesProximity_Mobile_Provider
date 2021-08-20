@@ -31,6 +31,9 @@
         <action
                 android:id="@+id/action_searchOrdersFragment_to_scanQrCodeFragment"
                 app:destination="@id/scanQrCodeFragment" />
+        <action
+                android:id="@+id/action_searchOrdersFragment_to_receiverNameFragment"
+                app:destination="@id/receiverNameFragment" />
     </fragment>
     <fragment
             android:id="@+id/scanQrCodeFragment"
@@ -39,6 +42,24 @@
             tools:layout="@layout/fragment_scan_qr_code" >
         <action
                 android:id="@+id/action_scanQrCodeFragment_to_viewOrderFragment"
+                app:destination="@id/viewOrderFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/receiverNameFragment"
+            android:name="com.smartcity.provider.ui.main.order.search.ReceiverNameFragment"
+            android:label="fragment_receiver_name"
+            tools:layout="@layout/fragment_receiver_name" >
+        <action
+                android:id="@+id/action_receiverNameFragment_to_viewSearchOrdersFragment"
+                app:destination="@id/viewSearchOrdersFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/viewSearchOrdersFragment"
+            android:name="com.smartcity.provider.ui.main.order.search.ViewSearchOrdersFragment"
+            android:label="fragment_view_search_orders"
+            tools:layout="@layout/fragment_view_search_orders" >
+        <action
+                android:id="@+id/action_viewSearchOrdersFragment_to_viewOrderFragment"
                 app:destination="@id/viewOrderFragment" />
     </fragment>
 

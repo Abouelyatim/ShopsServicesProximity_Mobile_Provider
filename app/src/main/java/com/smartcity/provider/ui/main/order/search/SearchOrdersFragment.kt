@@ -71,6 +71,13 @@ constructor(
         setHasOptionsMenu(true)
 
         scanQrCode()
+        searchByReceiver()
+    }
+
+    private fun searchByReceiver() {
+        search_order_receiver_name.setOnClickListener {
+            findNavController().navigate(R.id.action_searchOrdersFragment_to_receiverNameFragment)
+        }
     }
 
     private fun scanQrCode() {

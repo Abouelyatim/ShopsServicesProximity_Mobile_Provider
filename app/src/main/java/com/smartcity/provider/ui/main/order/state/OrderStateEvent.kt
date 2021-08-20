@@ -36,5 +36,10 @@ sealed class OrderStateEvent {
         var orderId : Long
     ) : OrderStateEvent()
 
+    class SearchOrderByReceiverEvent(
+        var firstName :String,
+        var lastName :String
+    ) : OrderStateEvent()
+
     class None: OrderStateEvent()
 }
