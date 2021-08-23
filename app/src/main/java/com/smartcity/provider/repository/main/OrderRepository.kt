@@ -755,6 +755,63 @@ constructor(
         }.asLiveData()
     }
 
+    fun attemptGetPastOrders(
+        id:Long
+    ): LiveData<DataState<OrderViewState>> {
+        return object: NetworkBoundResource<ListOrderResponse, Order, OrderViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            true,
+            true,
+            false
+        ){
+
+
+            // not applicable
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ListOrderResponse>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = OrderViewState(
+                            orderFields = OrderFields(
+                                searchOrderList = response.body.results
+                            )
+                        ),
+                        response = Response(
+                            SuccessHandling.DONE_Order,
+                            ResponseType.None()
+                        )
+                    )
+                )
+            }
+
+            // not applicable
+            override fun loadFromCache(): LiveData<OrderViewState> {
+                return AbsentLiveData.create()
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<ListOrderResponse>> {
+                return openApiMainService.getPastOrders(
+                    id= id
+                )
+            }
+
+            // not applicable
+            override suspend fun updateLocalDb(cacheObject: Order?) {
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptGetPastOrders", job)
+            }
+
+
+        }.asLiveData()
+    }
+
     private fun returnErrorResponse(errorMessage: String, responseType: ResponseType): LiveData<DataState<OrderViewState>>{
         Log.d(TAG, "returnErrorResponse: ${errorMessage}")
 

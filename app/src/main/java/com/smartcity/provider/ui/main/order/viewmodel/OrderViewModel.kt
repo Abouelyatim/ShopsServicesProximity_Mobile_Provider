@@ -137,6 +137,14 @@ constructor(
                 )
             }
 
+            is GetPastOrderEvent ->{
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    return orderRepository.attemptGetPastOrders(
+                        authToken.account_pk!!.toLong()
+                    )
+                }?: AbsentLiveData.create()
+            }
+
             is None ->{
                 return liveData {
                     emit(

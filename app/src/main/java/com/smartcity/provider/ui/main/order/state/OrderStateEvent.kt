@@ -50,5 +50,7 @@ sealed class OrderStateEvent {
         var note:String
     ) : OrderStateEvent()
 
+    class GetPastOrderEvent() : OrderStateEvent()
+
     class None: OrderStateEvent()
 }

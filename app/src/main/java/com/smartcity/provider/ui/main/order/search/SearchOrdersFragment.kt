@@ -2,21 +2,20 @@ package com.smartcity.provider.ui.main.order.search
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.budiyev.android.codescanner.AutoFocusMode
-import com.budiyev.android.codescanner.CodeScanner
-import com.budiyev.android.codescanner.DecodeCallback
-import com.budiyev.android.codescanner.ScanMode
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.BaseOrderFragment
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
+import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
 import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
+import com.smartcity.provider.ui.main.order.viewmodel.setSearchOrderListData
+import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.fragment_search_orders.*
 import javax.inject.Inject
 
@@ -73,6 +72,8 @@ constructor(
         scanQrCode()
         searchByReceiver()
         searchByDate()
+        searchPastOrders()
+        subscribeObservers()
     }
 
     private fun searchByDate() {
@@ -95,5 +96,38 @@ constructor(
                 stateChangeListener.isCameraPermissionGranted()
             }
         }
+    }
+
+    private fun searchPastOrders(){
+        search_past_orders.setOnClickListener {
+            viewModel.setStateEvent(
+                OrderStateEvent.GetPastOrderEvent()
+            )
+        }
+    }
+
+    private fun subscribeObservers() {
+        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
+            stateChangeListener.onDataStateChange(dataState)
+
+            if(dataState != null){
+                //set order list get it from network
+                dataState.data?.let { data ->
+                    data.response?.peekContent()?.let{ response ->
+                        if(response.message == SuccessHandling.DONE_Order){
+                            data.data?.let{
+                                it.peekContent()?.let{
+                                    it.orderFields.searchOrderList.let {
+                                        viewModel.setSearchOrderListData(it)
+                                        findNavController().navigate(R.id.action_searchOrdersFragment_to_viewSearchOrdersFragment)
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
 }

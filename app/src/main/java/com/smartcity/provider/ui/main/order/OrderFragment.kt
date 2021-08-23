@@ -79,7 +79,7 @@ constructor(
         val NEW = Pair<String,Int>("new",0)
         val ACCEPT= Pair<String,Int>("accept",1)
         val READY = Pair<String,Int>("ready",2)
-        val CONFIRMATION = Pair<String,Int>("confirmation",3)
+        val CONFIRMATION = Pair<String,Int>("waiting confirmation",3)
         val PROBLEM = Pair<String,Int>("problem",4)
     }
 
@@ -264,21 +264,21 @@ constructor(
     }
 
     private fun subscribeObservers(){
-        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+            viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
+                stateChangeListener.onDataStateChange(dataState)
 
-            if(dataState != null){
-                //set order list get it from network
-                dataState.data?.let { data ->
-                    data.data?.let{
-                        it.getContentIfNotHandled()?.let{
-                            viewModel.setOrderListData(it.orderFields.orderList)
-                            setEmptyListUi(it.orderFields.orderList.isEmpty())
+                if(dataState != null){
+                    //set order list get it from network
+                    dataState.data?.let { data ->
+                        data.data?.let{
+                            it.getContentIfNotHandled()?.let{
+                                viewModel.setOrderListData(it.orderFields.orderList)
+                                setEmptyListUi(it.orderFields.orderList.isEmpty())
+                            }
                         }
                     }
                 }
-            }
-        })
+            })
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             recyclerOrderAdapter.submitList(

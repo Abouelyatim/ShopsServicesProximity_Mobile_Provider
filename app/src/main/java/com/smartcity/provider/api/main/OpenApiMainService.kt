@@ -204,6 +204,11 @@ interface OpenApiMainService {
         @Query("id") id: Long?,
         @Query("note") note: String
     ):LiveData<GenericApiResponse<GenericResponse>>
+
+    @GET("order/current-provider-past-orders")
+    fun getPastOrders(
+        @Query("id") id: Long?
+    ):LiveData<GenericApiResponse<ListOrderResponse>>
 }
 
 

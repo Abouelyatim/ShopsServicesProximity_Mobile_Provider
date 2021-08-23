@@ -41,6 +41,9 @@
         <action
                 android:id="@+id/action_searchOrdersFragment_to_pickDateFragment"
                 app:destination="@id/pickDateFragment" />
+        <action
+                android:id="@+id/action_searchOrdersFragment_to_viewSearchOrdersFragment"
+                app:destination="@id/viewSearchOrdersFragment" />
     </fragment>
     <fragment
             android:id="@+id/scanQrCodeFragment"
