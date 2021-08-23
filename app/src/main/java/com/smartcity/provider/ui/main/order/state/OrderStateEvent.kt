@@ -45,5 +45,10 @@ sealed class OrderStateEvent {
         var date : String
     ) : OrderStateEvent()
 
+    class SetOrderNoteEvent(
+        var id:Long,
+        var note:String
+    ) : OrderStateEvent()
+
     class None: OrderStateEvent()
 }

@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
+import com.smartcity.provider.ui.main.order.AddOrderNoteFragment
 import com.smartcity.provider.ui.main.order.OrderFragment
 import com.smartcity.provider.ui.main.order.ViewOrderFragment
 import com.smartcity.provider.ui.main.order.search.*
@@ -47,6 +48,10 @@ constructor(
 
             PickDateFragment::class.java.name -> {
                 PickDateFragment(viewModelFactory, requestManager)
+            }
+
+            AddOrderNoteFragment::class.java.name -> {
+                AddOrderNoteFragment(viewModelFactory, requestManager)
             }
 
             else -> {

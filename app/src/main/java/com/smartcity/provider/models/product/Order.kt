@@ -49,7 +49,11 @@ data class Order(
 
     @SerializedName("orderState")
     @Expose
-    var orderState:OrderState
+    var orderState:OrderState,
+
+    @SerializedName("providerNote")
+    @Expose
+    var providerNote:String?,
 
 ) : Parcelable {
     override fun toString(): String {
@@ -63,6 +67,7 @@ data class Order(
                 "createAt=$createAt," +
                 "validDuration=$validDuration," +
                 "orderState=$orderState," +
+                "providerNote=$providerNote," +
                 ")"
     }
 }

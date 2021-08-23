@@ -130,6 +130,13 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
+            is SetOrderNoteEvent ->{
+                return orderRepository.attemptSetOrderNote(
+                    stateEvent.id,
+                    stateEvent.note
+                )
+            }
+
             is None ->{
                 return liveData {
                     emit(

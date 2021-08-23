@@ -198,6 +198,12 @@ interface OpenApiMainService {
         @Query("id") id: Long?,
         @Query("date") date: String?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
+
+    @PUT("order/current-store-note")
+    fun setOrderNote(
+        @Query("id") id: Long?,
+        @Query("note") note: String
+    ):LiveData<GenericApiResponse<GenericResponse>>
 }
 
 

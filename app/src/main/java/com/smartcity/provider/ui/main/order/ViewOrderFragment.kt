@@ -87,6 +87,7 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
 
+        setOrderNote()
         setOrderInformation()
         initProductsRecyclerView()
         setProductsList()
@@ -96,6 +97,20 @@ constructor(
         readyOrder()
         deliveredPickedUpOrder()
         setButtonsUi()
+    }
+
+    private fun setOrderNote() {
+        viewModel.getSelectedOrder()?.let { order ->
+            if(!order.providerNote.isNullOrEmpty()){
+                view_order_note.text = order.providerNote
+            }else{
+                view_order_note.text = "Add note"
+            }
+        }
+
+        add_note_container.setOnClickListener {
+            findNavController().navigate(R.id.action_viewOrderFragment_to_addOrderNoteFragment)
+        }
     }
 
     private fun getStepFromOrder(order:Order):OrderStep?{

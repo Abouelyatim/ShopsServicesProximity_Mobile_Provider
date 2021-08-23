@@ -22,7 +22,11 @@
             android:id="@+id/viewOrderFragment"
             android:name="com.smartcity.provider.ui.main.order.ViewOrderFragment"
             android:label="fragment_view_order"
-            tools:layout="@layout/fragment_view_order" />
+            tools:layout="@layout/fragment_view_order" >
+        <action
+                android:id="@+id/action_viewOrderFragment_to_addOrderNoteFragment"
+                app:destination="@id/addOrderNoteFragment" />
+    </fragment>
     <fragment
             android:id="@+id/searchOrdersFragment"
             android:name="com.smartcity.provider.ui.main.order.search.SearchOrdersFragment"
@@ -74,5 +78,10 @@
                 android:id="@+id/action_pickDateFragment_to_viewSearchOrdersFragment"
                 app:destination="@id/viewSearchOrdersFragment" />
     </fragment>
+    <fragment
+            android:id="@+id/addOrderNoteFragment"
+            android:name="com.smartcity.provider.ui.main.order.AddOrderNoteFragment"
+            android:label="fragment_add_order_note"
+            tools:layout="@layout/fragment_add_order_note" />
 
 </navigation>

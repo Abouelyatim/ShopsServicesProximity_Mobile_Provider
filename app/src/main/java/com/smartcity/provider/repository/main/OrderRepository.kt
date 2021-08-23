@@ -641,7 +641,6 @@ constructor(
         }.asLiveData()
     }
 
-
     fun attemptSearchOrderByDate(
         id:Long,
         date :String
@@ -701,6 +700,61 @@ constructor(
         }.asLiveData()
     }
 
+    fun attemptSetOrderNote(
+        id:Long,
+        note :String
+    ): LiveData<DataState<OrderViewState>> {
+        return object: NetworkBoundResource<GenericResponse, Order, OrderViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            true,
+            true,
+            false
+        ){
+
+
+            // not applicable
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = null,
+                        response = Response(
+                            SuccessHandling.CREATION_DONE,
+                            ResponseType.None()
+                        )
+                    )
+                )
+            }
+
+            // not applicable
+            override fun loadFromCache(): LiveData<OrderViewState> {
+                return AbsentLiveData.create()
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+                return openApiMainService.setOrderNote(
+                    id= id,
+                    note = note
+                )
+            }
+
+            // not applicable
+            override suspend fun updateLocalDb(cacheObject: Order?) {
+            }
+
+            override fun setJob(job: Job) {
+                addJob("attemptSetOrderNote", job)
+            }
+
+
+        }.asLiveData()
+    }
+
     private fun returnErrorResponse(errorMessage: String, responseType: ResponseType): LiveData<DataState<OrderViewState>>{
         Log.d(TAG, "returnErrorResponse: ${errorMessage}")
 
@@ -716,7 +770,6 @@ constructor(
             }
         }
     }
-
 }
 
 
