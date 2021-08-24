@@ -95,6 +95,14 @@ constructor(
                     stateEvent.id
                 )
             }
+
+            is UpdateProductsCustomCategoryEvent ->{
+                return customCategoryRepository.attemptUpdateProductsCustomCategory(
+                    stateEvent.products,
+                    stateEvent.category
+                )
+            }
+
             is None -> {
                 return liveData {
                     emit(

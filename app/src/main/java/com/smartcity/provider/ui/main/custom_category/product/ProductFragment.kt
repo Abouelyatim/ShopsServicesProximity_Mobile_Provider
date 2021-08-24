@@ -1,5 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.product
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.ui.AreYouSureCallback
@@ -21,8 +23,12 @@ import com.smartcity.provider.ui.main.custom_category.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
+import com.smartcity.provider.ui.main.order.OrderFilterAdapter
+import com.smartcity.provider.ui.main.order.viewmodel.getSelectedSortFilter
 import com.smartcity.provider.util.ActionConstants
+import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.SuccessHandling
+import com.smartcity.provider.util.SuccessHandling.Companion.CUSTOM_CATEGORY_UPDATE_DONE
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_product.*
 import javax.inject.Inject
@@ -35,10 +41,14 @@ constructor(
     private val requestManager: RequestManager
 ): BaseCustomCategoryFragment(R.layout.fragment_product),
     SwipeRefreshLayout.OnRefreshListener,
-    ProductAdapter.Interaction
+    ProductAdapter.Interaction,
+    OrderFilterAdapter.Interaction
 {
 
     private lateinit var productRecyclerAdapter: ProductAdapter
+
+    private var categoryProductAdapter: OrderFilterAdapter? = null
+    private lateinit var dialogView: View
 
     val viewModel: CustomCategoryViewModel by viewModels{
         viewModelFactory
@@ -98,6 +108,11 @@ constructor(
                 dataState.data?.let { data ->
                     data.response?.peekContent()?.let{ response ->
                         if(response.message.equals(SuccessHandling.DELETE_DONE)){
+                            ProductMain()
+                        }
+
+                        if (response.message == CUSTOM_CATEGORY_UPDATE_DONE){
+                            dialog.dismiss()
                             ProductMain()
                         }
                     }
@@ -187,19 +202,62 @@ constructor(
 
     }
 
+    var selectedProduct:Product? = null
+    override fun onItemMoved(item: Product) {
+        selectedProduct=item
+        showFilterDialog()
+    }
+
+    lateinit var dialog:BottomSheetDialog
+    private fun showFilterDialog() {
+        dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+        dialogView = layoutInflater.inflate(R.layout.dialog_move_product_custom_category, null)
+        dialog.setCancelable(true)
+        dialog.setContentView(dialogView)
+
+        val categoryRecyclerView = dialogView.findViewById<RecyclerView>(R.id.move_product_category)
+        categoryProductAdapter = OrderFilterAdapter(this@ProductFragment)
+        initCategoryRecyclerView(categoryRecyclerView, categoryProductAdapter!!)
+
+        categoryProductAdapter!!.submitList(
+            viewModel.getCustomCategoryFields().map { it.name },
+            ""
+        )
+
+        dialog.show()
+    }
+
+    private fun initCategoryRecyclerView(recyclerView: RecyclerView,recyclerAdapter:OrderFilterAdapter) {
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@ProductFragment.context,LinearLayoutManager.HORIZONTAL,false)
+
+            val rightSpacingDecorator = RightSpacingItemDecoration(0)
+            removeItemDecoration(rightSpacingDecorator) // does nothing if not applied already
+            addItemDecoration(rightSpacingDecorator)
+
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+
+                }
+            })
+            recyclerAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            adapter = recyclerAdapter
+        }
+    }
+
     fun deleteProduct(id:Long){
         viewModel.setStateEvent(CustomCategoryStateEvent.DeleteProduct(id))
     }
-
-
 
     override fun onResume() {
         super.onResume()
         viewModel.clearViewProductFields()
         viewModel.clearProductFields()
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -208,5 +266,19 @@ constructor(
         viewModel.clearProductFields()
         product_recyclerview.adapter = null
         setToolBareText("")
+    }
+
+    override fun onItemSelected(item: String) {
+        val category = viewModel.getCustomCategoryFields().find { it.name == item }
+        viewModel.setStateEvent(
+            CustomCategoryStateEvent.UpdateProductsCustomCategoryEvent(
+                listOf(selectedProduct!!.id),
+                category!!.pk.toLong()
+            )
+        )
+    }
+
+    override fun onItemDeSelected(item: String) {
+
     }
 }

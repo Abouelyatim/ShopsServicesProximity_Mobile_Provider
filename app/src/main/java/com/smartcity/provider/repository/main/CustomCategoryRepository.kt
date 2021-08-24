@@ -512,8 +512,6 @@ constructor(
         }.asLiveData()
     }
 
-
-
     fun attemptProductMain(
         id: Long
     ): LiveData<DataState<CustomCategoryViewState>> {
@@ -564,6 +562,63 @@ constructor(
 
             override fun setJob(job: Job) {
                 addJob("attemptProductMain", job)
+            }
+
+        }.asLiveData()
+    }
+
+    fun attemptUpdateProductsCustomCategory(
+        products: List<Long>,
+        category: Long
+    ): LiveData<DataState<CustomCategoryViewState>> {
+        return object :
+            NetworkBoundResource<GenericResponse, CustomCategory, CustomCategoryViewState>(
+                sessionManager.isConnectedToTheInternet(),
+                true,
+                true,
+                false
+            ) {
+            // Ignore
+            override suspend fun createCacheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+                Log.d(TAG, "handleApiSuccessResponse: ${response}")
+
+                onCompleteJob(
+                    DataState.data(
+                        data = null
+                        ,
+                        response = Response(
+                            SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE,
+                            ResponseType.SnackBar()
+                        )
+                    )
+                )
+
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+
+                return openApiMainService.updateProductsCustomCategory(
+                    products,
+                    category
+                )
+            }
+
+            override fun loadFromCache(): LiveData<CustomCategoryViewState> {
+                return AbsentLiveData.create()
+            }
+
+
+
+            override fun setJob(job: Job) {
+                addJob("attemptUpdateProductsCustomCategory", job)
+            }
+
+            override suspend fun updateLocalDb(cacheObject: CustomCategory?) {
+
             }
 
         }.asLiveData()

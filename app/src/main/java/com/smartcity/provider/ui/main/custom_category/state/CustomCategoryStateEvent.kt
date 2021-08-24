@@ -44,5 +44,10 @@ sealed class CustomCategoryStateEvent {
         val id:Long
     ):CustomCategoryStateEvent()
 
+    data class UpdateProductsCustomCategoryEvent(
+        val products: List<Long>,
+        val category: Long
+    ): CustomCategoryStateEvent()
+
     class None: CustomCategoryStateEvent()
 }

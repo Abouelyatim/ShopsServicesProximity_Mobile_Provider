@@ -209,6 +209,12 @@ interface OpenApiMainService {
     fun getPastOrders(
         @Query("id") id: Long?
     ):LiveData<GenericApiResponse<ListOrderResponse>>
+
+    @PUT("product/move-category")
+    fun updateProductsCustomCategory(
+        @Query("products") products: List<Long>,
+        @Query("category") category: Long
+    ): LiveData<GenericApiResponse<GenericResponse>>
 }
 
 

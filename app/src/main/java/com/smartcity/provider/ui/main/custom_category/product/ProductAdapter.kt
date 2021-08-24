@@ -105,7 +105,9 @@ class ProductAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(item: Product) = with(itemView) {
 
-
+            itemView.move_product.setOnClickListener {
+                interaction?.onItemMoved(item)
+            }
 
             itemView.setOnClickListener {
 
@@ -150,6 +152,6 @@ class ProductAdapter(
 
     interface Interaction {
         fun onItemSelected(item: Product,action:Int)
+        fun onItemMoved(item: Product)
     }
-
 }
