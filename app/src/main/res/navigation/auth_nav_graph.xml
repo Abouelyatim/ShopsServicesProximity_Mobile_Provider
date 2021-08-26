@@ -58,26 +58,6 @@
             android:name="com.smartcity.provider.ui.auth.RegisterFragment"
             android:label="fragment_register"
             tools:layout="@layout/fragment_register" >
-        <action
-                android:id="@+id/action_registerFragment_to_chooseServiceFragment"
-                app:destination="@id/chooseServiceFragment" />
     </fragment>
-    <fragment
-            android:id="@+id/chooseServiceFragment"
-            android:name="com.smartcity.provider.ui.auth.ChooseServiceFragment"
-            android:label="fragment_choose_service"
-            tools:layout="@layout/fragment_choose_service" >
-        <action
-                android:id="@+id/action_chooseServiceFragment_to_createStoreFragment"
-                app:destination="@id/createStoreFragment" />
-    </fragment>
-    <fragment
-            android:id="@+id/createStoreFragment"
-            android:name="com.smartcity.provider.ui.auth.CreateStoreFragment"
-            android:label="fragment_create_store"
-            tools:layout="@layout/fragment_create_store" >
-        <action
-                android:id="@+id/action_createStoreFragment_to_launcherFragment"
-                app:destination="@id/launcherFragment" />
-    </fragment>
+
 </navigation>

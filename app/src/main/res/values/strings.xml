@@ -74,6 +74,7 @@
     <string name="delete">Delete</string>
 
     <string name="AuthNavHost">AuthNavHost</string>
+    <string name="ConfigNavHost">ConfigNavHost</string>
     <string name="AccountFragmentFactory">AccountFragmentFactory</string>
     <string name="BlogFragmentFactory">BlogFragmentFactory</string>
     <string name="CreateBlogFragmentFactory">CreateBlogFragmentFactory</string>

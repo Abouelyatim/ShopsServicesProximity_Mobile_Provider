@@ -34,6 +34,10 @@
 
         <activity android:name="com.smartcity.provider.ui.main.MainActivity"
                 android:windowSoftInputMode="adjustResize"
+                />
+
+        <activity android:name="com.smartcity.provider.ui.config.ConfigActivity"
+                android:windowSoftInputMode="adjustResize"
                 >
 
         </activity>

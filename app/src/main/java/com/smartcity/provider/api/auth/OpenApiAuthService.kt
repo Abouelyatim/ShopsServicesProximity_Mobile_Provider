@@ -1,16 +1,13 @@
 package com.smartcity.provider.api.auth
 
 import androidx.lifecycle.LiveData
-import com.smartcity.provider.api.auth.network_responses.CategoryStoreResponse
-import com.smartcity.provider.util.GenericApiResponse
 import com.smartcity.provider.api.auth.network_responses.LoginResponse
 import com.smartcity.provider.api.auth.network_responses.RegistrationResponse
-import com.smartcity.provider.api.auth.network_responses.StoreResponse
 import com.smartcity.provider.di.auth.AuthScope
-import com.smartcity.provider.models.StoreAddress
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.http.*
+import com.smartcity.provider.util.GenericApiResponse
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.POST
 
 @AuthScope
 interface OpenApiAuthService {
@@ -30,16 +27,4 @@ interface OpenApiAuthService {
         @Field("passWord") password: String,
         @Field("passWord2") password2: String
     ): LiveData<GenericApiResponse<RegistrationResponse>>
-
-    @Multipart
-    @POST("store/create")
-    fun createStore(
-        @Part("store")  store: RequestBody,
-        @Part image: MultipartBody.Part?
-    ): LiveData<GenericApiResponse<StoreResponse>>
-
-    @GET("store/category/all")
-    fun getCategoryStore(
-    ): LiveData<GenericApiResponse<CategoryStoreResponse>>
-
 }

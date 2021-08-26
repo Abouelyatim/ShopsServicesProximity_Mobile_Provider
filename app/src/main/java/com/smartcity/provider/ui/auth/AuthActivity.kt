@@ -13,6 +13,7 @@ import com.smartcity.provider.R
 import com.smartcity.provider.fragments.auth.AuthNavHostFragment
 import com.smartcity.provider.ui.BaseActivity
 import com.smartcity.provider.ui.auth.state.AuthStateEvent
+import com.smartcity.provider.ui.config.ConfigActivity
 import com.smartcity.provider.ui.main.MainActivity
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE
@@ -103,16 +104,16 @@ class AuthActivity : BaseActivity()
             Log.d(TAG, "AuthActivity, subscribeObservers: AuthDataState: ${dataState}")
             dataState.let{ authToken ->
                 if(authToken != null && authToken.account_pk != -1 && authToken.token != null){
-                    navMainActivity()
+                    navConfigActivity()
                 }
 
             }
         })
     }
 
-    fun navMainActivity(){
-        Log.d(TAG, "navMainActivity: called.")
-        val intent = Intent(this, MainActivity::class.java)
+    private fun navConfigActivity(){
+        Log.d(TAG, "navConfigActivity: called.")
+        val intent = Intent(this, ConfigActivity::class.java)
         startActivity(intent)
         finish()
         (application as BaseApplication).releaseAuthComponent()

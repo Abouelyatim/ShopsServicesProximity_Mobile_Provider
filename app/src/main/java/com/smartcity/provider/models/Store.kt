@@ -10,14 +10,26 @@ data class Store (
     @SerializedName("name")
     @Expose
     var name:String,
+
     @SerializedName("description")
     @Expose
     var description:String,
+
     @SerializedName("storeAddress")
     @Expose
     var storeAddress:StoreAddress,
+
     @SerializedName("provider")
     @Expose
     var provider:Long,
+
+    @SerializedName("telephoneNumber")
+    @Expose
+    var telephoneNumber:String,
+
+    @SerializedName("defaultTelephoneNumber")
+    @Expose
+    var defaultTelephoneNumber:String,
+
 ): Parcelable {
 }

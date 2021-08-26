@@ -4,14 +4,11 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.smartcity.provider.api.auth.OpenApiAuthService
-import com.smartcity.provider.api.auth.network_responses.CategoryStoreResponse
 import com.smartcity.provider.api.auth.network_responses.LoginResponse
 import com.smartcity.provider.api.auth.network_responses.RegistrationResponse
-import com.smartcity.provider.api.auth.network_responses.StoreResponse
 import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.models.AccountProperties
 import com.smartcity.provider.models.AuthToken
-import com.smartcity.provider.models.StoreAddress
 import com.smartcity.provider.persistence.AccountPropertiesDao
 import com.smartcity.provider.persistence.AuthTokenDao
 import com.smartcity.provider.repository.JobManager
@@ -20,7 +17,9 @@ import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.DataState
 import com.smartcity.provider.ui.Response
 import com.smartcity.provider.ui.ResponseType
-import com.smartcity.provider.ui.auth.state.*
+import com.smartcity.provider.ui.auth.state.AuthViewState
+import com.smartcity.provider.ui.auth.state.LoginFields
+import com.smartcity.provider.ui.auth.state.RegistrationFields
 import com.smartcity.provider.util.AbsentLiveData
 import com.smartcity.provider.util.ApiSuccessResponse
 import com.smartcity.provider.util.ErrorHandling.Companion.ERROR_SAVE_AUTH_TOKEN
@@ -29,10 +28,7 @@ import com.smartcity.provider.util.GenericApiResponse
 import com.smartcity.provider.util.NotificationSettings.Companion.SETTINGS_NOTIFICATION
 import com.smartcity.provider.util.PreferenceKeys
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE
-import com.smartcity.provider.util.SuccessHandling.Companion.STORE_CREATION_DONE
 import kotlinx.coroutines.Job
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 @AuthScope
@@ -131,62 +127,6 @@ constructor(
 
         }.asLiveData()
     }
-    fun attemptCreateStore(
-        store: RequestBody,
-        image: MultipartBody.Part?
-    ): LiveData<DataState<AuthViewState>> {
-       /* val storeFieldErrors = StoreFields(name,description,address,category).isValidForLogin()
-        if(!storeFieldErrors.equals(RegistrationFields.RegistrationError.none())){
-            return returnErrorResponse(storeFieldErrors, ResponseType.Dialog())
-        }*/
-
-        return object: NetworkBoundResource<StoreResponse, Any, AuthViewState>(
-            sessionManager.isConnectedToTheInternet(),
-            true,
-            true,
-            false
-        ){
-            // Ignore
-            override fun loadFromCache(): LiveData<AuthViewState> {
-                return AbsentLiveData.create()
-            }
-
-            // Ignore
-            override suspend fun updateLocalDb(cacheObject: Any?) {
-
-            }
-
-            // not used in this case
-            override suspend fun createCacheRequestAndReturn() {
-
-            }
-            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<StoreResponse>) {
-
-                Log.d(TAG, "handleApiSuccessResponse: ${response}")
-
-
-
-                onCompleteJob(
-                    DataState.data(
-                        data = null
-                        ,
-                        response = Response(
-                            STORE_CREATION_DONE,
-                            ResponseType.Toast()
-                        )
-                    )
-                )
-            }
-            override fun createCall(): LiveData<GenericApiResponse<StoreResponse>> {
-                return openApiAuthService.createStore(store,image)
-            }
-
-            override fun setJob(job: Job) {
-                addJob("attemptCreateStore", job)
-            }
-        }.asLiveData()
-
-    }
 
     fun attemptRegistration(
         email: String,
@@ -259,11 +199,7 @@ constructor(
                 onCompleteJob(
                     DataState.data(
                         data = AuthViewState(
-                            authToken = AuthToken(response.body.pk, null),
-                            registrationState= RegistrationState(
-                                isRegistred = true
-                            )
-
+                            authToken = AuthToken(response.body.pk, null)
                         ),
                         response = null
                     )
@@ -357,57 +293,6 @@ constructor(
 
             }.asLiveData()
         }
-    }
-
-    fun attemptGetCategoryStore(
-    ): LiveData<DataState<AuthViewState>> {
-
-        return object: NetworkBoundResource<CategoryStoreResponse, Any, AuthViewState>(
-            sessionManager.isConnectedToTheInternet(),
-            true,
-            true,
-            false
-        ){
-            // Ignore
-            override fun loadFromCache(): LiveData<AuthViewState> {
-                return AbsentLiveData.create()
-            }
-
-            // Ignore
-            override suspend fun updateLocalDb(cacheObject: Any?) {
-
-            }
-
-            // not used in this case
-            override suspend fun createCacheRequestAndReturn() {
-
-            }
-            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<CategoryStoreResponse>) {
-
-
-                Log.d(TAG, "handleApiSuccessResponse: ${response}")
-                val list=response.body.response.map {
-                    it
-                }
-                onCompleteJob(
-                    DataState.data(
-                        data = AuthViewState(
-                            categoryStore = CategoryStore(list)
-                        )
-                        ,
-                        response = null
-                    )
-                )
-            }
-            override fun createCall(): LiveData<GenericApiResponse<CategoryStoreResponse>> {
-                return openApiAuthService.getCategoryStore()
-            }
-
-            override fun setJob(job: Job) {
-                addJob("attemptCreateStore", job)
-            }
-        }.asLiveData()
-
     }
 
     private fun saveAuthenticatedUserToPrefs(email: String){

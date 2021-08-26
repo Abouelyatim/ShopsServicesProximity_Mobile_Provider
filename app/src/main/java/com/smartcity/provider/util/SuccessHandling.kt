@@ -11,6 +11,7 @@ class SuccessHandling {
         const val RESPONSE_GET_NOTIFICATION_SETTINGS_DONE = "Done getting notification settings."
 
         const val STORE_CREATION_DONE = "Done cration store."
+        const val STORE_CATEGORIES_DONE = "Done store categories."
         const val CUSTOM_CATEGORY_CREATION_DONE = "Done cration."
 
         const val CREATION_DONE = "created."

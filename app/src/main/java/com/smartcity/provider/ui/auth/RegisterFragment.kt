@@ -50,15 +50,6 @@ constructor(
         viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
             stateChangeListener.onDataStateChange(dataState)
 
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.data?.peekContent()?.let{
-                        viewModel.setIsRegistred(
-                            it.registrationState.isRegistred
-                        )
-                    }
-                }
-            }
 
         })
         viewModel.viewState.observe(viewLifecycleOwner, Observer{viewState ->
@@ -69,16 +60,10 @@ constructor(
                 it.registration_confirm_password?.let{input_password_confirm.setText(it)}
             }
         })
+    }
 
-        viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-            if(viewModel.isRegistred()){
-                navChooseService()
-            }
-        })
-    }
-    fun navChooseService(){
-        findNavController().navigate(R.id.action_registerFragment_to_chooseServiceFragment   )
-    }
+
+
     fun register(){
         viewModel.setRegistrationFields(
             RegistrationFields(
@@ -88,7 +73,7 @@ constructor(
                 input_password_confirm.text.toString()
             )
         )
-        viewModel.setIsRegistred(false)
+
         viewModel.setStateEvent(
             RegisterAttemptEvent(
                 input_email.text.toString(),
@@ -101,7 +86,6 @@ constructor(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.setIsRegistred(false)
         viewModel.setRegistrationFields(
             RegistrationFields(
                 input_email.text.toString(),

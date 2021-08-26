@@ -2,6 +2,7 @@ package com.smartcity.provider.di
 
 import android.app.Application
 import com.smartcity.provider.di.auth.AuthComponent
+import com.smartcity.provider.di.config.ConfigComponent
 import com.smartcity.provider.di.main.MainComponent
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseActivity
@@ -33,8 +34,9 @@ interface AppComponent  {
 
     fun authComponent(): AuthComponent.Factory
 
-    fun mainComponent(): MainComponent.Factory
+    fun configComponent(): ConfigComponent.Factory
 
+    fun mainComponent(): MainComponent.Factory
 }
 
 

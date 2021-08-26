@@ -14,61 +14,10 @@ data class AuthViewState(
 
     var loginFields: LoginFields? = LoginFields(),
 
-    var authToken: AuthToken? = null,
-
-    var registrationState: RegistrationState = RegistrationState(),
-
-    var storeFields: StoreFields= StoreFields(),
-
-    var categoryStore: CategoryStore= CategoryStore()
+    var authToken: AuthToken? = null
 
 ) : Parcelable
-@Parcelize
-data class RegistrationState(
-    var isRegistred: Boolean = false
-) : Parcelable
 
-@Parcelize
-data class CategoryStore(
-    var listCategoryStore: List<String> ?=null
-) : Parcelable
-
-@Parcelize
-data class StoreFields(
-    var store_name: String? = null,
-    var store_description: String? = null,
-    var store_address: StoreAddress? = null,
-    var store_category: List<String>?=null,
-    var newImageUri: Uri? = null
-) : Parcelable {
-    class LoginError {
-
-        companion object{
-
-            fun mustFillAllFields(): String{
-                return "You can't create store without an name and description and address."
-            }
-
-            fun none():String{
-                return "None"
-            }
-
-        }
-    }
-    fun isValidForLogin(): String{
-
-        if(store_name.isNullOrEmpty()
-            || store_description.isNullOrEmpty()){
-
-            return LoginError.mustFillAllFields()
-        }
-        return LoginError.none()
-    }
-
-    override fun toString(): String {
-        return "LoginState(store_name=$store_name, store_description=$store_description, store_address=$store_address)"
-    }
-}
 @Parcelize
 data class RegistrationFields(
     var registration_email: String? = null,
