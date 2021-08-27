@@ -20,7 +20,7 @@ import com.smartcity.provider.R
 import com.smartcity.provider.models.Store
 import com.smartcity.provider.models.StoreAddress
 import com.smartcity.provider.ui.*
-import com.smartcity.provider.ui.auth.GpsTracker
+import com.smartcity.provider.util.GpsTracker
 import com.smartcity.provider.ui.config.state.ConfigStateEvent
 import com.smartcity.provider.ui.config.viewmodel.*
 import com.smartcity.provider.util.Constants

@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.auth
+package com.smartcity.provider.util
 
 
 import android.Manifest
