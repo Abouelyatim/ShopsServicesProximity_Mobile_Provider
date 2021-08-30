@@ -118,12 +118,6 @@ constructor(
         })
     }
 
-    private fun getOffers() {
-        viewModel.setStateEvent(
-            AccountStateEvent.GetOffersEvent()
-        )
-    }
-
     private fun createOffer() {
         val offerFieldsErrors=viewModel.getCurrentViewStateOrNew().discountFields.isValidForCreation()
         if(!offerFieldsErrors.equals(CustomCategoryViewState.ProductFields.CreateProductError.none())){

@@ -70,12 +70,6 @@ constructor(
         setInformation()
     }
 
-    private fun getOffers() {
-        viewModel.setStateEvent(
-            AccountStateEvent.GetOffersEvent()
-        )
-    }
-
     private fun subscribeObservers() {
         viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
