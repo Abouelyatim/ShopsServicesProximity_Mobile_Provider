@@ -1,6 +1,5 @@
 package com.smartcity.provider.ui.auth
 
-
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -13,25 +12,21 @@ import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.ui.auth.state.AuthStateEvent.*
 import com.smartcity.provider.ui.auth.state.LoginFields
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 @AuthScope
 class LoginFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory
-): BaseAuthFragment(R.layout.fragment_login) {
-
-
-
-    val viewModel: AuthViewModel by viewModels{
-        viewModelFactory
-    }
+): BaseAuthFragment(R.layout.fragment_login,viewModelFactory) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,10 +37,6 @@ constructor(
         login_button.setOnClickListener {
             login()
         }
-    }
-
-    override fun cancelActiveJobs() {
-        viewModel.cancelActiveJobs()
     }
 
     fun subscribeObservers(){
@@ -75,7 +66,6 @@ constructor(
             )
         )
     }
-
 }
 
 

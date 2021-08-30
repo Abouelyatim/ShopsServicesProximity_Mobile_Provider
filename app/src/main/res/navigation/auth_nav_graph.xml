@@ -39,13 +39,6 @@
 
     </fragment>
 
-
-    <fragment
-            android:id="@+id/forgotPasswordFragment"
-            android:name="com.smartcity.provider.ui.auth.ForgotPasswordFragment"
-            android:label="fragment_forgot_password"
-            tools:layout="@layout/fragment_forgot_password" />
-
     <fragment
             android:id="@+id/loginFragment"
             android:name="com.smartcity.provider.ui.auth.LoginFragment"

@@ -4,7 +4,6 @@ import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.auth.AuthScope
-import com.smartcity.provider.ui.auth.ForgotPasswordFragment
 import com.smartcity.provider.ui.auth.LauncherFragment
 import com.smartcity.provider.ui.auth.LoginFragment
 import com.smartcity.provider.ui.auth.RegisterFragment
@@ -34,14 +33,8 @@ constructor(
                 RegisterFragment(viewModelFactory)
             }
 
-            ForgotPasswordFragment::class.java.name -> {
-                ForgotPasswordFragment(viewModelFactory)
-            }
-
             else -> {
                 LauncherFragment(viewModelFactory)
             }
         }
-
-
 }
