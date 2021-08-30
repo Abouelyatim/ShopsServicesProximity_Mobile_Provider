@@ -1,12 +1,8 @@
-package com.smartcity.provider.ui.main.order
+package com.smartcity.provider.ui.main.order.order.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.*
 import com.smartcity.provider.R

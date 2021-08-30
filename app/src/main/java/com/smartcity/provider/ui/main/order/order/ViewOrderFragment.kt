@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.order
+package com.smartcity.provider.ui.main.order.order
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -22,33 +21,31 @@ import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.product.Order
 import com.smartcity.provider.models.product.OrderType
 import com.smartcity.provider.ui.AreYouSureCallback
-import com.smartcity.provider.ui.UIMessage
-import com.smartcity.provider.ui.UIMessageType
+import com.smartcity.provider.ui.main.order.BaseOrderFragment
+import com.smartcity.provider.ui.main.order.order.adapters.OrderProductAdapter
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
-import com.smartcity.provider.ui.main.order.viewmodel.*
-import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.DateUtils
+import com.smartcity.provider.ui.main.order.viewmodel.getOrderList
+import com.smartcity.provider.ui.main.order.viewmodel.getSelectedOrder
+import com.smartcity.provider.ui.main.order.viewmodel.setOrderListData
+import com.smartcity.provider.util.*
 import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDateTime
-import com.smartcity.provider.util.SuccessHandling.Companion.CUSTOM_CATEGORY_UPDATE_DONE
-import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_order.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ViewOrderFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseOrderFragment(R.layout.fragment_view_order)
+): BaseOrderFragment(R.layout.fragment_view_order,viewModelFactory)
 {
     private lateinit var orderProductRecyclerAdapter: OrderProductAdapter
-    
-    val viewModel: OrderViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +75,7 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -168,11 +165,18 @@ constructor(
                     // ignore
                 }
             }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_accept),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
+
+            uiCommunicationListener.onResponseReceived(
+                response = Response(
+                    message = getString(R.string.are_you_sure_accept),
+                    uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                    messageType = MessageType.Info()
+                ),
+                stateMessageCallback = object: StateMessageCallback {
+                    override fun removeMessageFromStack() {
+                        viewModel.clearStateMessage()
+                    }
+                }
             )
         }
 
@@ -189,11 +193,18 @@ constructor(
                     // ignore
                 }
             }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_reject),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
+
+            uiCommunicationListener.onResponseReceived(
+                response = Response(
+                    message = getString(R.string.are_you_sure_reject),
+                    uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                    messageType = MessageType.Info()
+                ),
+                stateMessageCallback = object: StateMessageCallback {
+                    override fun removeMessageFromStack() {
+                        viewModel.clearStateMessage()
+                    }
+                }
             )
         }
     }
@@ -212,11 +223,18 @@ constructor(
                     // ignore
                 }
             }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_ready),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
+
+            uiCommunicationListener.onResponseReceived(
+                response = Response(
+                    message = getString(R.string.are_you_sure_ready),
+                    uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                    messageType = MessageType.Info()
+                ),
+                stateMessageCallback = object: StateMessageCallback {
+                    override fun removeMessageFromStack() {
+                        viewModel.clearStateMessage()
+                    }
+                }
             )
         }
     }
@@ -303,30 +321,28 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                //set Product list get it from network
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        when(response.message){
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                            CUSTOM_CATEGORY_UPDATE_DONE ->{
-                                updateOrderList()
+            stateMessage?.let {
 
-                            }
+                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
+                    updateOrderList()
+                }
 
-                            else ->{
-
-                            }
-
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
-
         })
 
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
     }
 
     private fun updateOrderList() {
@@ -409,5 +425,4 @@ constructor(
             view_order_product_rest.text=(order.bill!!.total-order.bill!!.alreadyPaid).toString()+ Constants.DOLLAR
         }
     }
-
 }

@@ -1,39 +1,35 @@
-package com.smartcity.provider.ui.main.order
+package com.smartcity.provider.ui.main.order.order
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
+import com.smartcity.provider.ui.main.order.BaseOrderFragment
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
-import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
 import com.smartcity.provider.ui.main.order.viewmodel.getSelectedOrder
-import com.smartcity.provider.ui.main.order.viewmodel.setOrderListData
 import com.smartcity.provider.ui.main.order.viewmodel.setSelectedOrder
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.fragment_add_order_note.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class AddOrderNoteFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseOrderFragment(R.layout.fragment_add_order_note)
+): BaseOrderFragment(R.layout.fragment_add_order_note,viewModelFactory)
 {
-    val viewModel: OrderViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +59,7 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -81,22 +77,30 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-            if(dataState != null){
-                //set Product list get it from network
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message == SuccessHandling.CREATION_DONE){
-                            val order = viewModel.getSelectedOrder()
-                            order!!.providerNote = input_order_note.text.toString()
-                            viewModel.setSelectedOrder(order)
-                            findNavController().popBackStack()
+            stateMessage?.let {
+
+                if(stateMessage.response.message.equals(SuccessHandling.CREATION_DONE)){
+                    val order = viewModel.getSelectedOrder()
+                    order!!.providerNote = input_order_note.text.toString()
+                    viewModel.setSelectedOrder(order)
+                    findNavController().popBackStack()
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
     }
 

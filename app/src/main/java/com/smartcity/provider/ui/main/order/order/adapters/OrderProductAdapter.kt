@@ -1,7 +1,6 @@
-package com.smartcity.provider.ui.main.order
+package com.smartcity.provider.ui.main.order.order.adapters
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.smartcity.provider.R
 import com.smartcity.provider.models.OfferType
 import com.smartcity.provider.models.product.OrderProductVariant
-import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.util.Constants
 import kotlinx.android.synthetic.main.layout_product_order_item.view.*
 import java.math.BigDecimal

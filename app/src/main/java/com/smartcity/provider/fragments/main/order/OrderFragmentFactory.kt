@@ -4,9 +4,9 @@ import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.ui.main.order.AddOrderNoteFragment
-import com.smartcity.provider.ui.main.order.OrderFragment
-import com.smartcity.provider.ui.main.order.ViewOrderFragment
+import com.smartcity.provider.ui.main.order.order.AddOrderNoteFragment
+import com.smartcity.provider.ui.main.order.order.OrderFragment
+import com.smartcity.provider.ui.main.order.order.ViewOrderFragment
 import com.smartcity.provider.ui.main.order.search.*
 import javax.inject.Inject
 

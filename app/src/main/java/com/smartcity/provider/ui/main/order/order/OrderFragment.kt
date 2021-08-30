@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.order
+package com.smartcity.provider.ui.main.order.order
 
 
 import android.os.Bundle
@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -24,19 +23,24 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.smartcity.provider.R
 import com.smartcity.provider.models.OrderStep
 import com.smartcity.provider.models.product.Order
-import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.getSelectedActionPositions
-import com.smartcity.provider.ui.main.order.OrderActionAdapter.Companion.setSelectedActionPositions
-import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.ALL
-import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.DATE
-import com.smartcity.provider.ui.main.order.OrderFragment.ActionOrder.TODAY
-import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.ACCEPT
-import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.CONFIRMATION
-import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.NEW
-import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.PROBLEM
-import com.smartcity.provider.ui.main.order.OrderFragment.StepsOrder.READY
-import com.smartcity.provider.ui.main.order.OrderStepsAdapter.Companion.getSelectedStepPositions
-import com.smartcity.provider.ui.main.order.OrderStepsAdapter.Companion.setSelectedStepPositions
+import com.smartcity.provider.ui.main.order.BaseOrderFragment
 import com.smartcity.provider.ui.main.order.notification.Events
+import com.smartcity.provider.ui.main.order.order.OrderFragment.ActionOrder.ALL
+import com.smartcity.provider.ui.main.order.order.OrderFragment.ActionOrder.DATE
+import com.smartcity.provider.ui.main.order.order.OrderFragment.ActionOrder.TODAY
+import com.smartcity.provider.ui.main.order.order.OrderFragment.StepsOrder.ACCEPT
+import com.smartcity.provider.ui.main.order.order.OrderFragment.StepsOrder.CONFIRMATION
+import com.smartcity.provider.ui.main.order.order.OrderFragment.StepsOrder.NEW
+import com.smartcity.provider.ui.main.order.order.OrderFragment.StepsOrder.PROBLEM
+import com.smartcity.provider.ui.main.order.order.OrderFragment.StepsOrder.READY
+import com.smartcity.provider.ui.main.order.order.adapters.OrderActionAdapter
+import com.smartcity.provider.ui.main.order.order.adapters.OrderActionAdapter.Companion.getSelectedActionPositions
+import com.smartcity.provider.ui.main.order.order.adapters.OrderActionAdapter.Companion.setSelectedActionPositions
+import com.smartcity.provider.ui.main.order.order.adapters.OrderAdapter
+import com.smartcity.provider.ui.main.order.order.adapters.OrderFilterAdapter
+import com.smartcity.provider.ui.main.order.order.adapters.OrderStepsAdapter
+import com.smartcity.provider.ui.main.order.order.adapters.OrderStepsAdapter.Companion.getSelectedStepPositions
+import com.smartcity.provider.ui.main.order.order.adapters.OrderStepsAdapter.Companion.setSelectedStepPositions
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
@@ -44,17 +48,22 @@ import com.smartcity.provider.ui.main.order.viewmodel.*
 import com.smartcity.provider.util.DateUtils.Companion.convertDatePickerStringDateToLong
 import com.smartcity.provider.util.DateUtils.Companion.convertLongToStringDate
 import com.smartcity.provider.util.RightSpacingItemDecoration
+import com.smartcity.provider.util.StateMessageCallback
+import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class OrderFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseOrderFragment(R.layout.fragment_order),
+): BaseOrderFragment(R.layout.fragment_order,viewModelFactory),
     OrderActionAdapter.Interaction,
     OrderAdapter.Interaction,
     OrderStepsAdapter.Interaction,
@@ -82,12 +91,6 @@ constructor(
         val CONFIRMATION = Pair<String,Int>("waiting confirmation",3)
         val PROBLEM = Pair<String,Int>("problem",4)
     }
-
-
-    val viewModel: OrderViewModel by viewModels{
-        viewModelFactory
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,7 +120,7 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -264,23 +267,36 @@ constructor(
     }
 
     private fun subscribeObservers(){
-            viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-                stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                if(dataState != null){
-                    //set order list get it from network
-                    dataState.data?.let { data ->
-                        data.data?.let{
-                            it.getContentIfNotHandled()?.let{
-                                viewModel.setOrderListData(it.orderFields.orderList)
-                                setEmptyListUi(it.orderFields.orderList.isEmpty())
-                            }
+            stateMessage?.let {
+
+                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
+                    findNavController().popBackStack()
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
-            })
+                )
+            }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
+
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
+
+            setEmptyListUi(
+                viewModel.getOrderList().isEmpty()
+            )
+
             recyclerOrderAdapter.submitList(
                 viewModel.getOrderList()
             )
@@ -460,7 +476,7 @@ constructor(
 
     private  fun resetUI(){
         orders_recyclerview.smoothScrollToPosition(0)
-        stateChangeListener.hideSoftKeyboard()
+        uiCommunicationListener.hideSoftKeyboard()
         focusable_view.requestFocus()
     }
 
@@ -496,7 +512,7 @@ constructor(
         return super.onOptionsItemSelected(item)
     }
 
-    private fun initFilterOrderRecyclerView(recyclerView: RecyclerView,recyclerAdapter:OrderFilterAdapter) {
+    private fun initFilterOrderRecyclerView(recyclerView: RecyclerView,recyclerAdapter: OrderFilterAdapter) {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@OrderFragment.context,LinearLayoutManager.HORIZONTAL,false)
 

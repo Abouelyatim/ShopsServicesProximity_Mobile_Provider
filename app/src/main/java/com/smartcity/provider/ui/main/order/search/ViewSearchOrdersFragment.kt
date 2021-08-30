@@ -3,7 +3,6 @@ package com.smartcity.provider.ui.main.order.search
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,31 +11,29 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Order
 import com.smartcity.provider.ui.main.order.BaseOrderFragment
-import com.smartcity.provider.ui.main.order.OrderAdapter
+import com.smartcity.provider.ui.main.order.order.adapters.OrderAdapter
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderViewState
-import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
 import com.smartcity.provider.ui.main.order.viewmodel.getSearchOrderList
 import com.smartcity.provider.ui.main.order.viewmodel.setSelectedOrder
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_search_orders.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ViewSearchOrdersFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseOrderFragment(R.layout.fragment_view_search_orders),
+): BaseOrderFragment(R.layout.fragment_view_search_orders,viewModelFactory),
     OrderAdapter.Interaction
 {
 
     private lateinit var recyclerOrderAdapter: OrderAdapter
-
-    val viewModel: OrderViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +63,7 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 

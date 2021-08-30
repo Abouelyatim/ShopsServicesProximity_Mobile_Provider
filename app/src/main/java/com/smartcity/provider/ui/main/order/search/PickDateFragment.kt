@@ -3,39 +3,34 @@ package com.smartcity.provider.ui.main.order.search
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.budiyev.android.codescanner.CodeScanner
 import com.bumptech.glide.RequestManager
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
-import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.order.BaseOrderFragment
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
-import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
-import com.smartcity.provider.ui.main.order.viewmodel.setSearchOrderListData
 import com.smartcity.provider.util.DateUtils
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.fragment_pick_date.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PickDateFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseOrderFragment(R.layout.fragment_pick_date){
-
-    val viewModel: OrderViewModel by viewModels{
-        viewModelFactory
-    }
+): BaseOrderFragment(R.layout.fragment_pick_date,viewModelFactory){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +60,7 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -73,7 +68,6 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-
 
         subscribeObservers()
         pickDate()
@@ -119,27 +113,27 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-            if(dataState != null){
-                //set order list get it from network
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message == SuccessHandling.DONE_Order){
-                            data.data?.let{
-                                it.peekContent()?.let{
-                                    it.orderFields.searchOrderList.let {
-                                        viewModel.setSearchOrderListData(it)
-                                        navViewSearch()
-                                    }
-                                }
+            stateMessage?.let {
 
-                            }
+                if(stateMessage.response.message.equals(SuccessHandling.DONE_Order)){
+                    navViewSearch()
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
     }
 

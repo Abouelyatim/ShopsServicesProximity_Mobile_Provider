@@ -18,7 +18,7 @@ import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.custom_category.viewmodel.*
-import com.smartcity.provider.ui.main.order.OrderFilterAdapter
+import com.smartcity.provider.ui.main.order.order.adapters.OrderFilterAdapter
 import com.smartcity.provider.util.*
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -222,7 +222,7 @@ constructor(
         dialog.show()
     }
 
-    private fun initCategoryRecyclerView(recyclerView: RecyclerView,recyclerAdapter:OrderFilterAdapter) {
+    private fun initCategoryRecyclerView(recyclerView: RecyclerView,recyclerAdapter: OrderFilterAdapter) {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@ProductFragment.context,LinearLayoutManager.HORIZONTAL,false)
 

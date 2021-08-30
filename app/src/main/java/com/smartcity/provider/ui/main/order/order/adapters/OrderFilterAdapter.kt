@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.order
+package com.smartcity.provider.ui.main.order.order.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

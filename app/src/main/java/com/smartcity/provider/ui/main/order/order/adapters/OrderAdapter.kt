@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.order
+package com.smartcity.provider.ui.main.order.order.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -97,7 +97,7 @@ class OrderAdapter (
         val requestManager: RequestManager,
         private val interaction: Interaction?
     ) : RecyclerView.ViewHolder(itemView),
-        OrderProductAdapter.Interaction{
+        OrderProductAdapter.Interaction {
 
         private lateinit var order:Order
 

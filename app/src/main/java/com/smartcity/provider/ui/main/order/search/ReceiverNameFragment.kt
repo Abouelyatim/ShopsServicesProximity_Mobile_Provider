@@ -1,13 +1,8 @@
 package com.smartcity.provider.ui.main.order.search
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,23 +13,21 @@ import com.smartcity.provider.ui.main.order.BaseOrderFragment
 import com.smartcity.provider.ui.main.order.state.ORDER_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.order.state.OrderStateEvent
 import com.smartcity.provider.ui.main.order.state.OrderViewState
-import com.smartcity.provider.ui.main.order.viewmodel.OrderViewModel
-import com.smartcity.provider.ui.main.order.viewmodel.setSearchOrderListData
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.fragment_receiver_name.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ReceiverNameFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseOrderFragment(R.layout.fragment_receiver_name){
-
-    val viewModel: OrderViewModel by viewModels{
-        viewModelFactory
-    }
+): BaseOrderFragment(R.layout.fragment_receiver_name,viewModelFactory){
 
     private lateinit var codeScanner: CodeScanner
 
@@ -66,7 +59,7 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -101,27 +94,27 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-            if(dataState != null){
-                //set order list get it from network
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message == SuccessHandling.DONE_Order){
-                            data.data?.let{
-                                it.peekContent()?.let{
-                                    it.orderFields.searchOrderList.let {
-                                        viewModel.setSearchOrderListData(it)
-                                      navViewSearch()
-                                    }
-                                }
+            stateMessage?.let {
 
-                            }
+                if(stateMessage.response.message.equals(SuccessHandling.DONE_Order)){
+                    navViewSearch()
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
     }
 
