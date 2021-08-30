@@ -2,7 +2,6 @@ package com.smartcity.provider.ui.main.custom_category.product
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,29 +13,26 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.ui.AreYouSureCallback
-import com.smartcity.provider.ui.UIMessage
-import com.smartcity.provider.ui.UIMessageType
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
+import com.smartcity.provider.ui.main.custom_category.viewmodel.*
 import com.smartcity.provider.ui.main.order.OrderFilterAdapter
-import com.smartcity.provider.util.ActionConstants
-import com.smartcity.provider.util.RightSpacingItemDecoration
-import com.smartcity.provider.util.SuccessHandling
-import com.smartcity.provider.util.SuccessHandling.Companion.CUSTOM_CATEGORY_UPDATE_DONE
-import com.smartcity.provider.util.TopSpacingItemDecoration
+import com.smartcity.provider.util.*
 import kotlinx.android.synthetic.main.fragment_product.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ProductFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_product),
+): BaseCustomCategoryFragment(R.layout.fragment_product,viewModelFactory),
     SwipeRefreshLayout.OnRefreshListener,
     ProductAdapter.Interaction,
     OrderFilterAdapter.Interaction
@@ -47,9 +43,6 @@ constructor(
     private var categoryProductAdapter: OrderFilterAdapter? = null
     private lateinit var dialogView: View
 
-    val viewModel: CustomCategoryViewModel by viewModels{
-        viewModelFactory
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -60,6 +53,7 @@ constructor(
             }
         }
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
             CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY,
@@ -67,7 +61,8 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-    override fun cancelActiveJobs(){
+
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -75,7 +70,7 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         swipe_refresh.setOnRefreshListener(this)
-        stateChangeListener.expandAppBar()
+        uiCommunicationListener.expandAppBar()
 
         addProduct()
         initProductRecyclerView()
@@ -98,42 +93,38 @@ constructor(
 
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            //delete Product success
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message.equals(SuccessHandling.DELETE_DONE)){
-                            ProductMain()
-                        }
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                        if (response.message == CUSTOM_CATEGORY_UPDATE_DONE){
-                            dialog.dismiss()
-                            ProductMain()
-                        }
-                    }
-                }
-            }
-            //set Product list get it from network
-            dataState.data?.let { data ->
-                data.data?.let{
-                    it.getContentIfNotHandled()?.let{
-                        it.productList.let {
-                            viewModel.setProductList(it)
-                        }
-                    }
+            stateMessage?.let {
 
+                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
+                    ProductMain()
                 }
 
+                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
+                    dialog.dismiss()
+                    ProductMain()
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
+                )
             }
         })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
+
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
                 productRecyclerAdapter.submitList(viewModel.getProductList())
         })
-
-
     }
 
     private fun addProduct() {
@@ -188,11 +179,18 @@ constructor(
                         // ignore
                     }
                 }
-                uiCommunicationListener.onUIMessageReceived(
-                    UIMessage(
-                        getString(R.string.are_you_sure_delete),
-                        UIMessageType.AreYouSureDialog(callback)
-                    )
+
+                uiCommunicationListener.onResponseReceived(
+                    response = Response(
+                        message = getString(R.string.are_you_sure_delete),
+                        uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                        messageType = MessageType.Info()
+                    ),
+                    stateMessageCallback = object: StateMessageCallback{
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
                 )
             }
         }

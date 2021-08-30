@@ -1,5 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.customCategory
 
+
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -7,7 +8,6 @@ import android.view.*
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -15,43 +15,36 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
-
-
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.ui.AreYouSureCallback
-import com.smartcity.provider.ui.UIMessage
-import com.smartcity.provider.ui.UIMessageType
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
-import com.smartcity.provider.util.ActionConstants
-import com.smartcity.provider.util.SuccessHandling
-import com.smartcity.provider.util.TopSpacingItemDecoration
+import com.smartcity.provider.ui.main.custom_category.viewmodel.clearProductList
+import com.smartcity.provider.ui.main.custom_category.viewmodel.getCustomCategoryFields
+import com.smartcity.provider.ui.main.custom_category.viewmodel.setSelectedCustomCategory
+import com.smartcity.provider.util.*
 import kotlinx.android.synthetic.main.fragment_custom_category.*
-import kotlinx.android.synthetic.main.fragment_custom_category.swipe_refresh
-
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class CustomCategoryFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_custom_category),
+): BaseCustomCategoryFragment(R.layout.fragment_custom_category,viewModelFactory),
     CustomCategoryAdapter.Interaction,
     SwipeRefreshLayout.OnRefreshListener
 {
     private lateinit var recyclerAdapter: CustomCategoryAdapter
 
-
-
     private lateinit var alertDialog: AlertDialog
-    val viewModel: CustomCategoryViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +69,7 @@ constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -84,7 +77,7 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         swipe_refresh.setOnRefreshListener(this)
-        stateChangeListener.expandAppBar()
+        uiCommunicationListener.expandAppBar()
 
         CustomCategoryMain()
         initvRecyclerView()
@@ -194,50 +187,39 @@ constructor(
     }
 
     fun subscribeObservers(){
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            //delete Custom Category success
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message.equals(SuccessHandling.DELETE_DONE)){
-                            CustomCategoryMain()
-                        }
-                    }
-                }
-            }
-            //creation Custom Category success
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message.equals(SuccessHandling.CUSTOM_CATEGORY_CREATION_DONE)){
-                            alertDialog.dismiss()
-                            CustomCategoryMain()
-                        }
-                    }
-                }
-            }
-            //update Custom Category success
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
-                            alertDialog.dismiss()
-                            CustomCategoryMain()
-                        }
-                    }
-                }
-            }
-            //set Custom Category list get it from network
-            dataState.data?.let { data ->
-                data.data?.let{
-                    it.getContentIfNotHandled()?.let{
-                        viewModel.setCustomCategoryFields(it.customCategoryFields)
-                    }
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
+            stateMessage?.let {
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
+                )
+
+                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
+                    CustomCategoryMain()
+                }
+
+                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_CREATION_DONE)){
+                    alertDialog.dismiss()
+                    CustomCategoryMain()
+                }
+
+                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
+                    alertDialog.dismiss()
+                    CustomCategoryMain()
                 }
             }
         })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
+
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             recyclerAdapter.submitList(viewModel.getCustomCategoryFields())
@@ -260,11 +242,17 @@ constructor(
                         // ignore
                     }
                 }
-                uiCommunicationListener.onUIMessageReceived(
-                    UIMessage(
-                        getString(R.string.are_you_sure_delete),
-                        UIMessageType.AreYouSureDialog(callback)
-                    )
+                uiCommunicationListener.onResponseReceived(
+                    response = Response(
+                        message = getString(R.string.are_you_sure_delete),
+                        uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                        messageType = MessageType.Info()
+                    ),
+                    stateMessageCallback = object: StateMessageCallback{
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
                 )
             }
 
@@ -276,8 +264,6 @@ constructor(
 
         }
     }
-
-
 
     override fun onRefresh() {
         CustomCategoryMain()
@@ -297,7 +283,7 @@ constructor(
 
     private  fun resetUI(){
         custom_category_recyclerview.smoothScrollToPosition(0)
-        stateChangeListener.hideSoftKeyboard()
+        uiCommunicationListener.hideSoftKeyboard()
         focusable_view_custom_category.requestFocus()
     }
 }

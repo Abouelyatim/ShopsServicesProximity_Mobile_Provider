@@ -13,9 +13,25 @@ fun CustomCategoryViewModel.getCustomCategoryFields():List<CustomCategory>{
     }
 }
 
-fun CustomCategoryViewModel.getProductFields(): CustomCategoryViewState.ProductFields {
+fun CustomCategoryViewModel.getProductName(): String {
     getCurrentViewStateOrNew().let {
-        return it.productFields
+        return it.productFields.name?:""
+    }
+}
+
+fun CustomCategoryViewModel.getProductDescription(): String {
+    getCurrentViewStateOrNew().let {
+        return it.productFields.description?:""
+    }
+}
+fun CustomCategoryViewModel.getProductPrice(): String {
+    getCurrentViewStateOrNew().let {
+        return it.productFields.price?:""
+    }
+}
+fun CustomCategoryViewModel.getProductQuantity(): String {
+    getCurrentViewStateOrNew().let {
+        return it.productFields.quantity?:""
     }
 }
 

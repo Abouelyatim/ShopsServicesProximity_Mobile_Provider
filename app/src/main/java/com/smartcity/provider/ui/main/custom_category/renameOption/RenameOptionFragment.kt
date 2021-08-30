@@ -1,32 +1,36 @@
 package com.smartcity.provider.ui.main.custom_category.renameOption
 
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.viewModels
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
-import kotlinx.android.synthetic.main.fragment_create_option.*
+import com.smartcity.provider.ui.main.custom_category.viewmodel.getNewOption
+import com.smartcity.provider.ui.main.custom_category.viewmodel.getOptionList
+import com.smartcity.provider.ui.main.custom_category.viewmodel.setNewOption
+import com.smartcity.provider.ui.main.custom_category.viewmodel.setOptionList
 import kotlinx.android.synthetic.main.fragment_rename_option.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class RenameOptionFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_rename_option)
+): BaseCustomCategoryFragment(R.layout.fragment_rename_option,viewModelFactory)
 {
 
-    val viewModel: CustomCategoryViewModel by viewModels{
-        viewModelFactory
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -46,35 +50,34 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-    override fun cancelActiveJobs(){
+
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-
+        uiCommunicationListener.expandAppBar()
 
         viewModel.getNewOption()?.let {
             setOptionName(it.name)
         }
-
-
         adaptViewToNavigate()
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.update_menu, menu)
     }
+
     private fun setOptionName(name:String){
         input_option_rename.setText(name)
     }
+
     fun adaptViewToNavigate(){
         activity?.invalidateOptionsMenu()
     }
+
     fun updateOptionName(){
         val option=(viewModel.getNewOption())
 
@@ -83,8 +86,8 @@ constructor(
             .name=input_option_rename.text.toString()
 
         viewModel.setOptionList(optionList)
-
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         viewModel.getOptionList()?.let { it.isNotEmpty() }?.let {
             if(it){

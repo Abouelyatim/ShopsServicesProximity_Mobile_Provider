@@ -9,7 +9,6 @@ import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -17,34 +16,26 @@ import com.bumptech.glide.RequestManager
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.ProductVariants
-import com.smartcity.provider.ui.*
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
-import com.smartcity.provider.util.ErrorHandling
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_create_product.*
-import kotlinx.android.synthetic.main.fragment_create_store.*
-import kotlinx.android.synthetic.main.fragment_option_values.*
+import com.smartcity.provider.ui.main.custom_category.viewmodel.*
+import com.smartcity.provider.util.*
 import kotlinx.android.synthetic.main.fragment_variant.*
-import kotlinx.android.synthetic.main.layout_variant_list_item.view.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import java.io.File
-import java.lang.Exception
 import javax.inject.Inject
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class VariantFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_variant){
+): BaseCustomCategoryFragment(R.layout.fragment_variant,viewModelFactory){
 
-
-
-    val viewModel: CustomCategoryViewModel by viewModels{
-        viewModelFactory
-    }
     var imageUri:Uri?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,14 +56,15 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-    override fun cancelActiveJobs(){
+
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
+        uiCommunicationListener.expandAppBar()
 
         updateProductVariant()
         selectImage()
@@ -85,7 +77,6 @@ constructor(
             imageUri=it.imageUri
         }
     }
-
 
     private fun pasteImage() {
         variant_image_paste.setOnClickListener {
@@ -109,8 +100,6 @@ constructor(
 
         }
     }
-
-
 
     private fun deleteImage() {
         variant_image_delete.setOnClickListener {
@@ -137,8 +126,6 @@ constructor(
         })
     }
 
-
-
     private fun setVariantProperties(price:Double,
                                      quantity:Int,
                                      imageUri: Uri?){
@@ -152,7 +139,7 @@ constructor(
     }
     private fun selectImage() {
         variant_image.setOnClickListener {
-            if(stateChangeListener.isStoragePermissionGranted()){
+            if(uiCommunicationListener.isStoragePermissionGranted()){
                 pickFromGallery()
             }
         }
@@ -195,12 +182,17 @@ constructor(
     }
 
     fun showErrorDialog(errorMessage: String){
-        stateChangeListener.onDataStateChange(
-            DataState(
-                Event(StateError(Response(errorMessage, ResponseType.Dialog()))),
-                Loading(isLoading = false),
-                Data(Event.dataEvent(null), null)
-            )
+        uiCommunicationListener.onResponseReceived(
+            response = Response(
+                message = errorMessage,
+                uiComponentType = UIComponentType.Dialog(),
+                messageType = MessageType.Error()
+            ),
+            stateMessageCallback = object: StateMessageCallback {
+                override fun removeMessageFromStack() {
+                    viewModel.clearStateMessage()
+                }
+            }
         )
     }
 
@@ -249,8 +241,6 @@ constructor(
             }
         }
     }
-
-
 
     override fun onDestroy() {
         super.onDestroy()

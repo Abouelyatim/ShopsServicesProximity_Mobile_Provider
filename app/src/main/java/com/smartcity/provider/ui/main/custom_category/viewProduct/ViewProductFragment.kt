@@ -10,7 +10,6 @@ import android.transition.TransitionManager
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -24,24 +23,28 @@ import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.OptionsAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ValuesAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.VariantImageAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ViewPagerAdapter
+import com.smartcity.provider.ui.main.custom_category.viewmodel.*
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_product.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ViewProductFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_view_product),
+): BaseCustomCategoryFragment(R.layout.fragment_view_product,viewModelFactory),
     OptionsAdapter.Interaction,
     VariantImageAdapter.Interaction
 {
@@ -52,10 +55,6 @@ constructor(
     private lateinit var  variantImageRecyclerAdapter: VariantImageAdapter
     private lateinit var  optionsRecyclerAdapter: OptionsAdapter
     private lateinit var optionsRecyclerview:RecyclerView
-
-    val viewModel: CustomCategoryViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,16 +73,15 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-    override fun cancelActiveJobs(){
+
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-
-
+        uiCommunicationListener.expandAppBar()
 
         viewModel.getViewProductFields()?.let {
             product=it
@@ -161,8 +159,6 @@ constructor(
         return resultSortedMap
     }
 
-
-
     private fun showDetailedProduct(map: Map<String, String>){
         product.let {
             for (variant in it.productVariants){
@@ -209,8 +205,6 @@ constructor(
 
         }
     }
-
-
 
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
@@ -458,8 +452,6 @@ constructor(
         }
         viewModel.setChoisesMap(map)
     }
-
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.edit_view_menu, menu)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -35,10 +36,13 @@ constructor(
 
     lateinit var uiCommunicationListener: UICommunicationListener
 
+    lateinit var toolbarTitle: TextView
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupActionBarWithNavController(R.id.customCategoryFragment, activity as AppCompatActivity)
         setupChannel()
+        toolbarTitle=(activity as AppCompatActivity).findViewById(R.id.tool_bar_text)
     }
 
     private fun setupChannel() = viewModel.setupChannel()

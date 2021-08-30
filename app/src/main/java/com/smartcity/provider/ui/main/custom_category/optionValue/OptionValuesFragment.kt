@@ -2,7 +2,6 @@ package com.smartcity.provider.ui.main.custom_category.optionValue
 
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -12,26 +11,29 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
+import com.smartcity.provider.ui.main.custom_category.viewmodel.getNewOption
+import com.smartcity.provider.ui.main.custom_category.viewmodel.setNewOption
+import com.smartcity.provider.ui.main.custom_category.viewmodel.setOptionList
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_option_values.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class OptionValuesFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_option_values),
+): BaseCustomCategoryFragment(R.layout.fragment_option_values,viewModelFactory),
     OptionValuesAdapter.Interaction
 {
     private lateinit var recyclerAdapter: OptionValuesAdapter
-    val viewModel: CustomCategoryViewModel by viewModels{
-        viewModelFactory
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -50,14 +52,15 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-    override fun cancelActiveJobs(){
+
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
+        uiCommunicationListener.expandAppBar()
         createOptionValue()
         initvRecyclerView()
         subscribeObservers()

@@ -12,7 +12,6 @@ import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.ImageView
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -29,29 +28,31 @@ import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.ui.*
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState.ProductFields
+import com.smartcity.provider.ui.main.custom_category.viewmodel.*
 import com.smartcity.provider.util.*
 import com.smartcity.provider.util.Constants.Companion.LOCAL_STORAGE_DIRECTORY
 import kotlinx.android.synthetic.main.fragment_create_product.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
-import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class CreateProductFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_create_product),
+): BaseCustomCategoryFragment(R.layout.fragment_create_product,viewModelFactory),
     VarianteAdapter.Interaction,
     ProductImageAdapter.Interaction,
     ProductImageAdapter.InteractionAdd
@@ -60,9 +61,6 @@ constructor(
     private lateinit var productImageRecyclerAdapter: ProductImageAdapter
 
     var ACTION=-1
-    val viewModel: CustomCategoryViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,14 +81,15 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-    override fun cancelActiveJobs(){
+
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
+        uiCommunicationListener.expandAppBar()
 
         addOption()
 
@@ -119,52 +118,38 @@ constructor(
 
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-            //after successful product creation fire network request to update product list
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
+            stateMessage?.let {
 
-                        when(response.message){
-                            SuccessHandling.PRODUCT_UPDATE_DONE->{
-                                removeTempFiles()
-                                updateProductList()
-                            }
-
-                            SuccessHandling.PRODUCT_CREATION_DONE->{
-                                removeTempFiles()
-                                updateProductList()
-                            }
-                            else ->{
-                            }
-                        }
-                        //if(!data.response.hasBeenHandled){
-                        //  }
-
-                    }
+                if(stateMessage.response.message.equals(SuccessHandling.PRODUCT_UPDATE_DONE)){
+                    removeTempFiles()
+                    viewModel.clearProductFields()
+                    setProductProperties("","","","")
+                    findNavController().navigate(R.id.action_createProductFragment_to_productFragment)
                 }
 
-                //handle request response to update product list
-                dataState.data?.let { data ->
-                    data.data?.let{
-                        it.getContentIfNotHandled()?.let{
-                            it.productList.let {
-                                viewModel.setProductList(it)
-                            }
-                            viewModel.clearProductFields()
-                            setProductProperties("","","","")
-                            findNavController().navigate(R.id.action_createProductFragment_to_productFragment)
-                        }
-
-                    }
-
+                if(stateMessage.response.message.equals(SuccessHandling.PRODUCT_CREATION_DONE)){
+                    removeTempFiles()
+                    viewModel.clearProductFields()
+                    setProductProperties("","","","")
+                    findNavController().navigate(R.id.action_createProductFragment_to_productFragment)
                 }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
+                )
             }
-
         })
 
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
 
         productImageRecyclerAdapter.getListLivedata().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             it?.let {
@@ -527,14 +512,20 @@ constructor(
     }
 
     fun showErrorDialog(errorMessage: String){
-        stateChangeListener.onDataStateChange(
-            DataState(
-                Event(StateError(Response(errorMessage, ResponseType.Dialog()))),
-                Loading(isLoading = false),
-                Data(Event.dataEvent(null), null)
-            )
+        uiCommunicationListener.onResponseReceived(
+            response = Response(
+                message = errorMessage,
+                uiComponentType = UIComponentType.Dialog(),
+                messageType = MessageType.Error()
+            ),
+            stateMessageCallback = object: StateMessageCallback {
+                override fun removeMessageFromStack() {
+                    viewModel.clearStateMessage()
+                }
+            }
         )
     }
+
     fun initVarianteRecyclerView(){
         variant_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@CreateProductFragment.context)
@@ -586,15 +577,20 @@ constructor(
                         // ignore
                     }
                 }
-                uiCommunicationListener.onUIMessageReceived(
-                    UIMessage(
-                        getString(R.string.are_you_sure_delete),
-                        UIMessageType.AreYouSureDialog(callback)
-                    )
+
+                uiCommunicationListener.onResponseReceived(
+                    response = Response(
+                        message = getString(R.string.are_you_sure_delete),
+                        uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                        messageType = MessageType.Info()
+                    ),
+                    stateMessageCallback = object: StateMessageCallback{
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
                 )
             }
-
-
         }
 
     }
@@ -604,7 +600,7 @@ constructor(
     }
 
     override fun onItemAddSelected() {
-        if(stateChangeListener.isStoragePermissionGranted()){
+        if(uiCommunicationListener.isStoragePermissionGranted()){
             pickFromGallery()
         }
     }
@@ -641,11 +637,18 @@ constructor(
                     // ignore
                 }
             }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_delete),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
+
+            uiCommunicationListener.onResponseReceived(
+                response = Response(
+                    message = getString(R.string.are_you_sure_delete),
+                    uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                    messageType = MessageType.Info()
+                ),
+                stateMessageCallback = object: StateMessageCallback{
+                    override fun removeMessageFromStack() {
+                        viewModel.clearStateMessage()
+                    }
+                }
             )
         }
 
@@ -654,14 +657,12 @@ constructor(
 
     override fun onResume() {
         super.onResume()
-        viewModel.getProductFields().let { productFields->
-            setProductProperties(
-                productFields.name,
-                productFields.description,
-                productFields.price,
-                productFields.quantity
-            )
-        }
+        setProductProperties(
+            viewModel.getProductName(),
+            viewModel.getProductDescription(),
+            viewModel.getProductPrice(),
+            viewModel.getProductQuantity()
+        )
     }
 
 
@@ -698,5 +699,4 @@ constructor(
             )
         )*/
     }
-
 }
