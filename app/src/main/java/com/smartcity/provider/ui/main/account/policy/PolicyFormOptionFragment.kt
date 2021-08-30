@@ -18,13 +18,11 @@ import com.smartcity.provider.R
 import com.smartcity.provider.models.Policy
 import com.smartcity.provider.models.SelfPickUpOptions
 import com.smartcity.provider.models.TaxRange
-import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.*
-import com.smartcity.provider.ui.main.order.viewmodel.setOrderListData
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_policy_form_option.*
@@ -119,7 +117,7 @@ constructor(
 
     private fun savePolicy() {
         viewModel.setStateEvent(
-            AccountStateEvent.SavePolicy(
+            AccountStateEvent.SavePolicyEvent(
                 Policy(viewModel.getPolicyConfigurationDelivery()!!,
                     viewModel.getPolicyConfigurationSelfPickUpOption()!!,
                     viewModel.getPolicyConfigurationValidDuration()!!,

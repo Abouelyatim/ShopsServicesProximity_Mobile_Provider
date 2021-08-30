@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.smartcity.provider.api.auth.OpenApiAuthService
 import com.smartcity.provider.persistence.AccountPropertiesDao
 import com.smartcity.provider.persistence.AuthTokenDao
-import com.smartcity.provider.repository.auth.AuthRepository
+import com.smartcity.provider.repository.auth.AuthRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import dagger.Module
 import dagger.Provides
@@ -32,8 +32,8 @@ object AuthModule{
         openApiAuthService: OpenApiAuthService,
         preferences: SharedPreferences,
         editor: SharedPreferences.Editor
-        ): AuthRepository {
-        return AuthRepository(
+        ): AuthRepositoryImpl {
+        return AuthRepositoryImpl(
             authTokenDao,
             accountPropertiesDao,
             openApiAuthService,

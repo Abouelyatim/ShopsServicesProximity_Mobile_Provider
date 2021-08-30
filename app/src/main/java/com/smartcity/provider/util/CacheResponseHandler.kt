@@ -1,5 +1,7 @@
 package com.smartcity.provider.util
 
+
+
 abstract class CacheResponseHandler <ViewState, Data>(
     private val response: CacheResult<Data?>,
     private val stateEvent: StateEvent?

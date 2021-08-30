@@ -1,6 +1,6 @@
 package com.smartcity.provider.util
 
-
+import com.smartcity.provider.ui.AreYouSureCallback
 
 
 data class StateMessage(val response: Response)

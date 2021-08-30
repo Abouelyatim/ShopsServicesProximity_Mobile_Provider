@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import com.smartcity.provider.di.config.ConfigScope
-import com.smartcity.provider.repository.config.ConfigRepository
+import com.smartcity.provider.repository.config.ConfigRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class ConfigViewModel
 @Inject
 constructor(
-    val configRepository: ConfigRepository,
+    val configRepository: ConfigRepositoryImpl,
     private val sessionManager: SessionManager
 ): BaseViewModel<ConfigStateEvent, ConfigViewState>()
 {

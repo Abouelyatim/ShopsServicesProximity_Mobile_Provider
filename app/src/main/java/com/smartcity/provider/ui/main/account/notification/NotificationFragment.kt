@@ -76,14 +76,14 @@ constructor(
 
     private fun getSettings() {
         viewModel.setStateEvent(
-            AccountStateEvent.GetNotificationSettings()
+            AccountStateEvent.GetNotificationSettingsEvent()
         )
     }
 
     private fun saveNotificationSettings() {
         save_settings_button.setOnClickListener {
             viewModel.setStateEvent(
-                AccountStateEvent.SaveNotificationSettings(
+                AccountStateEvent.SaveNotificationSettingsEvent(
                     getCheckedSwitch()
                 )
             )

@@ -1,16 +1,14 @@
 package com.smartcity.provider.ui.main.custom_category
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Attribute
-import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
-import com.smartcity.provider.repository.main.CustomCategoryRepository
+import com.smartcity.provider.repository.main.CustomCategoryRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
@@ -30,14 +28,14 @@ import kotlin.collections.HashSet
 class CustomCategoryViewModel
 @Inject
 constructor(
-    val customCategoryRepository: CustomCategoryRepository,
+    val customCategoryRepository: CustomCategoryRepositoryImpl,
     val sessionManager: SessionManager
 ): BaseViewModel<CustomCategoryStateEvent, CustomCategoryViewState>() {
 
     override fun handleStateEvent(stateEvent: CustomCategoryStateEvent): LiveData<DataState<CustomCategoryViewState>> {
 
         when(stateEvent){
-            is CustomCategoryMain ->{
+            is CustomCategoryMainEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
                     customCategoryRepository.attemptCustomCategoryMain(
                         authToken.account_pk!!.toLong()
@@ -45,7 +43,7 @@ constructor(
                 }?: AbsentLiveData.create()
 
             }
-            is CreateCustomCategory ->{
+            is CreateCustomCategoryEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
 
                     customCategoryRepository.attemptCreateCustomCategory(
@@ -54,12 +52,12 @@ constructor(
                     )
                 }?: AbsentLiveData.create()
             }
-            is DeleteCustomCategory -> {
+            is DeleteCustomCategoryEvent -> {
                 return customCategoryRepository.attemptdeleteCustomCategory(
                     stateEvent.id
                 )
             }
-            is UpdateCustomCategory -> {
+            is UpdateCustomCategoryEvent -> {
                 return customCategoryRepository.attemptUpdateCustomCategory(
                     stateEvent.id,
                     stateEvent.name,
@@ -67,7 +65,7 @@ constructor(
                 )
             }
 
-            is CreateProduct ->{
+            is CreateProductEvent ->{
                 return customCategoryRepository.attemptCreateProduct(
                     stateEvent.product,
                     stateEvent.productImagesFile,
@@ -75,7 +73,7 @@ constructor(
                     stateEvent.productObject
                 )
             }
-            is UpdateProduct ->{
+            is UpdateProductEvent ->{
                 return customCategoryRepository.attemptUpdateProduct(
                     stateEvent.product,
                     stateEvent.productImagesFile,
@@ -84,13 +82,13 @@ constructor(
                 )
             }
 
-            is DeleteProduct ->{
+            is DeleteProductEvent ->{
                 return customCategoryRepository.attemptDeleteProduct(
                     stateEvent.id
                 )
             }
 
-            is ProductMain ->{
+            is ProductMainEvent ->{
                 return customCategoryRepository.attemptProductMain(
                     stateEvent.id
                 )

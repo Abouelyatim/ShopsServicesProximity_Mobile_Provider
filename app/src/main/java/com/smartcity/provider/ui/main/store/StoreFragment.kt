@@ -117,7 +117,7 @@ constructor(
     }
 
     fun CustomCategoryMain(){
-        viewModel.setStateEvent(StoreStateEvent.CustomCategoryMain())
+        viewModel.setStateEvent(StoreStateEvent.CustomCategoryMainEvent())
     }
 
     fun initCustomCategoryRecyclerView(){
@@ -218,7 +218,7 @@ constructor(
 
     fun ProductMain(id:Long){
         viewModel.setStateEvent(
-            StoreStateEvent.ProductMain(
+            StoreStateEvent.ProductMainEvent(
                 id
             ))
         viewModel.clearViewProductList()
@@ -226,7 +226,7 @@ constructor(
 
     fun AllProduct(){
         viewModel.setStateEvent(
-            StoreStateEvent.AllProduct()
+            StoreStateEvent.AllProductEvent()
         )
         viewModel.clearViewProductList()
     }

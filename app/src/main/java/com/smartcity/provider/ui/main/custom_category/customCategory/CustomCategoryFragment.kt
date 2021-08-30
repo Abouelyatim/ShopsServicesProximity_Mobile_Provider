@@ -2,14 +2,11 @@ package com.smartcity.provider.ui.main.custom_category.customCategory
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -104,7 +101,7 @@ constructor(
 
     fun createCustomCategory(name:String){
         viewModel.setStateEvent(
-            CustomCategoryStateEvent.CreateCustomCategory(
+            CustomCategoryStateEvent.CreateCustomCategoryEvent(
                 name
             )
         )
@@ -112,7 +109,7 @@ constructor(
 
     fun updateCustomCategory(id:Long,name:String,provider: Long){
         viewModel.setStateEvent(
-            CustomCategoryStateEvent.UpdateCustomCategory(
+            CustomCategoryStateEvent.UpdateCustomCategoryEvent(
                 id,
                 name,
                 provider
@@ -121,7 +118,7 @@ constructor(
     }
 
     fun deleteCustomCategory(id:Long){
-        viewModel.setStateEvent(CustomCategoryStateEvent.DeleteCustomCategory(id))
+        viewModel.setStateEvent(CustomCategoryStateEvent.DeleteCustomCategoryEvent(id))
     }
 
     fun showCustomDialog(header:String,inputText:String?,action: Int,item: CustomCategory?) {
@@ -170,7 +167,7 @@ constructor(
     }
 
     fun CustomCategoryMain(){
-        viewModel.setStateEvent(CustomCategoryStateEvent.CustomCategoryMain())
+        viewModel.setStateEvent(CustomCategoryStateEvent.CustomCategoryMainEvent())
     }
 
     fun initvRecyclerView(){

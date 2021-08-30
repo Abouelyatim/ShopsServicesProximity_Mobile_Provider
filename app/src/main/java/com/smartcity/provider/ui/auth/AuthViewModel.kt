@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.models.AuthToken
-import com.smartcity.provider.repository.auth.AuthRepository
+import com.smartcity.provider.repository.auth.AuthRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class AuthViewModel
 @Inject
 constructor(
-    val authRepository: AuthRepository,
+    val authRepository: AuthRepositoryImpl,
     private val sessionManager: SessionManager
 ): BaseViewModel<AuthStateEvent, AuthViewState>()
 {

@@ -7,7 +7,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.google.android.flexbox.FlexWrap
@@ -86,7 +85,7 @@ constructor(
         }
 
         viewModel.setStateEvent(
-            AccountStateEvent.GetStoreInformation()
+            AccountStateEvent.GetStoreInformationEvent()
         )
 
         add_category_button.setOnClickListener {
@@ -132,7 +131,7 @@ constructor(
                 }
 
             viewModel.setStateEvent(
-                AccountStateEvent.SetStoreInformation(
+                AccountStateEvent.SetStoreInformationEvent(
                     StoreInformation(
                         -1,
                         input_address.text.toString(),

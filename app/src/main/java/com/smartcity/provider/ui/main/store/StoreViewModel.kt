@@ -5,7 +5,7 @@ import androidx.lifecycle.liveData
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Product
-import com.smartcity.provider.repository.main.StoreRepository
+import com.smartcity.provider.repository.main.StoreRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
@@ -21,14 +21,14 @@ class StoreViewModel
 @Inject
 constructor(
     val sessionManager: SessionManager,
-    val storeRepository: StoreRepository
+    val storeRepository: StoreRepositoryImpl
 )
     : BaseViewModel<StoreStateEvent, StoreViewState>()
 {
     override fun handleStateEvent(stateEvent: StoreStateEvent): LiveData<DataState<StoreViewState>> {
         when(stateEvent){
 
-            is CustomCategoryMain ->{
+            is CustomCategoryMainEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
                     storeRepository.attemptCustomCategoryMain(
                         authToken.account_pk!!.toLong()
@@ -37,13 +37,13 @@ constructor(
 
             }
 
-            is ProductMain ->{
+            is ProductMainEvent ->{
                 return storeRepository.attemptProductMain(
                     stateEvent.id
                 )
             }
 
-            is AllProduct ->{
+            is AllProductEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
                     storeRepository.attemptAllProduct(
                         authToken.account_pk!!.toLong()

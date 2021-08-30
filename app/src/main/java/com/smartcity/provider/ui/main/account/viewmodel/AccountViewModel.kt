@@ -3,7 +3,7 @@ package com.smartcity.provider.ui.main.account.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.repository.main.AccountRepository
+import com.smartcity.provider.repository.main.AccountRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
@@ -19,7 +19,7 @@ class AccountViewModel
 @Inject
 constructor(
     val sessionManager: SessionManager,
-    val accountRepository: AccountRepository
+    val accountRepository: AccountRepositoryImpl
 )
     : BaseViewModel<AccountStateEvent, AccountViewState>()
 {
@@ -27,18 +27,18 @@ constructor(
     override fun handleStateEvent(stateEvent: AccountStateEvent): LiveData<DataState<AccountViewState>> {
         when(stateEvent){
 
-            is GetNotificationSettings ->{
+            is GetNotificationSettingsEvent ->{
                 return accountRepository.attemptGetNotificationSettings(
                 )
             }
 
-            is SaveNotificationSettings ->{
+            is SaveNotificationSettingsEvent ->{
                 return accountRepository.attemptSetNotificationSettings(
                     stateEvent.settings
                 )
             }
 
-            is SavePolicy ->{
+            is SavePolicyEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
                     stateEvent.policy.providerId=authToken.account_pk!!.toLong()
                     accountRepository.attemptCreatePolicy(
@@ -48,7 +48,7 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
-            is SetStoreInformation ->{
+            is SetStoreInformationEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
                     stateEvent.storeInformation.providerId=authToken.account_pk!!.toLong()
                     accountRepository.attemptSetStoreInformation(
@@ -58,7 +58,7 @@ constructor(
                 }?: AbsentLiveData.create()
             }
 
-            is GetStoreInformation ->{
+            is GetStoreInformationEvent ->{
                 return sessionManager.cachedToken.value?.let { authToken ->
                     accountRepository.attemptGetStoreInformation(
                         authToken.account_pk!!.toLong()

@@ -1,16 +1,44 @@
 package com.smartcity.provider.ui.main.store.state
 
-import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
+import com.smartcity.provider.util.StateEvent
 
-sealed class StoreStateEvent{
+sealed class StoreStateEvent: StateEvent{
 
-    class CustomCategoryMain : StoreStateEvent()
+    class CustomCategoryMainEvent : StoreStateEvent() {
+        override fun errorInfo(): String {
+            return "Get categories attempt failed."
+        }
 
-    class ProductMain(
+        override fun toString(): String {
+            return "CustomCategoryMainStateEvent"
+        }
+    }
+
+    class ProductMainEvent(
         val id: Long
-    ) : StoreStateEvent()
+    ) : StoreStateEvent(){
+        override fun errorInfo(): String {
+            return "Get products attempt failed."
+        }
 
-    class AllProduct() : StoreStateEvent()
+        override fun toString(): String {
+            return "ProductMainStateEvent"
+        }
+    }
 
-    class None: StoreStateEvent()
+    class AllProductEvent() : StoreStateEvent(){
+        override fun errorInfo(): String {
+            return "Get all products attempt failed."
+        }
+
+        override fun toString(): String {
+            return "AllProductStateEvent"
+        }
+    }
+
+    class None: StoreStateEvent(){
+        override fun errorInfo(): String {
+            return "None"
+        }
+    }
 }

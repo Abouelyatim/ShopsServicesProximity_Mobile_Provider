@@ -8,13 +8,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.ImageView
-import androidx.activity.OnBackPressedCallback
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -378,7 +375,7 @@ constructor(
 
             ActionConstants.CREATE ->{
                 viewModel.setStateEvent(
-                    CustomCategoryStateEvent.CreateProduct(
+                    CustomCategoryStateEvent.CreateProductEvent(
                         requestBody,
                         productImagesFileBody,
                         variantesImagesFile,
@@ -389,7 +386,7 @@ constructor(
 
             ActionConstants.UPDATE ->{
                 viewModel.setStateEvent(
-                    CustomCategoryStateEvent.UpdateProduct(
+                    CustomCategoryStateEvent.UpdateProductEvent(
                         requestBody,
                         productImagesFileBody,
                         variantesImagesFile,
@@ -492,7 +489,7 @@ constructor(
 
     private fun updateProductList(){
         viewModel.setStateEvent(
-            CustomCategoryStateEvent.ProductMain(
+            CustomCategoryStateEvent.ProductMainEvent(
                 viewModel.getSelectedCustomCategory()!!.pk.toLong()
             ))
     }

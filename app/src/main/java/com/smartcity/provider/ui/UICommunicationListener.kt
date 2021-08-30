@@ -24,5 +24,7 @@ interface UICommunicationListener {
 
     fun isFineLocationPermissionGranted(): Boolean
 
+    fun isCameraPermissionGranted(): Boolean
+
     fun updateStatusBarColor(@ColorRes statusBarColor: Int, statusBarTextColor:Boolean)
 }

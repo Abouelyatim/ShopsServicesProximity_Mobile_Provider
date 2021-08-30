@@ -1,8 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.product
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -24,7 +22,6 @@ import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
 import com.smartcity.provider.ui.main.order.OrderFilterAdapter
-import com.smartcity.provider.ui.main.order.viewmodel.getSelectedSortFilter
 import com.smartcity.provider.util.ActionConstants
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.SuccessHandling
@@ -93,7 +90,7 @@ constructor(
 
     fun ProductMain(){
         viewModel.setStateEvent(
-            CustomCategoryStateEvent.ProductMain(
+            CustomCategoryStateEvent.ProductMainEvent(
             viewModel.getSelectedCustomCategory()!!.pk.toLong()
         ))
     }
@@ -250,7 +247,7 @@ constructor(
     }
 
     fun deleteProduct(id:Long){
-        viewModel.setStateEvent(CustomCategoryStateEvent.DeleteProduct(id))
+        viewModel.setStateEvent(CustomCategoryStateEvent.DeleteProductEvent(id))
     }
 
     override fun onResume() {

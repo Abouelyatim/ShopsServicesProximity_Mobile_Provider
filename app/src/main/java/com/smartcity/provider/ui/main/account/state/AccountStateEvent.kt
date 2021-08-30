@@ -4,57 +4,180 @@ import com.smartcity.provider.models.FlashDeal
 import com.smartcity.provider.models.Offer
 import com.smartcity.provider.models.Policy
 import com.smartcity.provider.models.StoreInformation
-import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
+import com.smartcity.provider.util.StateEvent
 
-sealed class AccountStateEvent {
+sealed class AccountStateEvent: StateEvent {
 
-    class SaveNotificationSettings(
+    class SaveNotificationSettingsEvent(
         val settings:List<String>
-    ):AccountStateEvent()
+    ):AccountStateEvent() {
+        override fun errorInfo(): String {
+            return "Save notification sitings attempt failed."
+        }
 
-    class GetNotificationSettings():AccountStateEvent()
+        override fun toString(): String {
+            return "SaveNotificationSettingsStateEvent"
+        }
+    }
 
-    class SavePolicy(
+    class GetNotificationSettingsEvent():AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Get notification settings attempt failed."
+        }
+
+        override fun toString(): String {
+            return "GetNotificationSettingsStateEvent"
+        }
+    }
+
+    class SavePolicyEvent(
         var policy: Policy
-    ):AccountStateEvent()
+    ):AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Save policy attempt failed."
+        }
 
-    class SetStoreInformation(
+        override fun toString(): String {
+            return "SavePolicyStateEvent"
+        }
+    }
+
+    class SetStoreInformationEvent(
         var storeInformation: StoreInformation
-    ):AccountStateEvent()
+    ):AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Save store information attempt failed."
+        }
 
-    class GetStoreInformation(
-    ):AccountStateEvent()
+        override fun toString(): String {
+            return "SetStoreInformationStateEvent"
+        }
+    }
 
-    class AllCategoriesEvent:AccountStateEvent()
+    class GetStoreInformationEvent(
+    ):AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Get store information attempt failed."
+        }
 
+        override fun toString(): String {
+            return "GetStoreInformationStateEvent"
+        }
+    }
 
-    class GetCustomCategoriesEvent : AccountStateEvent()
+    class AllCategoriesEvent:AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Get all categories attempt failed."
+        }
+
+        override fun toString(): String {
+            return "AllCategoriesStateEvent"
+        }
+    }
+
+    class GetCustomCategoriesEvent : AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Get categories attempt failed."
+        }
+
+        override fun toString(): String {
+            return "GetCustomCategoriesStateEvent"
+        }
+    }
 
     class GetProductsEvent(
         val id: Long
-    ) : AccountStateEvent()
+    ) : AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Get products attempt failed."
+        }
+
+        override fun toString(): String {
+            return "GetProductsStateEvent"
+        }
+    }
 
     class CreateOfferEvent(
         val offer: Offer
-    ) : AccountStateEvent()
+    ) : AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Offer creation attempt failed."
+        }
 
-    class GetOffersEvent():AccountStateEvent()
+        override fun toString(): String {
+            return "CreateOfferStateEvent"
+        }
+    }
+
+    class GetOffersEvent():AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Get offers attempt failed."
+        }
+
+        override fun toString(): String {
+            return "GetOffersStateEvent"
+        }
+    }
 
     class DeleteOfferEvent(
         val id:Long
-    ):AccountStateEvent()
+    ):AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Delete offer attempt failed."
+        }
+
+        override fun toString(): String {
+            return "DeleteOfferStateEvent"
+        }
+    }
 
     class UpdateOfferEvent(
         val offer: Offer
-    ) : AccountStateEvent()
+    ) : AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Update offer attempt failed."
+        }
+
+        override fun toString(): String {
+            return "UpdateOfferStateEvent"
+        }
+    }
 
     class CreateFlashDealEvent(
         val flashDeal: FlashDeal
-    ): AccountStateEvent()
+    ): AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Create flash offer attempt failed."
+        }
 
-    class GetFlashDealsEvent():AccountStateEvent()
+        override fun toString(): String {
+            return "CreateFlashDealStateEvent"
+        }
+    }
 
-    class GetSearchFlashDealsEvent():AccountStateEvent()
+    class GetFlashDealsEvent():AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Get flash offers attempt failed."
+        }
 
-    class None: AccountStateEvent()
+        override fun toString(): String {
+            return "GetFlashDealsStateEvent"
+        }
+    }
+
+    class GetSearchFlashDealsEvent():AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "Search flash offers attempt failed."
+        }
+
+        override fun toString(): String {
+            return "GetSearchFlashDealsStateEvent"
+        }
+    }
+
+    class None: AccountStateEvent(){
+        override fun errorInfo(): String {
+            return "None"
+        }
+    }
 }

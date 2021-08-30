@@ -2,7 +2,7 @@ package com.smartcity.provider.di.config
 
 import android.content.SharedPreferences
 import com.smartcity.provider.api.config.OpenApiConfigService
-import com.smartcity.provider.repository.config.ConfigRepository
+import com.smartcity.provider.repository.config.ConfigRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import dagger.Module
 import dagger.Provides
@@ -29,8 +29,8 @@ object ConfigModule {
         OpenApiConfigService: OpenApiConfigService,
         preferences: SharedPreferences,
         editor: SharedPreferences.Editor
-    ): ConfigRepository {
-        return ConfigRepository(
+    ): ConfigRepositoryImpl {
+        return ConfigRepositoryImpl(
             OpenApiConfigService,
             sessionManager,
             preferences,

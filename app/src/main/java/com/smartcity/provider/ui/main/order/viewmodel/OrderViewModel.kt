@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.smartcity.provider.di.main.MainScope
-import com.smartcity.provider.repository.main.OrderRepository
+import com.smartcity.provider.repository.main.OrderRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
 import com.smartcity.provider.ui.DataState
@@ -21,7 +21,7 @@ class OrderViewModel
 @Inject
 constructor(
     private val sessionManager: SessionManager,
-    private val orderRepository: OrderRepository,
+    private val orderRepository: OrderRepositoryImpl,
     private val sharedPreferences: SharedPreferences,
     private val editor: SharedPreferences.Editor
 ): BaseViewModel<OrderStateEvent, OrderViewState>(){

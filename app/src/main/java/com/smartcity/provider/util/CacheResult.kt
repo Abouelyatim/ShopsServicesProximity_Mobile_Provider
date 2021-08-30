@@ -1,4 +1,4 @@
-package com.smartcity.client.util
+package com.smartcity.provider.util
 
 sealed class CacheResult<out T> {
 

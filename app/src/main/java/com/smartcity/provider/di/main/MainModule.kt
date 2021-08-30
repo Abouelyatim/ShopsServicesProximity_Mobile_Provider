@@ -5,10 +5,10 @@ import com.smartcity.provider.api.main.OpenApiMainService
 import com.smartcity.provider.persistence.AccountPropertiesDao
 import com.smartcity.provider.persistence.AppDatabase
 import com.smartcity.provider.persistence.BlogPostDao
-import com.smartcity.provider.repository.main.AccountRepository
-import com.smartcity.provider.repository.main.StoreRepository
-import com.smartcity.provider.repository.main.OrderRepository
-import com.smartcity.provider.repository.main.CustomCategoryRepository
+import com.smartcity.provider.repository.main.AccountRepositoryImpl
+import com.smartcity.provider.repository.main.StoreRepositoryImpl
+import com.smartcity.provider.repository.main.OrderRepositoryImpl
+import com.smartcity.provider.repository.main.CustomCategoryRepositoryImpl
 
 
 import com.smartcity.provider.session.SessionManager
@@ -34,8 +34,8 @@ object MainModule {
         openApiMainService: OpenApiMainService,
         accountPropertiesDao: AccountPropertiesDao,
         sessionManager: SessionManager
-    ): StoreRepository {
-        return StoreRepository(openApiMainService, accountPropertiesDao, sessionManager)
+    ): StoreRepositoryImpl {
+        return StoreRepositoryImpl(openApiMainService, accountPropertiesDao, sessionManager)
     }
 
     @JvmStatic
@@ -51,8 +51,8 @@ object MainModule {
     fun provideBlogRepository(
         openApiMainService: OpenApiMainService,
         sessionManager: SessionManager
-    ): OrderRepository {
-        return OrderRepository(openApiMainService, sessionManager)
+    ): OrderRepositoryImpl {
+        return OrderRepositoryImpl(openApiMainService, sessionManager)
     }
 
     @JvmStatic
@@ -62,8 +62,8 @@ object MainModule {
         openApiMainService: OpenApiMainService,
         blogPostDao: BlogPostDao,
         sessionManager: SessionManager
-    ): CustomCategoryRepository {
-        return CustomCategoryRepository(openApiMainService, blogPostDao, sessionManager)
+    ): CustomCategoryRepositoryImpl {
+        return CustomCategoryRepositoryImpl(openApiMainService, blogPostDao, sessionManager)
     }
 
     @JvmStatic
@@ -74,8 +74,8 @@ object MainModule {
         sessionManager: SessionManager,
         preferences: SharedPreferences,
         editor: SharedPreferences.Editor
-    ): AccountRepository {
-        return AccountRepository(openApiMainService, sessionManager,preferences,editor)
+    ): AccountRepositoryImpl {
+        return AccountRepositoryImpl(openApiMainService, sessionManager,preferences,editor)
     }
 }
 
