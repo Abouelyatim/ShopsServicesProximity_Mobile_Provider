@@ -4,7 +4,6 @@ import androidx.annotation.ColorRes
 import com.smartcity.provider.util.Response
 import com.smartcity.provider.util.StateMessageCallback
 
-
 interface UICommunicationListener {
 
     fun onResponseReceived(

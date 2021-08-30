@@ -15,14 +15,18 @@ import com.smartcity.provider.fragments.config.ConfigNavHostFragment
 import com.smartcity.provider.ui.BaseActivity
 import com.smartcity.provider.ui.config.viewmodel.ConfigViewModel
 import com.smartcity.provider.ui.config.viewmodel.getStoreCategories
-import com.smartcity.provider.ui.config.viewmodel.setStoreCategories
 import com.smartcity.provider.ui.main.MainActivity
 import com.smartcity.provider.util.PreferenceKeys
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.activity_config.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import javax.inject.Named
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ConfigActivity: BaseActivity()
 {
     @Inject
@@ -62,12 +66,20 @@ class ConfigActivity: BaseActivity()
         }
     }
 
+    override fun displayFragmentContainerView() {
+        onFinishCheckPreviousAuthUser()
+    }
+
     override fun expandAppBar() {
         // ignore
     }
 
     override fun displayBottomNavigation(bool: Boolean) {
         // ignore
+    }
+
+    override fun updateStatusBarColor(statusBarColor: Int, statusBarTextColor: Boolean) {
+
     }
 
     fun onRestoreInstanceState(){
@@ -97,24 +109,26 @@ class ConfigActivity: BaseActivity()
             navMainActivity()
         }
 
-        viewModel.dataState.observe(this, Observer{ dataState ->
-            onDataStateChange(dataState)
-            dataState.data?.let { data ->
-                data.data?.let {
-                    it.peekContent().storeFields.storeCategory?.let {
-                        viewModel.setStoreCategories(it)
-                    }
-                }
-                data.response?.let{event ->
-                    event.peekContent().let{ response ->
-                        response.message?.let{ message ->
-                            if(message.equals(SuccessHandling.STORE_CATEGORIES_DONE)){//after save selected store categories navigate to main
-                                navMainActivity()
+        viewModel.stateMessage.observe(this, Observer { stateMessage ->//must
+
+            stateMessage?.let {
+
+                if(stateMessage.response.message.equals(SuccessHandling.STORE_CATEGORIES_DONE)){//after save interest center navigate to main
+                    onResponseReceived(
+                        response = it.response,
+                        stateMessageCallback = object: StateMessageCallback {
+                            override fun removeMessageFromStack() {
+                                viewModel.clearStateMessage()
                             }
                         }
-                    }
+                    )
+                    navMainActivity()
                 }
             }
+        })
+
+        viewModel.numActiveJobs.observe(this, Observer { jobCounter ->//must
+            displayProgressBar(viewModel.areAnyJobsActive())
         })
 
         viewModel.viewState.observe(this, Observer{ viewState ->

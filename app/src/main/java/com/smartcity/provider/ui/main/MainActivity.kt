@@ -2,10 +2,15 @@ package com.smartcity.provider.ui.main
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.Observer
@@ -30,10 +35,13 @@ import com.smartcity.provider.util.BottomNavController.*
 import com.smartcity.provider.util.PreferenceKeys
 import com.smartcity.provider.util.setUpNavigation
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import javax.inject.Named
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class MainActivity : BaseActivity(),
     OnNavigationGraphChanged,
     OnNavigationReselectedListener
@@ -242,6 +250,21 @@ class MainActivity : BaseActivity(),
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun updateStatusBarColor(statusBarColor: Int, statusBarTextColor: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val window: Window = window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            ContextCompat.getColor(this, statusBarColor)
+            window.statusBarColor = ContextCompat.getColor(this, statusBarColor)
+            if(statusBarTextColor){
+                window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            }else{
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            }
+        }
+    }
+
     override fun onBackPressed() = bottomNavController.onBackPressed()
 
     private fun setupActionBar(){
@@ -264,5 +287,7 @@ class MainActivity : BaseActivity(),
         }
     }
 
+    override fun displayFragmentContainerView() {
 
+    }
 }

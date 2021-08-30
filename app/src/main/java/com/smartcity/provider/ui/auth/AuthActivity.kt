@@ -15,12 +15,17 @@ import com.smartcity.provider.ui.BaseActivity
 import com.smartcity.provider.ui.auth.state.AuthStateEvent
 import com.smartcity.provider.ui.config.ConfigActivity
 import com.smartcity.provider.ui.main.MainActivity
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.SuccessHandling.Companion.RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE
 import kotlinx.android.synthetic.main.activity_auth.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import javax.inject.Named
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class AuthActivity : BaseActivity()
 {
 
@@ -70,27 +75,27 @@ class AuthActivity : BaseActivity()
     }
 
     private fun subscribeObservers(){
-        viewModel.dataState.observe(this, Observer { dataState ->
-            onDataStateChange(dataState)
-            dataState.data?.let { data ->
-                data.data?.let { event ->
-                    event.getContentIfNotHandled()?.let {
-                        it.authToken?.let {
-                            Log.d(TAG, "AuthActivity, DataState: ${it}")
-                            viewModel.setAuthToken(it)
+        viewModel.stateMessage.observe(this, Observer { stateMessage ->//must
+
+            stateMessage?.let {
+
+                if(stateMessage.response.message.equals(RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE)){
+                    onFinishCheckPreviousAuthUser()
+                }
+
+                onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
-                data.response?.let{event ->
-                    event.peekContent().let{ response ->
-                        response.message?.let{ message ->
-                            if(message.equals(RESPONSE_CHECK_PREVIOUS_AUTH_USER_DONE)){
-                                onFinishCheckPreviousAuthUser()
-                            }
-                        }
-                    }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(this, Observer { jobCounter ->//must
+            displayProgressBar(viewModel.areAnyJobsActive())
         })
 
         viewModel.viewState.observe(this, Observer{
@@ -141,6 +146,10 @@ class AuthActivity : BaseActivity()
         }
     }
 
+    override fun displayFragmentContainerView() {
+
+    }
+
     override fun expandAppBar() {
         // ignore
     }
@@ -149,7 +158,9 @@ class AuthActivity : BaseActivity()
 
     }
 
+    override fun updateStatusBarColor(statusBarColor: Int, statusBarTextColor: Boolean) {
 
+    }
 }
 
 
