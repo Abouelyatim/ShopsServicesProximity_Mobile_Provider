@@ -1,5 +1,6 @@
 package com.smartcity.provider.ui.main.store.viewmodel
 
+import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.ui.main.store.state.StoreViewState
 
@@ -24,23 +25,39 @@ fun StoreViewModel.setViewCustomCategoryFields(viewCustomCategoryFields: StoreVi
     update.viewCustomCategoryFields = viewCustomCategoryFields
     setViewState(update)
 }
+
 fun StoreViewModel.setViewProductFields(product: Product){
     val update = getCurrentViewStateOrNew()
     update.viewProductFields.product = product
     setViewState(update)
 }
+
 fun StoreViewModel.setChoisesMap(map: MutableMap<String, String>){
     val update = getCurrentViewStateOrNew()
     update.choisesMap.choises = map
     setViewState(update)
 }
+
 fun StoreViewModel.clearChoisesMap(){
     val update = getCurrentViewStateOrNew()
     update.choisesMap= StoreViewState.ChoisesMap()
     setViewState(update)
 }
+
 fun StoreViewModel.setCustomCategoryRecyclerPosition(postion:Int){
     val update = getCurrentViewStateOrNew()
     update.customCategoryRecyclerPosition=postion
+    setViewState(update)
+}
+
+fun StoreViewModel.setCustomCategoryList(list : List<CustomCategory>){
+    val update = getCurrentViewStateOrNew()
+    update.viewCustomCategoryFields.customCategoryList=list
+    setViewState(update)
+}
+
+fun StoreViewModel.setProductList(list:List<Product>){
+    val update = getCurrentViewStateOrNew()
+    update.viewProductList.products = list
     setViewState(update)
 }

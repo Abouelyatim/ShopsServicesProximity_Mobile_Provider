@@ -33,3 +33,9 @@ fun StoreViewModel.getCustomCategoryRecyclerPosition():Int{
         return it.customCategoryRecyclerPosition
     }
 }
+
+fun StoreViewModel.getProductList():List<Product>{
+    getCurrentViewStateOrNew().let {
+        return it.viewProductList.products?: listOf()
+    }
+}

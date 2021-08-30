@@ -1,129 +1,146 @@
 package com.smartcity.provider.ui.main.custom_category.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.repository.main.CustomCategoryRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
-import com.smartcity.provider.ui.DataState
-import com.smartcity.provider.ui.Loading
-import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryStateEvent.*
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState
-import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState.*
-import com.smartcity.provider.util.AbsentLiveData
-import java.util.*
+import com.smartcity.provider.util.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
+@FlowPreview
 @MainScope
 class CustomCategoryViewModel
 @Inject
 constructor(
     val customCategoryRepository: CustomCategoryRepositoryImpl,
     val sessionManager: SessionManager
-): BaseViewModel<CustomCategoryStateEvent, CustomCategoryViewState>() {
+): BaseViewModel<CustomCategoryViewState>() {
 
-    override fun handleStateEvent(stateEvent: CustomCategoryStateEvent): LiveData<DataState<CustomCategoryViewState>> {
-
-        when(stateEvent){
-            is CustomCategoryMainEvent ->{
-                return sessionManager.cachedToken.value?.let { authToken ->
-                    customCategoryRepository.attemptCustomCategoryMain(
-                        authToken.account_pk!!.toLong()
-                    )
-                }?: AbsentLiveData.create()
-
-            }
-            is CreateCustomCategoryEvent ->{
-                return sessionManager.cachedToken.value?.let { authToken ->
-
-                    customCategoryRepository.attemptCreateCustomCategory(
-                        authToken.account_pk!!.toLong(),
-                        stateEvent.name
-                    )
-                }?: AbsentLiveData.create()
-            }
-            is DeleteCustomCategoryEvent -> {
-                return customCategoryRepository.attemptdeleteCustomCategory(
-                    stateEvent.id
+    override fun handleNewData(data: CustomCategoryViewState) {
+        data.customCategoryFields.let { customCategoryFields ->
+            customCategoryFields.customCategoryList?.let {list ->
+                setCustomCategoryList(
+                    list
                 )
-            }
-            is UpdateCustomCategoryEvent -> {
-                return customCategoryRepository.attemptUpdateCustomCategory(
-                    stateEvent.id,
-                    stateEvent.name,
-                    stateEvent.provider
-                )
-            }
-
-            is CreateProductEvent ->{
-                return customCategoryRepository.attemptCreateProduct(
-                    stateEvent.product,
-                    stateEvent.productImagesFile,
-                    stateEvent.variantesImagesFile,
-                    stateEvent.productObject
-                )
-            }
-            is UpdateProductEvent ->{
-                return customCategoryRepository.attemptUpdateProduct(
-                    stateEvent.product,
-                    stateEvent.productImagesFile,
-                    stateEvent.variantesImagesFile,
-                    stateEvent.productObject
-                )
-            }
-
-            is DeleteProductEvent ->{
-                return customCategoryRepository.attemptDeleteProduct(
-                    stateEvent.id
-                )
-            }
-
-            is ProductMainEvent ->{
-                return customCategoryRepository.attemptProductMain(
-                    stateEvent.id
-                )
-            }
-
-            is UpdateProductsCustomCategoryEvent ->{
-                return customCategoryRepository.attemptUpdateProductsCustomCategory(
-                    stateEvent.products,
-                    stateEvent.category
-                )
-            }
-
-            is None -> {
-                return liveData {
-                    emit(
-                        DataState<CustomCategoryViewState>(
-                            null,
-                            Loading(false),
-                            null
-                        )
-                    )
-                }
             }
         }
 
+        data.productList.let { productList ->
+            productList.products?.let {list ->
+                setProducts(
+                    list
+                )
+            }
+        }
+    }
+
+    override fun setStateEvent(stateEvent: StateEvent) {
+        if(!isJobAlreadyActive(stateEvent)){
+            sessionManager.cachedToken.value?.let { authToken ->
+                val job: Flow<DataState<CustomCategoryViewState>> = when(stateEvent){
+
+                    is CustomCategoryMainEvent ->{
+                        customCategoryRepository.attemptCustomCategoryMain(
+                            stateEvent,
+                            authToken.account_pk!!.toLong()
+                        )
+                    }
+
+                    is CreateCustomCategoryEvent ->{
+                        customCategoryRepository.attemptCreateCustomCategory(
+                            stateEvent,
+                            authToken.account_pk!!.toLong(),
+                            stateEvent.name
+                        )
+                    }
+
+                    is DeleteCustomCategoryEvent -> {
+                        customCategoryRepository.attemptDeleteCustomCategory(
+                            stateEvent,
+                            stateEvent.id
+                        )
+                    }
+
+                    is UpdateCustomCategoryEvent -> {
+                        customCategoryRepository.attemptUpdateCustomCategory(
+                            stateEvent,
+                            stateEvent.id,
+                            stateEvent.name,
+                            stateEvent.provider
+                        )
+                    }
+
+                    is CreateProductEvent ->{
+                        customCategoryRepository.attemptCreateProduct(
+                            stateEvent,
+                            stateEvent.product,
+                            stateEvent.productImagesFile,
+                            stateEvent.variantesImagesFile,
+                            stateEvent.productObject
+                        )
+                    }
+
+                    is UpdateProductEvent ->{
+                        customCategoryRepository.attemptUpdateProduct(
+                            stateEvent,
+                            stateEvent.product,
+                            stateEvent.productImagesFile,
+                            stateEvent.variantesImagesFile,
+                            stateEvent.productObject
+                        )
+                    }
+
+                    is DeleteProductEvent ->{
+                        customCategoryRepository.attemptDeleteProduct(
+                            stateEvent,
+                            stateEvent.id
+                        )
+                    }
+
+                    is ProductMainEvent ->{
+                        customCategoryRepository.attemptProductMain(
+                            stateEvent,
+                            stateEvent.id
+                        )
+                    }
+
+                    is UpdateProductsCustomCategoryEvent ->{
+                        customCategoryRepository.attemptUpdateProductsCustomCategory(
+                            stateEvent,
+                            stateEvent.products,
+                            stateEvent.category
+                        )
+                    }
+
+                    else -> {
+                        flow{
+                            emit(
+                                DataState.error<CustomCategoryViewState>(
+                                    response = Response(
+                                        message = ErrorHandling.INVALID_STATE_EVENT,
+                                        uiComponentType = UIComponentType.None(),
+                                        messageType = MessageType.Error()
+                                    ),
+                                    stateEvent = stateEvent
+                                )
+                            )
+                        }
+                    }
+                }
+                launchJob(stateEvent, job)
+            }
+        }
     }
 
     override fun initNewViewState(): CustomCategoryViewState {
         return CustomCategoryViewState()
-    }
-
-    fun cancelActiveJobs(){
-        customCategoryRepository.cancelActiveJobs()
-        handlePendingData()
-    }
-
-    fun handlePendingData(){
-        setStateEvent(None())
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        cancelActiveJobs()
     }
 }
 

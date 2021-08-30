@@ -71,9 +71,26 @@ fun CustomCategoryViewModel.setProductList(productList: CustomCategoryViewState.
     update.productList=productList
     setViewState(update)
 }
+
 fun CustomCategoryViewModel.setProductImageList(image: Uri){
     val update = getCurrentViewStateOrNew()
-    update.productFields.productImageList.add(image)
+    if (update.productFields.productImageList.isNullOrEmpty()){
+        update.productFields.productImageList = mutableListOf()
+        setViewState(update)
+    }
+    update.productFields.productImageList?.add(image)
+    setViewState(update)
+}
+
+fun CustomCategoryViewModel.setCustomCategoryList(list: List<CustomCategory>){
+    val update = getCurrentViewStateOrNew()
+    update.customCategoryFields.customCategoryList=list
+    setViewState(update)
+}
+
+fun CustomCategoryViewModel.setProducts(list: List<Product>){
+    val update = getCurrentViewStateOrNew()
+    update.productList.products=list
     setViewState(update)
 }
 
