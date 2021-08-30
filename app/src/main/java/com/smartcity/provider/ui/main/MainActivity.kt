@@ -24,11 +24,7 @@ import com.smartcity.provider.models.AUTH_TOKEN_BUNDLE_KEY
 import com.smartcity.provider.models.AuthToken
 import com.smartcity.provider.ui.BaseActivity
 import com.smartcity.provider.ui.auth.AuthActivity
-import com.smartcity.provider.ui.main.account.BaseAccountFragment
-import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.order.BaseOrderFragment
 import com.smartcity.provider.ui.main.order.notification.NotificationAlarmService
-import com.smartcity.provider.ui.main.store.BaseStoreFragment
 import com.smartcity.provider.util.BOTTOM_NAV_BACKSTACK_KEY
 import com.smartcity.provider.util.BottomNavController
 import com.smartcity.provider.util.BottomNavController.*
@@ -78,32 +74,7 @@ class MainActivity : BaseActivity(),
     }
 
     override fun onGraphChange() {
-        cancelActiveJobs()
         expandAppBar()
-    }
-
-    private fun cancelActiveJobs(){
-        val fragments = bottomNavController.fragmentManager
-            .findFragmentById(bottomNavController.containerId)
-            ?.childFragmentManager
-            ?.fragments
-        if(fragments != null){
-            for(fragment in fragments){
-                if(fragment is BaseStoreFragment){
-                    fragment.cancelActiveJobs()
-                }
-                if(fragment is BaseOrderFragment){
-                    fragment.cancelActiveJobs()
-                }
-                if(fragment is BaseCustomCategoryFragment){
-                    fragment.cancelActiveJobs()
-                }
-                if(fragment is BaseAccountFragment){
-                    fragment.cancelActiveJobs()
-                }
-            }
-        }
-        displayProgressBar(false)
     }
 
     override fun onReselectNavItem(

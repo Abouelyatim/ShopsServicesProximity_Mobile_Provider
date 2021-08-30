@@ -36,7 +36,7 @@ constructor(
         }
 
         forgot_password.setOnClickListener {
-            navForgotPassword()
+
         }
 
         focusable_view.requestFocus() // reset focus
@@ -48,9 +48,5 @@ constructor(
 
     fun navRegistration(){
         findNavController().navigate(R.id.action_launcherFragment_to_registerFragment)
-    }
-
-    fun navForgotPassword(){
-        findNavController().navigate(R.id.action_launcherFragment_to_forgotPasswordFragment)
     }
 }

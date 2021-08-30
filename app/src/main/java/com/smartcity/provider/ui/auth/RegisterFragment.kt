@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.smartcity.provider.R
 import com.smartcity.provider.di.auth.AuthScope
 import com.smartcity.provider.ui.auth.state.AuthStateEvent.RegisterAttemptEvent
 import com.smartcity.provider.ui.auth.state.RegistrationFields
+import com.smartcity.provider.util.StateMessageCallback
 import kotlinx.android.synthetic.main.fragment_register.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -42,6 +44,10 @@ constructor(
                 it.registration_username?.let{input_username.setText(it)}
                 it.registration_password?.let{input_password.setText(it)}
                 it.registration_confirm_password?.let{input_password_confirm.setText(it)}
+            }
+
+            viewState.authToken?.let {
+                findNavController().popBackStack()
             }
         })
     }
