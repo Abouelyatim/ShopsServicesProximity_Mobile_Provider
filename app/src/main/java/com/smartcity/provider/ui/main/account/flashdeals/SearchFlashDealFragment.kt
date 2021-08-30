@@ -1,18 +1,11 @@
 package com.smartcity.provider.ui.main.account.flashdeals
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -25,28 +18,26 @@ import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KE
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.*
-import com.smartcity.provider.ui.main.order.viewmodel.getRangeDate
-import com.smartcity.provider.ui.main.order.viewmodel.setRangeDate
 import com.smartcity.provider.util.DateUtils
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_flash_deals.*
 import kotlinx.android.synthetic.main.fragment_search_flash_deal.*
 import kotlinx.android.synthetic.main.layout_order_filter.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class SearchFlashDealFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_search_flash_deal)
+): BaseAccountFragment(R.layout.fragment_search_flash_deal, viewModelFactory)
 {
     private lateinit var flashRecyclerAdapter: FlashDealsAdapter
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -55,6 +46,7 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -66,7 +58,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -74,8 +66,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         initRecyclerView()
         subscribeObservers()
@@ -91,20 +83,23 @@ constructor(
 
     @SuppressLint("SetTextI18n")
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            //set Offer list get it from network
-            dataState.data?.let { data ->
-                data.data?.let{
-                    it.getContentIfNotHandled()?.let{
-                        it.flashDealsFields.searchFlashDealsList.let {
-                            viewModel.setSearchFlashDealsList(it)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
+
+            stateMessage?.let {
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-
-                }
-
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
 
         //submit list to recycler view
@@ -179,5 +174,4 @@ constructor(
             adapter = flashRecyclerAdapter
         }
     }
-
 }

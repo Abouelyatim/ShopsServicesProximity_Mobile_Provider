@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
@@ -17,26 +16,24 @@ import com.smartcity.provider.R
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountViewState
-import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
 import com.smartcity.provider.ui.main.account.viewmodel.getRangeDiscountDate
 import com.smartcity.provider.ui.main.account.viewmodel.setEndRangeDiscountDate
 import com.smartcity.provider.ui.main.account.viewmodel.setStartRangeDiscountDate
 import com.smartcity.provider.util.DateUtils
 import kotlinx.android.synthetic.main.fragment_pick_date_discount.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import java.util.*
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PickDateDiscountFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_pick_date_discount){
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
+): BaseAccountFragment(R.layout.fragment_pick_date_discount,viewModelFactory){
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -45,6 +42,7 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -56,7 +54,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -64,8 +62,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         subscribeObservers()
         pick_start_date.setOnClickListener {
@@ -75,7 +73,6 @@ constructor(
         pick_end_date.setOnClickListener {
             showDatePicker("end")
         }
-
     }
 
     private fun showDatePicker(step:String){
@@ -191,7 +188,4 @@ constructor(
 
         })
     }
-
-
-
 }

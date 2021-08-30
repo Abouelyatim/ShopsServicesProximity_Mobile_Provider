@@ -7,7 +7,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -16,31 +15,26 @@ import com.smartcity.provider.R
 import com.smartcity.provider.models.OfferState
 import com.smartcity.provider.models.OfferType
 import com.smartcity.provider.ui.AreYouSureCallback
-import com.smartcity.provider.ui.UIMessage
-import com.smartcity.provider.ui.UIMessageType
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.*
-import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.DateUtils
+import com.smartcity.provider.util.*
 import com.smartcity.provider.util.DateUtils.Companion.convertStringToStringDate
-import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.fragment_view_offer.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ViewOfferFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_view_offer){
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
+): BaseAccountFragment(R.layout.fragment_view_offer,viewModelFactory){
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -49,6 +43,7 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -60,7 +55,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -68,9 +63,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
-
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         subscribeObservers()
         setInformation()
@@ -83,31 +77,27 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message.equals(SuccessHandling.DELETE_DONE)){
-                            getOffers()
-                        }
-                    }
-                }
-            }
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-            //set Offer list get it from network
-            dataState.data?.let { data ->
-                data.data?.let{
-                    it.getContentIfNotHandled()?.let{
-                        it.discountOfferList.offersList.let {
-                            viewModel.setOffersList(it)
-                        }
-                        findNavController().popBackStack()
-                    }
+            stateMessage?.let {
 
+                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
+                    findNavController().popBackStack()
                 }
 
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
     }
 
@@ -179,11 +169,17 @@ constructor(
                         // ignore
                     }
                 }
-                uiCommunicationListener.onUIMessageReceived(
-                    UIMessage(
-                        getString(R.string.are_you_sure_delete),
-                        UIMessageType.AreYouSureDialog(callback)
-                    )
+                uiCommunicationListener.onResponseReceived(
+                    response = Response(
+                        message = getString(R.string.are_you_sure_delete),
+                        uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                        messageType = MessageType.Info()
+                    ),
+                    stateMessageCallback = object: StateMessageCallback{
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
                 )
                 return true
             }

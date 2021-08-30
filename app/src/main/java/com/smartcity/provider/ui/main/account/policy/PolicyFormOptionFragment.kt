@@ -8,7 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,25 +23,25 @@ import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KE
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.*
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_policy_form_option.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PolicyFormOptionFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_policy_form_option),
+): BaseAccountFragment(R.layout.fragment_policy_form_option,viewModelFactory),
     DepositRangeAdapter.Interaction{
 
     private lateinit var recyclerAdapter: DepositRangeAdapter
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -61,7 +61,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -69,8 +69,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         initPicker()
         initUi()
@@ -94,21 +94,28 @@ constructor(
             recyclerAdapter.submitList(viewModel.getPolicyConfigurationTaxRanges().toSet())
         })
 
-        viewModel.dataState.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dataState->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        if(!data.response.hasBeenHandled){
-                            if (response.message==SuccessHandling.CREATION_DONE){
-                                navPolicy()
-                            }
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
+
+            stateMessage?.let {
+
+                if(stateMessage.response.message.equals(SuccessHandling.CREATION_DONE)){
+                    navPolicy()
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
         })
 
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
     }
 
     private fun navPolicy(){

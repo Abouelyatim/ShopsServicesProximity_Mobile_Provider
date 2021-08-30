@@ -3,7 +3,6 @@ package com.smartcity.provider.ui.main.account.notification
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,26 +13,26 @@ import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
-import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
+import com.smartcity.provider.ui.main.account.viewmodel.getNotificationSettings
 import com.smartcity.provider.util.NotificationSettings.Companion.ORDERS_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.REMINDER_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.SOUND_NOTIFICATION
 import com.smartcity.provider.util.NotificationSettings.Companion.VIBRATION_NOTIFICATION
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import kotlinx.android.synthetic.main.fragment_notification.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class NotificationFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_notification){
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
+): BaseAccountFragment(R.layout.fragment_notification,viewModelFactory){
 
     private lateinit var  switches:List<Pair<String,SwitchMaterial>>
     private var clickedSwitch:List<String> = listOf()
@@ -45,6 +44,7 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -56,7 +56,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -64,8 +64,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         subscribeObservers()
         saveNotificationSettings()
@@ -131,29 +131,32 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                        if(!data.response.hasBeenHandled){
-                            if (response.message==SuccessHandling.RESPONSE_SAVE_NOTIFICATION_SETTINGS_DONE){
-                                navAccount()
-                            }
-                        }
+            stateMessage?.let {
 
-                        if (response.message==SuccessHandling.RESPONSE_GET_NOTIFICATION_SETTINGS_DONE){
-                            data.data?.let{
-                                it.peekContent()?.let{
-                                    clickedSwitch=it.notificationSettings
-                                    setSwitchesUi(it.notificationSettings)
-                                }
-                            }
+                if(stateMessage.response.message.equals(SuccessHandling.RESPONSE_SAVE_NOTIFICATION_SETTINGS_DONE)){
+                    navAccount()
+                }
+
+                if(stateMessage.response.message.equals(SuccessHandling.RESPONSE_GET_NOTIFICATION_SETTINGS_DONE)){
+                    clickedSwitch=viewModel.getNotificationSettings()
+                    setSwitchesUi(viewModel.getNotificationSettings())
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
     }
 
@@ -163,6 +166,6 @@ constructor(
 
     override fun onDestroy() {
         super.onDestroy()
-        stateChangeListener.displayBottomNavigation(true)
+        uiCommunicationListener.displayBottomNavigation(true)
     }
 }

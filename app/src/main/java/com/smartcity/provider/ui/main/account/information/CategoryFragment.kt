@@ -3,7 +3,6 @@ package com.smartcity.provider.ui.main.account.information
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -21,25 +20,24 @@ import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KE
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.*
-import com.smartcity.provider.util.SuccessHandling
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_category.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class CategoryFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_category),
+): BaseAccountFragment(R.layout.fragment_category,viewModelFactory),
     CategoriesAdapter.Interaction {
 
     private lateinit var categoriesAdapter: CategoriesAdapter
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -48,6 +46,7 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -59,7 +58,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -67,8 +66,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         initRecyclerView()
         subscribeObservers()
@@ -78,28 +77,23 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                          if(!data.response.hasBeenHandled){
-                              if (response.message==SuccessHandling.DONE_ALL_CATEGORIES){
-                                  data.data?.let{
-                                      it.peekContent()?.let{
-                                          it.storeInformationFields.categoryList?.let {
-                                              viewModel.setCategoriesList(it)
-                                          }
+            stateMessage?.let {
 
-                                      }
-                                  }
-
-                              }
-                          }
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
                     }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
 
         //submit list to recycler view

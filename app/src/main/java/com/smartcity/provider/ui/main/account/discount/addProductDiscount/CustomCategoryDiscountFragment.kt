@@ -3,7 +3,6 @@ package com.smartcity.provider.ui.main.account.discount.addProductDiscount
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -20,22 +19,21 @@ import com.smartcity.provider.ui.main.account.state.AccountViewState
 import com.smartcity.provider.ui.main.account.viewmodel.*
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_custom_category_discount.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class CustomCategoryDiscountFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_custom_category_discount),
+): BaseAccountFragment(R.layout.fragment_custom_category_discount,viewModelFactory),
     CustomCategoryDiscountAdapter.Interaction{
 
     private lateinit var recyclerAdapter: CustomCategoryDiscountAdapter
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -55,7 +53,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -63,8 +61,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         initRecyclerView()
         subscribeObservers()
@@ -78,19 +76,6 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-
-            //set Custom Category list get it from network
-            dataState.data?.let { data ->
-                data.data?.let{
-                    it.getContentIfNotHandled()?.let{
-                        viewModel.setCustomCategoryList(it.discountFields.customCategoryList)
-                    }
-
-                }
-            }
-        })
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             recyclerAdapter.submitList(viewModel.getCustomCategoryList())

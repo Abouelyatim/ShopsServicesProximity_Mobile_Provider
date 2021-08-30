@@ -3,7 +3,6 @@ package com.smartcity.provider.ui.main.account.information
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,38 +13,36 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.smartcity.provider.R
 import com.smartcity.provider.models.StoreInformation
-import com.smartcity.provider.ui.*
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.information.adapters.SelectedCategoriesValueAdapter
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
-import com.smartcity.provider.ui.main.account.viewmodel.*
+import com.smartcity.provider.ui.main.account.viewmodel.getSelectedCategoriesList
+import com.smartcity.provider.ui.main.account.viewmodel.getStoreInformation
+import com.smartcity.provider.util.*
 import com.smartcity.provider.util.ErrorHandling.Companion.ERROR_FILL_ALL_INFORMATION
 import com.smartcity.provider.util.ErrorHandling.Companion.ERROR_INVALID_PHONE_NUMBER_FORMAT
-import com.smartcity.provider.util.SuccessHandling
-import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_information.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import me.ibrahimsn.lib.PhoneNumberKit
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class InformationFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_information)
+): BaseAccountFragment(R.layout.fragment_information,viewModelFactory)
 {
 
     private lateinit var selectedCategoriesValueAdapter: SelectedCategoriesValueAdapter
 
     lateinit var defaultPhoneNumberKit:PhoneNumberKit
     lateinit var phoneNumberKit:PhoneNumberKit
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -54,6 +51,7 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -65,7 +63,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -73,8 +71,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         initRecyclerView()
         subscribeObservers()
@@ -146,35 +144,30 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                        if(!data.response.hasBeenHandled){
-                            if (response.message==SuccessHandling.CREATION_DONE){
-                                navAccount()
-                            }
-                        }
+            stateMessage?.let {
 
-                        if(!data.response.hasBeenHandled){
-                            if (response.message==SuccessHandling.DONE_STORE_INFORMATION){
-                                data.data?.let{
-                                    it.peekContent()?.let{
-                                        it.storeInformationFields!!.storeInformation?.let {
-                                            viewModel.setStoreInformation(it)
-                                            viewModel.setSelectedCategoriesList(it.defaultCategoriesList!!.toMutableList())
-                                        }
-                                    }
-                                }
+                if(stateMessage.response.message.equals(SuccessHandling.CREATION_DONE)){
+                    navAccount()
+                }
 
-                            }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
         })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
+
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             var selectedCategoriesValue= listOf<String>()
@@ -232,13 +225,17 @@ constructor(
     }
 
     fun showErrorDialog(errorMessage: String){
-        stateChangeListener.onDataStateChange(
-            DataState(
-                Event(StateError(Response(errorMessage, ResponseType.Dialog()))),
-                Loading(isLoading = false),
-                Data(Event.dataEvent(null), null)
-            )
+        uiCommunicationListener.onResponseReceived(
+            response = Response(
+                message = errorMessage,
+                uiComponentType = UIComponentType.Dialog(),
+                messageType = MessageType.Error()
+            ),
+            stateMessageCallback = object: StateMessageCallback {
+                override fun removeMessageFromStack() {
+                    viewModel.clearStateMessage()
+                }
+            }
         )
     }
-
 }

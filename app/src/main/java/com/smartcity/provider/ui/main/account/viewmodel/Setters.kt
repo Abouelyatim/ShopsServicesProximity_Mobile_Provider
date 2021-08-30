@@ -187,3 +187,9 @@ fun AccountViewModel.setSelectedOfferFilter(value:  Pair<String,OfferState>?){
     update.discountFields.selectedOfferFilter = value
     setViewState(update)
 }
+
+fun AccountViewModel.setNotificationSettings(list : List<String>){
+    val update = getCurrentViewStateOrNew()
+    update.notificationSettings = list
+    setViewState(update)
+}

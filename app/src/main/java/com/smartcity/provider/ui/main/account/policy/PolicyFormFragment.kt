@@ -8,31 +8,36 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.SelfPickUpOptions
-import com.smartcity.provider.ui.*
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountViewState
-import com.smartcity.provider.ui.main.account.viewmodel.*
+import com.smartcity.provider.ui.main.account.viewmodel.getPolicyConfigurationDelivery
+import com.smartcity.provider.ui.main.account.viewmodel.getPolicyConfigurationSelfPickUpOption
+import com.smartcity.provider.ui.main.account.viewmodel.setPolicyConfigurationDelivery
+import com.smartcity.provider.ui.main.account.viewmodel.setPolicyConfigurationSelfPickUpOption
 import com.smartcity.provider.util.ErrorHandling.Companion.ERROR_FILL_ALL_INFORMATION
+import com.smartcity.provider.util.MessageType
+import com.smartcity.provider.util.Response
+import com.smartcity.provider.util.StateMessageCallback
+import com.smartcity.provider.util.UIComponentType
 import kotlinx.android.synthetic.main.fragment_policy_form.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PolicyFormFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_policy_form){
-
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
+): BaseAccountFragment(R.layout.fragment_policy_form,viewModelFactory){
 
     private lateinit var  radios:List<Pair<RadioButton, SelfPickUpOptions>>
 
@@ -56,7 +61,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -64,8 +69,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         initRadisButtons()
         initExtendable()
@@ -147,12 +152,17 @@ constructor(
     }
 
     fun showErrorDialog(errorMessage: String){
-        stateChangeListener.onDataStateChange(
-            DataState(
-                Event(StateError(Response(errorMessage, ResponseType.Dialog()))),
-                Loading(isLoading = false),
-                Data(Event.dataEvent(null), null)
-            )
+        uiCommunicationListener.onResponseReceived(
+            response = Response(
+                message = errorMessage,
+                uiComponentType = UIComponentType.Dialog(),
+                messageType = MessageType.Error()
+            ),
+            stateMessageCallback = object: StateMessageCallback {
+                override fun removeMessageFromStack() {
+                    viewModel.clearStateMessage()
+                }
+            }
         )
     }
 }

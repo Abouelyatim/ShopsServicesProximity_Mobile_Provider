@@ -25,10 +25,19 @@ constructor(
 {
 
     override fun handleNewData(data: AccountViewState) {
+        data.notificationSettings?.let { list ->
+            setNotificationSettings(
+                list
+            )
+        }
+
         data.storeInformationFields.let { storeInformationFields ->
             storeInformationFields.storeInformation?.let {
                 setStoreInformation(
                     it
+                )
+                setSelectedCategoriesList(
+                    it.defaultCategoriesList!!.toMutableList()
                 )
             }
 

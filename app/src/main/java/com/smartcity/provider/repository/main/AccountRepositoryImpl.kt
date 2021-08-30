@@ -61,7 +61,9 @@ constructor(
         settings?.let {
             emit(
                 DataState.data<AccountViewState>(
-                    data = null,
+                    data = AccountViewState(
+                        notificationSettings = it.toList()
+                    ),
                     response = Response(
                         RESPONSE_GET_NOTIFICATION_SETTINGS_DONE,
                         UIComponentType.None(),

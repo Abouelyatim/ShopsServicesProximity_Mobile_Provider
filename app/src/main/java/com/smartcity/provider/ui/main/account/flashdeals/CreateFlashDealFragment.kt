@@ -1,12 +1,8 @@
 package com.smartcity.provider.ui.main.account.flashdeals
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,32 +10,25 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.FlashDeal
 import com.smartcity.provider.ui.AreYouSureCallback
-import com.smartcity.provider.ui.UIMessage
-import com.smartcity.provider.ui.UIMessageType
 import com.smartcity.provider.ui.main.account.BaseAccountFragment
 import com.smartcity.provider.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.account.state.AccountStateEvent
 import com.smartcity.provider.ui.main.account.state.AccountViewState
-import com.smartcity.provider.ui.main.account.viewmodel.AccountViewModel
-import com.smartcity.provider.ui.main.account.viewmodel.getSelectedOffer
-import com.smartcity.provider.ui.main.account.viewmodel.setFlashDealsList
-import com.smartcity.provider.ui.main.account.viewmodel.setOffersList
-import com.smartcity.provider.util.SuccessHandling
+import com.smartcity.provider.util.*
 import kotlinx.android.synthetic.main.fragment_create_flash_deal.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class CreateFlashDealFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseAccountFragment(R.layout.fragment_create_flash_deal)
+): BaseAccountFragment(R.layout.fragment_create_flash_deal,viewModelFactory)
 {
-    val viewModel: AccountViewModel by viewModels{
-        viewModelFactory
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
             ACCOUNT_VIEW_STATE_BUNDLE_KEY,
@@ -47,6 +36,7 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
@@ -58,7 +48,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -66,9 +56,8 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
-        stateChangeListener.displayBottomNavigation(false)
-
+        uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         subscribeObservers()
 
@@ -84,33 +73,27 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                        if(!data.response.hasBeenHandled){
-                            if (response.message== SuccessHandling.CREATION_DONE){
-                                getFlashDeals()
-                            }
-                        }
+            stateMessage?.let {
 
-                        if(!data.response.hasBeenHandled) {
-                            if (response.message == SuccessHandling.DONE_Flashes) {
-                                data.data?.let {
-                                    it.getContentIfNotHandled()?.let {
-                                        it.flashDealsFields.flashDealsList.let {
-                                            viewModel.setFlashDealsList(it)
-                                        }
-                                    }
-                                    findNavController().popBackStack()
-                                }
-                            }
+                if(stateMessage.response.message.equals(SuccessHandling.CREATION_DONE)){
+                    findNavController().popBackStack()
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
     }
 
@@ -136,11 +119,18 @@ constructor(
                 // ignore
             }
         }
-        uiCommunicationListener.onUIMessageReceived(
-            UIMessage(
-                getString(R.string.are_you_sure_publish),
-                UIMessageType.AreYouSureDialog(callback)
-            )
+
+        uiCommunicationListener.onResponseReceived(
+            response = Response(
+                message = getString(R.string.are_you_sure_publish),
+                uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                messageType = MessageType.Info()
+            ),
+            stateMessageCallback = object: StateMessageCallback {
+                override fun removeMessageFromStack() {
+                    viewModel.clearStateMessage()
+                }
+            }
         )
     }
 }

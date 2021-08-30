@@ -152,3 +152,9 @@ fun AccountViewModel.getSelectedOfferFilter(): Pair<String,OfferState>?{
         return it.discountFields.selectedOfferFilter
     }
 }
+
+fun AccountViewModel.getNotificationSettings(): List<String>{
+    getCurrentViewStateOrNew().let {
+        return it.notificationSettings?: listOf()
+    }
+}

@@ -8,6 +8,7 @@ import kotlinx.android.parcel.Parcelize
 const val ACCOUNT_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.account.state.AccountViewState"
 @Parcelize
 class AccountViewState(
+    var notificationSettings:List<String>? = null,
     var policyConfiguration:PolicyConfiguration=PolicyConfiguration(),
     var storeInformationFields: StoreInformationFields=StoreInformationFields(),
     var discountFields: DiscountFields =DiscountFields(),
