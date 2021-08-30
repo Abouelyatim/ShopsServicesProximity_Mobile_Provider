@@ -32,7 +32,7 @@ constructor(
 
         data.viewProductList.let { viewProductList ->
             viewProductList.products?.let {list ->
-                setProductList(
+                setViewProductList(
                     list
                 )
             }

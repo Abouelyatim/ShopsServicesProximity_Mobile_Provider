@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -23,31 +22,27 @@ import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.
 import com.smartcity.provider.ui.main.store.state.STORE_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent
 import com.smartcity.provider.ui.main.store.state.StoreViewState
-import com.smartcity.provider.ui.main.store.viewmodel.StoreViewModel
-import com.smartcity.provider.util.ActionConstants
-import com.smartcity.provider.util.RightSpacingItemDecoration
-import com.smartcity.provider.util.SuccessHandling
-import com.smartcity.provider.util.TopSpacingItemDecoration
+import com.smartcity.provider.ui.main.store.viewmodel.*
+import com.smartcity.provider.util.*
 import kotlinx.android.synthetic.main.fragment_store.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class StoreFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseStoreFragment(R.layout.fragment_store),
+): BaseStoreFragment(R.layout.fragment_store,viewModelFactory),
     ViewCustomCategoryAdapter.Interaction,
     ViewCustomCategoryAdapter.InteractionAll,
     ViewProductAdapter.Interaction{
 
     private lateinit var customCategoryrecyclerAdapter: ViewCustomCategoryAdapter
     private lateinit var productRecyclerAdapter: ViewProductAdapter
-
-    val viewModel: StoreViewModel by viewModels{
-        viewModelFactory
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(
@@ -68,7 +63,7 @@ constructor(
         }
     }
 
-    override fun cancelActiveJobs(){
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
@@ -76,7 +71,7 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
+        uiCommunicationListener.expandAppBar()
 
 
         initCustomCategoryRecyclerView()
@@ -154,57 +149,29 @@ constructor(
     }
 
     private fun subscribeObservers(){
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-            if(dataState != null){
-                //set Product list get it from network
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
-                        when(response.message){
+            stateMessage?.let {
 
-                            SuccessHandling.DONE_Product_Main->{
-                                data.data?.let{
-                                    it.peekContent()?.let{
-                                        it.viewProductList.let {
-                                            viewModel.setViewProductList(it)
-                                        }
-                                    }
+                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
+                    findNavController().popBackStack()
+                }
 
-                                }
-                            }
-
-                            SuccessHandling.DONE_Custom_Category_Main->{
-                                AllProduct()
-                                data.data?.let{
-                                    it.peekContent()?.let{
-                                        viewModel.setViewCustomCategoryFields(it.viewCustomCategoryFields)
-                                    }
-
-                                }
-                            }
-
-                            SuccessHandling.DONE_All_Product->{
-                                data.data?.let{
-                                    it.peekContent()?.let{
-                                        it.viewProductList.let {
-                                            viewModel.setViewProductList(it)
-                                        }
-                                    }
-
-                                }
-                            }
-
-
-                            else ->{
-
-                            }
-
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
         })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
+        })
+
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             customCategoryrecyclerAdapter.submitList(viewModel.getViewCustomCategoryFields())

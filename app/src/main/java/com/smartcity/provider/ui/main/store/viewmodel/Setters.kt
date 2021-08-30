@@ -10,19 +10,9 @@ fun StoreViewModel.clearViewProductList(){
     setViewState(update)
 }
 
-fun StoreViewModel.setViewProductList(productList: StoreViewState.ViewProductList){
+fun StoreViewModel.setViewProductList(productList: List<Product>){
     val update = getCurrentViewStateOrNew()
-    update.viewProductList=productList
-    setViewState(update)
-}
-
-fun StoreViewModel.setViewCustomCategoryFields(viewCustomCategoryFields: StoreViewState.ViewCustomCategoryFields){
-    val update = getCurrentViewStateOrNew()
-
-    if(update.viewCustomCategoryFields == viewCustomCategoryFields){
-        return
-    }
-    update.viewCustomCategoryFields = viewCustomCategoryFields
+    update.viewProductList.products=productList
     setViewState(update)
 }
 
@@ -53,11 +43,5 @@ fun StoreViewModel.setCustomCategoryRecyclerPosition(postion:Int){
 fun StoreViewModel.setCustomCategoryList(list : List<CustomCategory>){
     val update = getCurrentViewStateOrNew()
     update.viewCustomCategoryFields.customCategoryList=list
-    setViewState(update)
-}
-
-fun StoreViewModel.setProductList(list:List<Product>){
-    val update = getCurrentViewStateOrNew()
-    update.viewProductList.products = list
     setViewState(update)
 }

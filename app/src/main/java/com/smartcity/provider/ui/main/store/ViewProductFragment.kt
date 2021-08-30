@@ -11,7 +11,6 @@ import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,28 +23,34 @@ import com.smartcity.provider.models.OfferType
 import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.models.product.Product
 import com.smartcity.provider.models.product.ProductVariants
-import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.OptionsAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ValuesAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.VariantImageAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ViewPagerAdapter
+import com.smartcity.provider.ui.main.store.state.STORE_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.state.StoreViewState
-import com.smartcity.provider.ui.main.store.viewmodel.StoreViewModel
+import com.smartcity.provider.ui.main.store.viewmodel.clearChoisesMap
+import com.smartcity.provider.ui.main.store.viewmodel.getChoisesMap
+import com.smartcity.provider.ui.main.store.viewmodel.getViewProductFields
+import com.smartcity.provider.ui.main.store.viewmodel.setChoisesMap
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_product.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ViewProductFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseCustomCategoryFragment(R.layout.fragment_view_product),
+): BaseStoreFragment(R.layout.fragment_view_product,viewModelFactory),
     OptionsAdapter.Interaction,
     VariantImageAdapter.Interaction
 {
@@ -57,16 +62,12 @@ constructor(
     private lateinit var  optionsRecyclerAdapter: OptionsAdapter
     private lateinit var optionsRecyclerview: RecyclerView
 
-    val viewModel: StoreViewModel by viewModels{
-        viewModelFactory
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cancelActiveJobs()
         // Restore state after process death
         savedInstanceState?.let { inState ->
-            (inState[CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY] as StoreViewState?)?.let { viewState ->
+            (inState[STORE_VIEW_STATE_BUNDLE_KEY] as StoreViewState?)?.let { viewState ->
                 viewModel.setViewState(viewState)
             }
         }
@@ -78,20 +79,19 @@ constructor(
         )
         super.onSaveInstanceState(outState)
     }
-    override fun cancelActiveJobs(){
+
+    fun cancelActiveJobs(){
         viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        stateChangeListener.expandAppBar()
+        uiCommunicationListener.expandAppBar()
 
         viewModel.getViewProductFields()?.let {
             product=it
         }
-
-
 
         initViewPager()
         setNewPrice(product_new_price)
