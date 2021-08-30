@@ -7,16 +7,15 @@ import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.smartcity.provider.R
 import com.smartcity.provider.persistence.AccountPropertiesDao
 import com.smartcity.provider.persistence.AppDatabase
 import com.smartcity.provider.persistence.AppDatabase.Companion.DATABASE_NAME
 import com.smartcity.provider.persistence.AuthTokenDao
 import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.LiveDataCallAdapterFactory
 import com.smartcity.provider.util.PreferenceKeys
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -63,7 +62,6 @@ object AppModule{
     fun provideRetrofitBuilder(gsonBuilder:  Gson): Retrofit.Builder{
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
-            .addCallAdapterFactory(LiveDataCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create(gsonBuilder))
     }
 

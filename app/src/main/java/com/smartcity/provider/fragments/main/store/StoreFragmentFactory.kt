@@ -40,6 +40,4 @@ constructor(
                     requestManager)
             }
         }
-
-
 }

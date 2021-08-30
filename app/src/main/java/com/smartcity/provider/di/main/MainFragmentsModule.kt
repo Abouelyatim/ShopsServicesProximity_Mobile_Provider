@@ -81,5 +81,4 @@ object MainFragmentsModule {
     ): SharedPreferences {
         return sharedPreferences
     }
-
 }

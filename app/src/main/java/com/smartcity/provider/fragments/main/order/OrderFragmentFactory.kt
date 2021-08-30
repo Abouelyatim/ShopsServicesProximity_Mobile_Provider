@@ -58,6 +58,4 @@ constructor(
                 OrderFragment(viewModelFactory, requestManager)
             }
         }
-
-
 }
