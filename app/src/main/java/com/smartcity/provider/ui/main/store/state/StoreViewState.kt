@@ -26,12 +26,12 @@ class StoreViewState(
 
     @Parcelize
     data class ViewProductList(
-        var products:List<Product> = ArrayList()
+        var products:List<Product>? = null
     ) : Parcelable
 
     @Parcelize
     data class ViewCustomCategoryFields(
-        var customCategoryList: List<CustomCategory> = ArrayList<CustomCategory>()
+        var customCategoryList: List<CustomCategory>? = null
     ) : Parcelable
 
     @Parcelize
@@ -41,6 +41,6 @@ class StoreViewState(
 
     @Parcelize
     data class ChoisesMap(
-        var choises:MutableMap<String, String> = mutableMapOf()
+        var choises:MutableMap<String, String>? = null
     ) : Parcelable
 }

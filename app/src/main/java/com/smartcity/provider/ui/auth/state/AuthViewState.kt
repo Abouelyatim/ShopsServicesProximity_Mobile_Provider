@@ -1,18 +1,16 @@
 package com.smartcity.provider.ui.auth.state
 
-import android.net.Uri
 import android.os.Parcelable
 import com.smartcity.provider.models.AuthToken
-import com.smartcity.provider.models.StoreAddress
 import kotlinx.android.parcel.Parcelize
 
 const val AUTH_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.auth.state.AuthViewState"
 
 @Parcelize
 data class AuthViewState(
-    var registrationFields: RegistrationFields? = RegistrationFields(),
+    var registrationFields: RegistrationFields? = null,
 
-    var loginFields: LoginFields? = LoginFields(),
+    var loginFields: LoginFields? = null,
 
     var authToken: AuthToken? = null
 

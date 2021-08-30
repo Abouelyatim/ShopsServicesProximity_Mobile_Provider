@@ -2,7 +2,6 @@ package com.smartcity.provider.ui.main.account.viewmodel
 
 import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
-import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.ui.main.account.state.AccountViewState
 
 fun AccountViewModel.setPolicyConfigurationDelivery(bool:Boolean){

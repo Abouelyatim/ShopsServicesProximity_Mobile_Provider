@@ -18,20 +18,18 @@ data class OrderViewState (
 
     @Parcelize
     data class OrderFields(
-        var searchOrderList: List<Order> = listOf(),
-        var orderList: List<Order> = listOf(),
+        var searchOrderList: List<Order>? = null,
+        var orderList: List<Order>? = null,
         var selectedOrder:Order?=null,
-        var orderAction: List<Triple<String,Int,Int>> = listOf(),
-        var orderSteps: List<Pair<String,Int>> = listOf(),
-        var orderActionRecyclerPosition: Int =0,
-        var orderStepsRecyclerPosition: Int =0,
+        var orderAction: List<Triple<String,Int,Int>>? = null,
+        var orderSteps: List<Pair<String,Int>>? = null,
+        var orderActionRecyclerPosition: Int? = null,
+        var orderStepsRecyclerPosition: Int? = null,
         var selectedSortFilter:Triple<String,String,String> ?=null,
         var selectedTypeFilter:Triple<String,String,String> ?=null,
         var rangeDate:Pair<String?,String?> =Pair(null,null),
-        var orderStepFilter: OrderStep = OrderStep.NEW_ORDER
+        var orderStepFilter: OrderStep? = null
     ) : Parcelable
-
-
 }
 
 

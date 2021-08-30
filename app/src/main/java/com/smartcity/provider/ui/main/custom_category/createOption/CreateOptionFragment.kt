@@ -1,8 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.createOption
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -20,8 +18,7 @@ import com.smartcity.provider.models.product.AttributeValue
 import com.smartcity.provider.models.product.ProductVariantAttributeValue
 import com.smartcity.provider.models.product.ProductVariants
 import com.smartcity.provider.ui.main.custom_category.BaseCustomCategoryFragment
-import com.smartcity.provider.ui.main.custom_category.CustomCategoryViewModel
-import com.smartcity.provider.ui.main.custom_category.customCategory.CustomCategoryFragment
+import com.smartcity.provider.ui.main.custom_category.viewmodel.CustomCategoryViewModel
 import com.smartcity.provider.ui.main.custom_category.customCategory.CustomCategoryFragment.*
 import com.smartcity.provider.ui.main.custom_category.state.CUSTOM_CATEGORY_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.custom_category.state.CustomCategoryViewState

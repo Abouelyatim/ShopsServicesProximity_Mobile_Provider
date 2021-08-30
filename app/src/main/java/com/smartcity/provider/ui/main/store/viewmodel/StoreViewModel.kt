@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.store
+package com.smartcity.provider.ui.main.store.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
@@ -71,79 +71,7 @@ constructor(
         return StoreViewState()
     }
 
-    fun clearViewProductList(){
-        val update = getCurrentViewStateOrNew()
-        update.viewProductList= StoreViewState.ViewProductList()
-        setViewState(update)
-    }
 
-    fun setViewProductList(productList: StoreViewState.ViewProductList){
-        val update = getCurrentViewStateOrNew()
-        update.viewProductList=productList
-        setViewState(update)
-    }
-
-    fun getViewProductList(): StoreViewState.ViewProductList {
-        getCurrentViewStateOrNew().let {
-            return it.viewProductList
-        }
-    }
-
-    fun setViewCustomCategoryFields(viewCustomCategoryFields: StoreViewState.ViewCustomCategoryFields){
-        val update = getCurrentViewStateOrNew()
-
-        if(update.viewCustomCategoryFields == viewCustomCategoryFields){
-            return
-        }
-        update.viewCustomCategoryFields = viewCustomCategoryFields
-        setViewState(update)
-    }
-    fun getViewCustomCategoryFields():List<CustomCategory>{
-        getCurrentViewStateOrNew().let {
-            return it.viewCustomCategoryFields.customCategoryList
-        }
-    }
-
-    fun setViewProductFields(product: Product){
-        val update = getCurrentViewStateOrNew()
-        update.viewProductFields.product = product
-        setViewState(update)
-    }
-
-    fun getViewProductFields():Product?{
-        getCurrentViewStateOrNew().let {
-            return it.viewProductFields.product
-        }
-    }
-
-    fun setChoisesMap(map: MutableMap<String, String>){
-        val update = getCurrentViewStateOrNew()
-        update.choisesMap.choises = map
-        setViewState(update)
-    }
-
-    fun getChoisesMap():MutableMap<String, String>{
-        getCurrentViewStateOrNew().let {
-            return it.choisesMap.choises
-        }
-    }
-    fun clearChoisesMap(){
-        val update = getCurrentViewStateOrNew()
-        update.choisesMap= StoreViewState.ChoisesMap()
-        setViewState(update)
-    }
-
-    fun setCustomCategoryRecyclerPosition(postion:Int){
-        val update = getCurrentViewStateOrNew()
-        update.customCategoryRecyclerPosition=postion
-        setViewState(update)
-    }
-
-    fun getCustomCategoryRecyclerPosition():Int{
-        getCurrentViewStateOrNew().let {
-            return it.customCategoryRecyclerPosition
-        }
-    }
 
 
 

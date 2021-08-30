@@ -7,13 +7,13 @@ import com.smartcity.provider.models.product.OrderType
 
 fun OrderViewModel.getOrderList(): List<Order> {
     getCurrentViewStateOrNew().let {
-        return it.orderFields.orderList
+        return it.orderFields.orderList?: listOf()
     }
 }
 
 fun OrderViewModel.getSearchOrderList(): List<Order> {
     getCurrentViewStateOrNew().let {
-        return it.orderFields.searchOrderList
+        return it.orderFields.searchOrderList?: listOf()
     }
 }
 
@@ -25,25 +25,25 @@ fun OrderViewModel.getSelectedOrder(): Order? {
 
 fun OrderViewModel.getOrderAction(): List<Triple<String,Int,Int>> {
     getCurrentViewStateOrNew().let {
-        return it.orderFields.orderAction
+        return it.orderFields.orderAction?: listOf()
     }
 }
 
 fun OrderViewModel.getOrderSteps(): List<Pair<String,Int>> {
     getCurrentViewStateOrNew().let {
-        return it.orderFields.orderSteps
+        return it.orderFields.orderSteps?: listOf()
     }
 }
 
 fun OrderViewModel.getOrderActionRecyclerPosition():Int{
     getCurrentViewStateOrNew().let {
-        return it.orderFields.orderActionRecyclerPosition
+        return it.orderFields.orderActionRecyclerPosition?:0
     }
 }
 
 fun OrderViewModel.getOrderStepsRecyclerPosition():Int{
     getCurrentViewStateOrNew().let {
-        return it.orderFields.orderStepsRecyclerPosition
+        return it.orderFields.orderStepsRecyclerPosition?:0
     }
 }
 
@@ -61,7 +61,7 @@ fun OrderViewModel.getSelectedTypeFilter():Triple<String,String,String>? {
 
 fun OrderViewModel.getOrderStepFilter(): OrderStep {
     getCurrentViewStateOrNew().let {
-        return it.orderFields.orderStepFilter
+        return it.orderFields.orderStepFilter?:OrderStep.NEW_ORDER
     }
 }
 

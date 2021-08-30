@@ -3,14 +3,11 @@ package com.smartcity.provider.ui.main.account.state
 import android.os.Parcelable
 import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
-import com.smartcity.provider.models.product.ProductVariants
 import kotlinx.android.parcel.Parcelize
-import java.util.logging.Filter
 
 const val ACCOUNT_VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.openapi.ui.main.account.state.AccountViewState"
 @Parcelize
 class AccountViewState(
-    var notificationSettings:List<String> = listOf(),
     var policyConfiguration:PolicyConfiguration=PolicyConfiguration(),
     var storeInformationFields: StoreInformationFields=StoreInformationFields(),
     var discountFields: DiscountFields =DiscountFields(),
@@ -20,15 +17,15 @@ class AccountViewState(
 
     @Parcelize
     data class FlashDealsFields(
-        var flashDealsList:List<FlashDeal> = listOf(),
-        var searchFlashDealsList:List<FlashDeal> = listOf(),
+        var flashDealsList:List<FlashDeal>? = null,
+        var searchFlashDealsList:List<FlashDeal>? = null,
         var rangeDate:Pair<String?,String?> =Pair(null,null)
     ) : Parcelable
 
     @Parcelize
     data class StoreInformationFields(
         var storeInformation: StoreInformation?=null,
-        var categoryList:List<Category> = listOf(),
+        var categoryList:List<Category>? = null,
         var selectedCategory:Category? = null,
 
         var selectedCategories:MutableList<Category> = mutableListOf()
@@ -40,28 +37,28 @@ class AccountViewState(
         var selfPickUpOption: SelfPickUpOptions?=null,
         var validDuration:Long?=null,
         var tax:Int?=null,
-        var taxRanges:List<TaxRange> = listOf()
+        var taxRanges:List<TaxRange>? = null
     ) : Parcelable
 
     @Parcelize
     data class DiscountOfferList(
-        var offersList:List<Offer> = listOf(),
+        var offersList:List<Offer>? = null,
         var selectedOffer:Offer?=null
     ) : Parcelable
 
     @Parcelize
     data class DiscountFields(
-        var customCategoryList: List<CustomCategory> = listOf(),
+        var customCategoryList: List<CustomCategory>? = null,
         var selectedCustomCategory:CustomCategory?=null,
-        var productsList:List<Product> = ArrayList<Product>(),
+        var productsList:List<Product>? = null,
         var selectedProductToSelectVariant:Product?=null,
 
-        var selectedProductDiscount:List<Product> = listOf(),
+        var selectedProductDiscount:List<Product>? = null,
         var rangeDiscountDate:Pair<String?,String?> =Pair(null,null),
-        var discountCode:String="",
-        var offerType:OfferType=OfferType.PERCENTAGE,
-        var discountValuePercentage:String="%",
-        var discountValueFixed:String="",
+        var discountCode:String? = null,
+        var offerType:OfferType? = null,
+        var discountValuePercentage:String? = null,
+        var discountValueFixed:String? = null,
 
         var selectedOfferFilter: Pair<String,OfferState>? = null
     ) : Parcelable{
@@ -81,16 +78,16 @@ class AccountViewState(
         }
 
         fun isValidForCreation(): String{
-            if(selectedProductDiscount.isEmpty()
+            if(selectedProductDiscount.isNullOrEmpty()
                 || rangeDiscountDate.first==null
                 || rangeDiscountDate.second==null
-                || discountCode.isBlank()
-                || discountCode.isEmpty()){
+                || discountCode.isNullOrBlank()
+                || discountCode.isNullOrEmpty()){
                 return CreateOfferError.mustFillAllFields()
             }
 
 
-            if(offerType==OfferType.FIXED && (discountValueFixed.isBlank() || discountValueFixed.isEmpty())){
+            if(offerType==OfferType.FIXED && (discountValueFixed.isNullOrBlank() || discountValueFixed.isNullOrEmpty())){
                 return CreateOfferError.mustFillAllFields()
             }
 

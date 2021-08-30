@@ -31,6 +31,7 @@ import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.Value
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.VariantImageAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ViewPagerAdapter
 import com.smartcity.provider.ui.main.store.state.StoreViewState
+import com.smartcity.provider.ui.main.store.viewmodel.StoreViewModel
 import com.smartcity.provider.util.Constants
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_view_product.*

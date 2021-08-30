@@ -36,10 +36,9 @@ class CustomCategoryViewState(
 ) : Parcelable {
     @Parcelize
     data class CustomCategoryFields(
-        var customCategoryList: List<CustomCategory> = ArrayList<CustomCategory>(),
+        var customCategoryList: List<CustomCategory>? = null,
         var layoutManagerState: Parcelable? = null
     ) : Parcelable
-
 
     @Parcelize
     data class SelectedCustomCategory(
@@ -59,7 +58,7 @@ class CustomCategoryViewState(
 
     @Parcelize
     data class ProductList(
-        var products:List<Product> = ArrayList()
+        var products:List<Product> ? = null
     ) : Parcelable
 
     @Parcelize
@@ -74,12 +73,12 @@ class CustomCategoryViewState(
 
     @Parcelize
     data class ProductFields(
-        var description: String = "",
-        var name: String = "",
-        var price: String= "",
-        var quantity:String= "",
-        var productImageList: MutableList<Uri> = ArrayList<Uri>(),
-        var productVariantList: MutableList<ProductVariants> = ArrayList<ProductVariants>(),
+        var description: String ? = null,
+        var name: String ? = null,
+        var price: String ? = null,
+        var quantity:String ? = null,
+        var productImageList: MutableList<Uri> ? = null,
+        var productVariantList: MutableList<ProductVariants> ? = null,
         var attributeList: HashSet <Attribute> = LinkedHashSet ()
     ) : Parcelable{
         class CreateProductError {
@@ -100,11 +99,12 @@ class CustomCategoryViewState(
 
         fun isValidForCreation(): String{
 
-            if(description.isEmpty()
-                || name.isEmpty()
-                || productVariantList.isEmpty()
-                || productVariantList.map { it.price==0.0 }.all{!it}.not()
-                || productVariantList.map { it.unit==0 }.all{!it}.not()){
+            if(description.isNullOrEmpty()
+                || name.isNullOrEmpty()
+                || productVariantList.isNullOrEmpty()
+                || productVariantList?.map { it.price==0.0 }?.all{!it}?.not() != false
+                || productVariantList?.map { it.unit==0 }?.all{!it}?.not() != false
+            ){
 
                 return CreateProductError.mustFillAllFields()
             }
@@ -115,7 +115,6 @@ class CustomCategoryViewState(
 
     @Parcelize
     data class ChoisesMap(
-        var choises:MutableMap<String, String> = mutableMapOf()
+        var choises:MutableMap<String, String> ? = null
     ) : Parcelable
-
 }

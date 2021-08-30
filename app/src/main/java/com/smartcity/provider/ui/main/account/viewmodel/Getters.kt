@@ -2,7 +2,6 @@ package com.smartcity.provider.ui.main.account.viewmodel
 
 import com.smartcity.provider.models.*
 import com.smartcity.provider.models.product.Product
-import com.smartcity.provider.models.product.ProductVariants
 
 fun AccountViewModel.getPolicyConfigurationDelivery(): Boolean? {
     getCurrentViewStateOrNew().let {
@@ -30,13 +29,13 @@ fun AccountViewModel.getPolicyConfigurationTax(): Int? {
 
 fun AccountViewModel.getPolicyConfigurationTaxRanges():List<TaxRange> {
     getCurrentViewStateOrNew().let {
-        return it.policyConfiguration.taxRanges
+        return it.policyConfiguration.taxRanges?: listOf()
     }
 }
 
 fun AccountViewModel.getCustomCategoryList():List<CustomCategory>{
     getCurrentViewStateOrNew().let {
-        return it.discountFields.customCategoryList
+        return it.discountFields.customCategoryList?: listOf()
     }
 }
 
@@ -48,13 +47,13 @@ fun AccountViewModel.getSelectedCustomCategory():CustomCategory?{
 
 fun AccountViewModel.getProductList():List<Product>{
     getCurrentViewStateOrNew().let {
-        return it.discountFields.productsList
+        return it.discountFields.productsList?: arrayListOf()
     }
 }
 
 fun AccountViewModel.getSelectedProductDiscount():List<Product>{
     getCurrentViewStateOrNew().let {
-        return it.discountFields.selectedProductDiscount
+        return it.discountFields.selectedProductDiscount?: listOf()
     }
 }
 
@@ -72,31 +71,31 @@ fun AccountViewModel.getRangeDiscountDate():Pair<String?,String?>{
 
 fun AccountViewModel.getDiscountCode():String{
     getCurrentViewStateOrNew().let {
-        return it.discountFields.discountCode
+        return it.discountFields.discountCode?:""
     }
 }
 
 fun AccountViewModel.getOfferType(): OfferType {
     getCurrentViewStateOrNew().let {
-        return it.discountFields.offerType
+        return it.discountFields.offerType?:OfferType.PERCENTAGE
     }
 }
 
 fun AccountViewModel.getDiscountValuePercentage():String{
     getCurrentViewStateOrNew().let {
-        return it.discountFields.discountValuePercentage
+        return it.discountFields.discountValuePercentage?:"%"
     }
 }
 
 fun AccountViewModel.getDiscountValueFixed():String{
     getCurrentViewStateOrNew().let {
-        return it.discountFields.discountValueFixed
+        return it.discountFields.discountValueFixed?:""
     }
 }
 
 fun AccountViewModel.getOffersList():List<Offer>{
     getCurrentViewStateOrNew().let {
-        return it.discountOfferList.offersList
+        return it.discountOfferList.offersList?: listOf()
     }
 }
 
@@ -114,7 +113,7 @@ fun AccountViewModel.getSelectedCategoriesList():MutableList<Category>{
 
 fun AccountViewModel.getCategoriesList():List<Category>{
     getCurrentViewStateOrNew().let {
-        return it.storeInformationFields.categoryList
+        return it.storeInformationFields.categoryList?: listOf()
     }
 }
 
@@ -132,7 +131,7 @@ fun AccountViewModel.getSelectedCategory(): Category?{
 
 fun AccountViewModel.getFlashDealsList(): List<FlashDeal>{
     getCurrentViewStateOrNew().let {
-        return it.flashDealsFields.flashDealsList
+        return it.flashDealsFields.flashDealsList?: listOf()
     }
 }
 
@@ -144,7 +143,7 @@ fun AccountViewModel.getSearchFlashDealRangeDate(): Pair<String?,String?>{
 
 fun AccountViewModel.getSearchFlashDealsList(): List<FlashDeal>{
     getCurrentViewStateOrNew().let {
-        return it.flashDealsFields.searchFlashDealsList
+        return it.flashDealsFields.searchFlashDealsList?: listOf()
     }
 }
 

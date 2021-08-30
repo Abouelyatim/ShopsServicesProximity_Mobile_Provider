@@ -23,6 +23,7 @@ import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.
 import com.smartcity.provider.ui.main.store.state.STORE_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent
 import com.smartcity.provider.ui.main.store.state.StoreViewState
+import com.smartcity.provider.ui.main.store.viewmodel.StoreViewModel
 import com.smartcity.provider.util.ActionConstants
 import com.smartcity.provider.util.RightSpacingItemDecoration
 import com.smartcity.provider.util.SuccessHandling
