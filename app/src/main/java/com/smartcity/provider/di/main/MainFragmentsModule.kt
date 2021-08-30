@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.smartcity.provider.fragments.main.account.AccountFragmentFactory
 import com.smartcity.provider.fragments.main.store.StoreFragmentFactory
-import com.smartcity.provider.fragments.main.blog.BlogFragmentFactory
+import com.smartcity.provider.fragments.main.order.OrderFragmentFactory
 import com.smartcity.provider.fragments.main.custom_category.CustomCategoryFragmentFactory
 
 
@@ -38,7 +38,7 @@ object MainFragmentsModule {
         viewModelFactory: ViewModelProvider.Factory,
         requestManager: RequestManager
     ): FragmentFactory {
-        return BlogFragmentFactory(
+        return OrderFragmentFactory(
             viewModelFactory,
             requestManager
         )

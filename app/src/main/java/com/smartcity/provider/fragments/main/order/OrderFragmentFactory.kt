@@ -1,4 +1,4 @@
-package com.smartcity.provider.fragments.main.blog
+package com.smartcity.provider.fragments.main.order
 
 import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +11,7 @@ import com.smartcity.provider.ui.main.order.search.*
 import javax.inject.Inject
 
 @MainScope
-class BlogFragmentFactory
+class OrderFragmentFactory
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,

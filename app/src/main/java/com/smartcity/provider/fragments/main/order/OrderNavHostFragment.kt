@@ -1,4 +1,4 @@
-package com.smartcity.provider.fragments.main.blog
+package com.smartcity.provider.fragments.main.order
 
 import android.content.Context
 import android.os.Bundle
@@ -6,7 +6,7 @@ import androidx.annotation.NavigationRes
 import androidx.navigation.fragment.NavHostFragment
 import com.smartcity.provider.ui.main.MainActivity
 
-class BlogNavHostFragment : NavHostFragment(){
+class OrderNavHostFragment : NavHostFragment(){
     override fun onAttach(context: Context) {
         childFragmentManager.fragmentFactory =
             (activity as MainActivity).blogFragmentFactory
@@ -20,14 +20,14 @@ class BlogNavHostFragment : NavHostFragment(){
         @JvmStatic
         fun create(
             @NavigationRes graphId: Int = 0
-        ): BlogNavHostFragment {
+        ): OrderNavHostFragment {
             var bundle: Bundle? = null
             if(graphId != 0){
                 bundle = Bundle()
                 bundle.putInt(KEY_GRAPH_ID, graphId)
             }
             val result =
-                BlogNavHostFragment()
+                OrderNavHostFragment()
             if(bundle != null){
                 result.arguments = bundle
             }
