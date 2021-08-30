@@ -2,7 +2,6 @@ package com.smartcity.provider.ui.config
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -16,33 +15,23 @@ import com.smartcity.provider.models.Category
 import com.smartcity.provider.ui.config.state.ConfigStateEvent
 import com.smartcity.provider.ui.config.viewmodel.*
 import com.smartcity.provider.ui.main.account.information.adapters.CategoriesAdapter
-import com.smartcity.provider.util.SuccessHandling
+import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_category_config.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class CategoryConfigFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory
-): BaseConfigFragment(R.layout.fragment_category_config),
+): BaseConfigFragment(R.layout.fragment_category_config,viewModelFactory),
     CategoriesAdapter.Interaction{
 
     private lateinit var categoriesAdapter: CategoriesAdapter
-
-    val viewModel: ConfigViewModel by viewModels{
-        viewModelFactory
-    }
-
-    override fun cancelActiveJobs() {
-        viewModel.cancelActiveJobs()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.cancelActiveJobs()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,28 +53,23 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.response?.peekContent()?.let{ response ->
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
-                        if(!data.response.hasBeenHandled){
-                            if (response.message== SuccessHandling.DONE_ALL_CATEGORIES){
-                                data.data?.let{
-                                    it.peekContent()?.let{
-                                        it.storeFields.allCategoryStore?.let {
-                                            viewModel.setListAllCategoryStore(it)
-                                        }
+            stateMessage?.let {
 
-                                    }
-                                }
-
-                            }
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
+                )
             }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
 
         //submit list to recycler view

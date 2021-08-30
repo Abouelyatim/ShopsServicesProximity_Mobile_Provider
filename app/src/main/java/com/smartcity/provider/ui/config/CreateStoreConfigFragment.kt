@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -19,22 +18,18 @@ import com.bumptech.glide.RequestManager
 import com.smartcity.provider.R
 import com.smartcity.provider.models.Store
 import com.smartcity.provider.models.StoreAddress
-import com.smartcity.provider.ui.*
-import com.smartcity.provider.util.GpsTracker
+import com.smartcity.provider.ui.AreYouSureCallback
 import com.smartcity.provider.ui.config.state.ConfigStateEvent
 import com.smartcity.provider.ui.config.viewmodel.*
-import com.smartcity.provider.util.Constants
-import com.smartcity.provider.util.ErrorHandling
-import com.smartcity.provider.util.SuccessHandling
+import com.smartcity.provider.util.*
 import com.sucho.placepicker.AddressData
 import com.sucho.placepicker.MapType
 import com.sucho.placepicker.PlacePicker
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_create_store_config.*
-import kotlinx.android.synthetic.main.fragment_create_store_config.default_phone_number
-import kotlinx.android.synthetic.main.fragment_create_store_config.input_address
-import kotlinx.android.synthetic.main.fragment_create_store_config.phone_number
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import me.ibrahimsn.lib.PhoneNumberKit
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -42,25 +37,17 @@ import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
-
+@FlowPreview
+@ExperimentalCoroutinesApi
 class CreateStoreConfigFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory,
     private val requestManager: RequestManager
-): BaseConfigFragment(R.layout.fragment_create_store_config){
+): BaseConfigFragment(R.layout.fragment_create_store_config,viewModelFactory){
 
     lateinit var defaultPhoneNumberKit: PhoneNumberKit
     lateinit var phoneNumberKit: PhoneNumberKit
-
-    val viewModel: ConfigViewModel by viewModels{
-        viewModelFactory
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.cancelActiveJobs()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,13 +55,13 @@ constructor(
         subscribeObservers()
 
         store_image.setOnClickListener {
-            if(stateChangeListener.isStoragePermissionGranted()){
+            if(uiCommunicationListener.isStoragePermissionGranted()){
                 pickFromGallery()
             }
         }
 
         update_textview_store.setOnClickListener {
-            if(stateChangeListener.isStoragePermissionGranted()){
+            if(uiCommunicationListener.isStoragePermissionGranted()){
                 pickFromGallery()
             }
         }
@@ -83,7 +70,7 @@ constructor(
         val applicationInfo = activity!!.packageManager.getApplicationInfo( activity!!.packageName, PackageManager.GET_META_DATA)
         input_address.setOnClickListener {
             val gpsTracker = GpsTracker(context!!)
-            if(stateChangeListener.isFineLocationPermissionGranted()){
+            if(uiCommunicationListener.isFineLocationPermissionGranted()){
                 gpsTracker.getCurrentLocation()
                 val latitude: Double = gpsTracker.getLatitude()
                 val longitude: Double = gpsTracker.getLongitude()
@@ -102,7 +89,7 @@ constructor(
                     .build(activity!!)
                 startActivityForResult(intent, com.sucho.placepicker.Constants.PLACE_PICKER_REQUEST)
             }else{
-                stateChangeListener.isFineLocationPermissionGranted()
+                uiCommunicationListener.isFineLocationPermissionGranted()
             }
         }
         next_button.setOnClickListener {
@@ -117,14 +104,19 @@ constructor(
                 }
 
             }
-            uiCommunicationListener.onUIMessageReceived(
-                UIMessage(
-                    getString(R.string.are_you_sure_publish),
-                    UIMessageType.AreYouSureDialog(callback)
-                )
+            uiCommunicationListener.onResponseReceived(
+                response = Response(
+                    message = getString(R.string.are_you_sure_publish),
+                    uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                    messageType = MessageType.Info()
+                ),
+                stateMessageCallback = object: StateMessageCallback{
+                    override fun removeMessageFromStack() {
+                        viewModel.clearStateMessage()
+                    }
+                }
             )
         }
-
     }
 
     private fun setTextInput(){
@@ -187,10 +179,6 @@ constructor(
         beug=false
     }
 
-    override fun cancelActiveJobs() {
-        viewModel.cancelActiveJobs()
-    }
-
     private fun create() {
         if(validPhoneNumber()){
             var multipartBody: MultipartBody.Part? = null
@@ -236,37 +224,27 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
+            stateMessage?.let {
 
-            if(dataState != null){
-                dataState.data?.let { data ->
-                    data.data?.peekContent()?.let{
-                        it.storeFields.allCategoryStore?.let {
-                            viewModel.setListAllCategoryStore(
-                                it
-                            )
+                if(stateMessage.response.message.equals(SuccessHandling.STORE_CREATION_DONE)){
+                    findNavController().navigate(R.id.action_createStoreConfigFragment_to_categoryConfigFragment)
+                }
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
                         }
                     }
-                }
-            }
-
-            if(dataState != null){
-                dataState.data?.let { data ->
-
-                    data.response?.peekContent()?.let{ response ->
-                        if(response.message.equals(SuccessHandling.STORE_CREATION_DONE)){
-                           findNavController().navigate(R.id.action_createStoreConfigFragment_to_categoryConfigFragment)
-                        }
-                    }
-                }
+                )
             }
         })
 
-        viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-
-
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer{
@@ -365,6 +343,7 @@ constructor(
             }
         }
     }
+
     private fun launchImageCrop(uri: Uri){
         context?.let{
             CropImage.activity(uri)
@@ -374,12 +353,17 @@ constructor(
     }
 
     fun showErrorDialog(errorMessage: String){
-        stateChangeListener.onDataStateChange(
-            DataState(
-                Event(StateError(Response(errorMessage, ResponseType.Dialog()))),
-                Loading(isLoading = false),
-                Data(Event.dataEvent(null), null)
-            )
+        uiCommunicationListener.onResponseReceived(
+            response = Response(
+                message = errorMessage,
+                uiComponentType = UIComponentType.Dialog(),
+                messageType = MessageType.Error()
+            ),
+            stateMessageCallback = object: StateMessageCallback {
+                override fun removeMessageFromStack() {
+                    viewModel.clearStateMessage()
+                }
+            }
         )
     }
 

@@ -2,34 +2,24 @@ package com.smartcity.provider.ui.config
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.smartcity.provider.R
 import com.smartcity.provider.ui.config.state.ConfigStateEvent
-import com.smartcity.provider.ui.config.viewmodel.ConfigViewModel
+import com.smartcity.provider.util.StateMessageCallback
 import kotlinx.android.synthetic.main.fragment_choose_service_config.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class ChooseServiceConfigFragment
 @Inject
 constructor(
     private val viewModelFactory: ViewModelProvider.Factory
-): BaseConfigFragment(R.layout.fragment_choose_service_config){
-
-    val viewModel: ConfigViewModel by viewModels{
-        viewModelFactory
-    }
-
-    override fun cancelActiveJobs() {
-        viewModel.cancelActiveJobs()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.cancelActiveJobs()
-    }
+): BaseConfigFragment(R.layout.fragment_choose_service_config,viewModelFactory){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,9 +38,23 @@ constructor(
     }
 
     private fun subscribeObservers() {
-        viewModel.dataState.observe(viewLifecycleOwner, Observer{ dataState ->
-            stateChangeListener.onDataStateChange(dataState)
+        viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
+            stateMessage?.let {
+
+                uiCommunicationListener.onResponseReceived(
+                    response = it.response,
+                    stateMessageCallback = object: StateMessageCallback {
+                        override fun removeMessageFromStack() {
+                            viewModel.clearStateMessage()
+                        }
+                    }
+                )
+            }
+        })
+
+        viewModel.numActiveJobs.observe(viewLifecycleOwner, Observer { jobCounter ->//must
+            uiCommunicationListener.displayProgressBar(viewModel.areAnyJobsActive())
         })
     }
 }
