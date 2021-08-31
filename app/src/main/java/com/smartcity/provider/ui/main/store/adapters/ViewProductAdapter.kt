@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.store
+package com.smartcity.provider.ui.main.store.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -67,7 +67,7 @@ class ViewProductAdapter (
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ):  ProductHolder {
+    ): ProductHolder {
 
         return  ProductHolder(
             LayoutInflater.from(parent.context)

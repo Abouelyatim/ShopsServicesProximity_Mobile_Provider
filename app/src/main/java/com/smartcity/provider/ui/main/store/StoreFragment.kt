@@ -17,8 +17,10 @@ import com.google.android.flexbox.JustifyContent
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
 import com.smartcity.provider.models.product.Product
-import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.getSelectedPositions
-import com.smartcity.provider.ui.main.store.ViewCustomCategoryAdapter.Companion.setSelectedPositions
+import com.smartcity.provider.ui.main.store.adapters.ViewCustomCategoryAdapter
+import com.smartcity.provider.ui.main.store.adapters.ViewCustomCategoryAdapter.Companion.getSelectedPositions
+import com.smartcity.provider.ui.main.store.adapters.ViewCustomCategoryAdapter.Companion.setSelectedPositions
+import com.smartcity.provider.ui.main.store.adapters.ViewProductAdapter
 import com.smartcity.provider.ui.main.store.state.STORE_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.state.StoreStateEvent
 import com.smartcity.provider.ui.main.store.state.StoreViewState
@@ -78,8 +80,9 @@ constructor(
         initProductRecyclerView()
         subscribeObservers()
 
-        if(viewModel.getCustomCategoryRecyclerPosition()==0){
+        if(viewModel.getCustomCategoryRecyclerPosition()==0 && viewModel.getViewProductList().products.isNullOrEmpty()){
             CustomCategoryMain()
+            AllProduct()
         }
     }
 
@@ -152,10 +155,6 @@ constructor(
         viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must
 
             stateMessage?.let {
-
-                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
-                    findNavController().popBackStack()
-                }
 
                 uiCommunicationListener.onResponseReceived(
                     response = it.response,

@@ -97,15 +97,6 @@ constructor(
 
             stateMessage?.let {
 
-                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
-                    ProductMain()
-                }
-
-                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
-                    dialog.dismiss()
-                    ProductMain()
-                }
-
                 uiCommunicationListener.onResponseReceived(
                     response = it.response,
                     stateMessageCallback = object: StateMessageCallback {
@@ -114,6 +105,15 @@ constructor(
                         }
                     }
                 )
+
+                if(stateMessage.response.message.equals(SuccessHandling.DELETE_DONE)){
+                    ProductMain()
+                }
+
+                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
+                    dialog.dismiss()
+                    ProductMain()
+                }
             }
         })
 

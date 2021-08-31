@@ -1,4 +1,4 @@
-package com.smartcity.provider.ui.main.store
+package com.smartcity.provider.ui.main.store.adapters
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.*
 import com.smartcity.provider.R
 import com.smartcity.provider.models.CustomCategory
 import kotlinx.android.synthetic.main.layout_view_custom_category_list_item.view.*
-import kotlinx.android.synthetic.main.option_value_item.view.*
 
 
 class ViewCustomCategoryAdapter (
@@ -28,12 +27,12 @@ class ViewCustomCategoryAdapter (
         }
 
         fun setSelectedPositions(position:Int){
-             selectedPosition=position
+             selectedPosition =position
         }
     }
 
     fun resetSelectedPosition(){
-        selectedPosition=0
+        selectedPosition =0
     }
 
     val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CustomCategory>() {
@@ -151,7 +150,7 @@ class ViewCustomCategoryAdapter (
 
 
         fun bind(position: Int) = with(itemView) {
-            if(selectedPosition==position){
+            if(selectedPosition ==position){
                 itemView.custom_category_container.background= ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_selected_white,null)
                 itemView.view_custom_category_name.setTextColor(Color.parseColor("#ffffff"))
             }
@@ -161,7 +160,7 @@ class ViewCustomCategoryAdapter (
             }
 
             itemView.setOnClickListener {
-                selectedPosition=position
+                selectedPosition =position
                 interactionAll?.onItemAddSelected()
             }
 
@@ -176,7 +175,7 @@ class ViewCustomCategoryAdapter (
 
         fun bind(item: CustomCategory,position: Int) = with(itemView) {
 
-            if(selectedPosition==position){
+            if(selectedPosition ==position){
                 itemView.custom_category_container.background= ResourcesCompat.getDrawable(resources,R.drawable.raduis_selector_selected_white,null)
                 itemView.view_custom_category_name.setTextColor(Color.parseColor("#ffffff"))
 
@@ -188,7 +187,7 @@ class ViewCustomCategoryAdapter (
             }
 
             itemView.setOnClickListener {
-                selectedPosition=position;
+                selectedPosition =position;
                 interaction?.onItemSelected(adapterPosition,item)
             }
             itemView.view_custom_category_name.text=item.name

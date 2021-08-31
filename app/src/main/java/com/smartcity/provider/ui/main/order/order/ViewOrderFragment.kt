@@ -325,10 +325,6 @@ constructor(
 
             stateMessage?.let {
 
-                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
-                    updateOrderList()
-                }
-
                 uiCommunicationListener.onResponseReceived(
                     response = it.response,
                     stateMessageCallback = object: StateMessageCallback {
@@ -337,6 +333,10 @@ constructor(
                         }
                     }
                 )
+
+                if(stateMessage.response.message.equals(SuccessHandling.CUSTOM_CATEGORY_UPDATE_DONE)){
+                    updateOrderList()
+                }
             }
         })
 

@@ -30,6 +30,6 @@ fun StoreViewModel.getChoisesMap():MutableMap<String, String>{
 
 fun StoreViewModel.getCustomCategoryRecyclerPosition():Int{
     getCurrentViewStateOrNew().let {
-        return it.customCategoryRecyclerPosition
+        return it.customCategoryRecyclerPosition?:0
     }
 }

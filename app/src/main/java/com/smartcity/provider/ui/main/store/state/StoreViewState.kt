@@ -20,7 +20,7 @@ class StoreViewState(
 
     var choisesMap: ChoisesMap = ChoisesMap(),
 
-    var customCategoryRecyclerPosition:Int=0
+    var customCategoryRecyclerPosition:Int?=null
 
     ) : Parcelable{
 
