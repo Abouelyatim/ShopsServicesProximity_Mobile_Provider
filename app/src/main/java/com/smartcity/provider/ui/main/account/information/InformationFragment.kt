@@ -82,10 +82,12 @@ constructor(
             saveStoreInformation()
         }
 
-        viewModel.setStateEvent(
-            AccountStateEvent.GetStoreInformationEvent()
-        )
-
+        if(viewModel.getStoreInformation()==null){
+            viewModel.setStateEvent(
+                AccountStateEvent.GetStoreInformationEvent()
+            )
+        }
+        
         add_category_button.setOnClickListener {
             navCategory()
         }
@@ -170,7 +172,7 @@ constructor(
 
         //submit list to recycler view
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-            var selectedCategoriesValue= listOf<String>()
+            val selectedCategoriesValue= mutableListOf<String>()
             viewModel.getSelectedCategoriesList()
                 .map {
                     selectedCategoriesValue+=it.subCategorys
