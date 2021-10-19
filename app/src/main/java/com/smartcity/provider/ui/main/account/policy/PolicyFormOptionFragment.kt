@@ -234,9 +234,6 @@ constructor(
             SelfPickUpOptions.SELF_PICK_UP_PART_RANGE->{
                 setUpUi(percentage = false, range = true)
             }
-            SelfPickUpOptions.SELF_PICK_UP_EXTEND_PERCENTAGE->{
-                setUpUi(percentage = true, range = false)
-            }
         }
     }
 

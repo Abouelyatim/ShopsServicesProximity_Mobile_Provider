@@ -87,7 +87,7 @@ constructor(
                 AccountStateEvent.GetStoreInformationEvent()
             )
         }
-        
+
         add_category_button.setOnClickListener {
             navCategory()
         }

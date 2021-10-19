@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -51,6 +52,7 @@ constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        uiCommunicationListener.updateStatusBarColor(R.color.white,false)
         setTextInput()
         subscribeObservers()
 
@@ -209,7 +211,8 @@ constructor(
                     viewModel.getStoreAddress()!!,
                     -1,
                     input_phone_number.text.toString(),
-                    input_default_phone_number.text.toString()
+                    input_default_phone_number.text.toString(),
+                    getUriName(viewModel.getNewImageUri())
                 )
 
 
@@ -221,6 +224,13 @@ constructor(
                 )
             }
         }
+    }
+
+    private fun getUriName(uri:Uri?):String{
+        uri?.let {
+            return RingtoneManager.getRingtone(context, uri).getTitle(context)
+        }
+        return ""
     }
 
     private fun subscribeObservers() {
@@ -268,7 +278,7 @@ constructor(
         }
         else{
             requestManager
-                .load(R.drawable.default_image)
+                .load(R.drawable.ic_baseline_add_photo_alternate_grey)
                 .into(store_image)
         }
         input_name.setText(name)

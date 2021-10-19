@@ -31,5 +31,8 @@ data class Store (
     @Expose
     var defaultTelephoneNumber:String,
 
+    @SerializedName("imageStore")
+    @Expose
+    var imageStore:String
 ): Parcelable {
 }

@@ -104,7 +104,6 @@ constructor(
     fun initExtendable(){
         val list= mutableListOf<Pair<ImageView, TextView>>()
         list.add(Pair(expand_without_payment,description_without_payment))
-        list.add(Pair(expand_extend_range,description_extend_range))
         list.add(Pair(expand_total_payment,description_total_payment))
         list.add(Pair(expand_part_fixed,description_part_fixed))
         list.add(Pair(expand_part_range,description_part_range))
@@ -131,7 +130,6 @@ constructor(
     fun initRadisButtons(){
         val list= mutableListOf<Pair<RadioButton, SelfPickUpOptions>>()
         list.add(Pair( radio_without_payment, SelfPickUpOptions.SELF_PICK_UP))
-        list.add(Pair( radio_extend_fixed, SelfPickUpOptions.SELF_PICK_UP_EXTEND_PERCENTAGE))
         list.add(Pair( radio_total_payment, SelfPickUpOptions.SELF_PICK_UP_TOTAL))
         list.add(Pair( radio_part_fixed, SelfPickUpOptions.SELF_PICK_UP_PART_PERCENTAGE))
         list.add(Pair(radio_part_range, SelfPickUpOptions.SELF_PICK_UP_PART_RANGE))

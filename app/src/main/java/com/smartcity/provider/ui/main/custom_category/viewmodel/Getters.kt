@@ -79,9 +79,9 @@ fun CustomCategoryViewModel.isEmptyProductFields():Boolean{
     return false
 }
 
-fun CustomCategoryViewModel.getProductImageList():List<Uri>?{
+fun CustomCategoryViewModel.getProductImageList():List<Uri>{
     getCurrentViewStateOrNew().let {
-        return it.productFields.productImageList
+        return it.productFields.productImageList?: listOf()
     }
 }
 
