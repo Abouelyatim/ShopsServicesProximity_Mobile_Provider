@@ -1,5 +1,6 @@
 package com.smartcity.provider.ui.main.store.viewmodel
 
+import com.smartcity.provider.di.main.MainScope
 import com.smartcity.provider.repository.main.StoreRepositoryImpl
 import com.smartcity.provider.session.SessionManager
 import com.smartcity.provider.ui.BaseViewModel
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @FlowPreview
+@MainScope
 class StoreViewModel
 @Inject
 constructor(

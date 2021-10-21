@@ -7,12 +7,14 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -28,6 +30,7 @@ import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.Optio
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ValuesAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.VariantImageAdapter
 import com.smartcity.provider.ui.main.custom_category.viewProduct.adapters.ViewPagerAdapter
+import com.smartcity.provider.ui.main.custom_category.viewmodel.getViewProductFields
 import com.smartcity.provider.ui.main.store.state.STORE_VIEW_STATE_BUNDLE_KEY
 import com.smartcity.provider.ui.main.store.state.StoreViewState
 import com.smartcity.provider.ui.main.store.viewmodel.clearChoisesMap
@@ -64,7 +67,7 @@ constructor(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cancelActiveJobs()
+
         // Restore state after process death
         savedInstanceState?.let { inState ->
             (inState[STORE_VIEW_STATE_BUNDLE_KEY] as StoreViewState?)?.let { viewState ->
@@ -88,6 +91,7 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         viewModel.getViewProductFields()?.let {
             product=it
@@ -101,6 +105,18 @@ constructor(
         setDescription()
         variantsDialog()
         subscribeObservers()
+        backProceed()
+        editProduct()
+    }
+
+    private fun editProduct() {
+        edit_button.visibility = View.GONE
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     fun getVariantValues (productVariants: ProductVariants):Map<String,String>{
@@ -568,8 +584,6 @@ constructor(
         dotsIndicator.setViewPager(view_pager)
         view_pager.adapter?.registerDataSetObserver(dotsIndicator.dataSetObserver)
     }
-
-
 
     override fun onDestroy() {
         super.onDestroy()

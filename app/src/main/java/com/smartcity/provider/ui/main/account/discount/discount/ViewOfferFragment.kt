@@ -68,6 +68,41 @@ constructor(
 
         subscribeObservers()
         setInformation()
+        editDiscount()
+        deleteDiscount()
+    }
+
+    private fun deleteDiscount() {
+        delete_button.setOnClickListener {
+            val callback: AreYouSureCallback = object: AreYouSureCallback {
+                override fun proceed() {
+                    deleteOffer(
+                        viewModel.getSelectedOffer()!!.id!!
+                    )
+                }
+                override fun cancel() {
+                    // ignore
+                }
+            }
+            uiCommunicationListener.onResponseReceived(
+                response = Response(
+                    message = getString(R.string.are_you_sure_delete),
+                    uiComponentType = UIComponentType.AreYouSureDialog(callback),
+                    messageType = MessageType.Info()
+                ),
+                stateMessageCallback = object: StateMessageCallback{
+                    override fun removeMessageFromStack() {
+                        viewModel.clearStateMessage()
+                    }
+                }
+            )
+        }
+    }
+
+    private fun editDiscount() {
+        edit_button.setOnClickListener {
+            updateOffer()
+        }
     }
 
     private fun subscribeObservers() {
@@ -139,46 +174,6 @@ constructor(
                 this.endDate!!
             )}"
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_delete_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.edit -> {
-                updateOffer()
-                return true
-            }
-
-            R.id.delete -> {
-                val callback: AreYouSureCallback = object: AreYouSureCallback {
-                    override fun proceed() {
-                        deleteOffer(
-                            viewModel.getSelectedOffer()!!.id!!
-                        )
-                    }
-                    override fun cancel() {
-                        // ignore
-                    }
-                }
-                uiCommunicationListener.onResponseReceived(
-                    response = Response(
-                        message = getString(R.string.are_you_sure_delete),
-                        uiComponentType = UIComponentType.AreYouSureDialog(callback),
-                        messageType = MessageType.Info()
-                    ),
-                    stateMessageCallback = object: StateMessageCallback{
-                        override fun removeMessageFromStack() {
-                            viewModel.clearStateMessage()
-                        }
-                    }
-                )
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun updateOffer() {

@@ -74,7 +74,7 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
         uiCommunicationListener.expandAppBar()
-
+        uiCommunicationListener.displayBottomNavigation(true)
 
         initCustomCategoryRecyclerView()
         initProductRecyclerView()
@@ -178,7 +178,6 @@ constructor(
                     submitList(viewModel.getViewProductList().products)
                 }
 
-            Log.d("ii",viewModel.getViewProductList().products.toString())
 
         })
     }

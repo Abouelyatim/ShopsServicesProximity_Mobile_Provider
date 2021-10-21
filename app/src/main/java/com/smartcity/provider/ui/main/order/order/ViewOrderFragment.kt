@@ -83,6 +83,7 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
+        uiCommunicationListener.displayBottomNavigation(false)
 
         setOrderNote()
         setOrderInformation()
@@ -94,6 +95,13 @@ constructor(
         readyOrder()
         deliveredPickedUpOrder()
         setButtonsUi()
+        backProceed()
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun setOrderNote() {

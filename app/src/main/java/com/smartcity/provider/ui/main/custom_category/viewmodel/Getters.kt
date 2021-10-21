@@ -73,7 +73,7 @@ fun CustomCategoryViewModel.getProductList():List<Product>{
 
 fun CustomCategoryViewModel.isEmptyProductFields():Boolean{
     val update = getCurrentViewStateOrNew()
-    if (update.productFields.name==""){
+    if (update.productFields.name== null){
         return true
     }
     return false

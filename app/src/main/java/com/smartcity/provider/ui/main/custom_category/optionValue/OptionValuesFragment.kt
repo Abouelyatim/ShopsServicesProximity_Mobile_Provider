@@ -1,6 +1,7 @@
 package com.smartcity.provider.ui.main.custom_category.optionValue
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -65,6 +66,33 @@ constructor(
         initvRecyclerView()
         subscribeObservers()
         setToolBarText(viewModel.getNewOption()!!.name)
+        backProceed()
+        saveValues()
+    }
+
+    private fun saveValues() {
+        check_button_value.setOnClickListener {
+            viewModel.getNewOption()?.let {
+                viewModel.setOptionList(it)
+            }
+            findNavController().navigate(R.id.action_optionValuesFragment_to_createOptionFragment)
+        }
+    }
+
+    private fun setCheckButton() {
+        viewModel.getNewOption()?.let { it.attributeValues.isNotEmpty() }?.let {
+            if(it){
+                check_button_value.visibility = View.VISIBLE
+            }else{
+                check_button_value.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun setToolBarText(text:String){
@@ -74,13 +102,7 @@ constructor(
     private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             recyclerAdapter.submitList(viewModel.getNewOption()?.let {it.attributeValues })
-
-            viewModel.getNewOption()?.let {
-                if(it.attributeValues.isNotEmpty()){
-                    adaptViewToNavigate()
-                }
-            }
-
+            setCheckButton()
         })
     }
 
@@ -118,36 +140,6 @@ constructor(
             adapter = recyclerAdapter
         }
 
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        viewModel.getNewOption()?.let { it.attributeValues.isNotEmpty() }?.let {
-            if(it){
-                inflater.inflate(R.menu.update_menu, menu)
-            }
-        }
-
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        viewModel.getNewOption()?.let { it.attributeValues.isNotEmpty() }?.let {
-            if(it){
-                when(item.itemId){
-                    R.id.save -> {
-                        viewModel.getNewOption()?.let {
-                            viewModel.setOptionList(it)
-                        }
-                        findNavController().navigate(R.id.action_optionValuesFragment_to_createOptionFragment)
-                        return true
-                    }
-                }
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun adaptViewToNavigate(){
-        activity?.invalidateOptionsMenu()
     }
 
     override fun onItemSelected(position: Int, item: AttributeValue) {

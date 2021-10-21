@@ -32,7 +32,7 @@ fun Activity.displaySnackBar(
 ){
     val snckBar= Snackbar.make(this.window.decorView.findViewById(android.R.id.content),message,
         Snackbar.LENGTH_SHORT)
-    snckBar.setAnchorView(this.findViewById(R.id.bottom_navigation_view) as View)
+    //snckBar.setAnchorView(this.findViewById(R.id.bottom_navigation_view) as View)
     snckBar.show()
     stateMessageCallback.removeMessageFromStack()
 }

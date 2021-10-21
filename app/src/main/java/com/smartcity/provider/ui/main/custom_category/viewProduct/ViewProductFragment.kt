@@ -87,7 +87,6 @@ constructor(
             product=it
         }
 
-        adaptViewToNavigate()
         initViewPager()
         setPrice(product_new_price)
         setName()
@@ -95,6 +94,20 @@ constructor(
         setDescription()
         variantsDialog()
         subscribeObservers()
+        backProceed()
+        editProduct()
+    }
+
+    private fun editProduct() {
+        edit_button.setOnClickListener {
+            findNavController().navigate(R.id.action_viewProductFragment_to_createProductFragment)
+        }
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     fun getVariantValues (productVariants: ProductVariants):Map<String,String>{
@@ -451,23 +464,5 @@ constructor(
             map.put(option,value)
         }
         viewModel.setChoisesMap(map)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_view_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.edit -> {
-                findNavController().navigate(R.id.action_viewProductFragment_to_createProductFragment)
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun adaptViewToNavigate(){
-        activity?.invalidateOptionsMenu()
     }
 }

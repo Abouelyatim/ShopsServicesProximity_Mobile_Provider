@@ -57,6 +57,13 @@ constructor(
         uiCommunicationListener.expandAppBar()
 
         createOption()
+        backProceed()
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun createOption() {

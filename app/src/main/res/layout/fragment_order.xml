@@ -1,11 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context=".ui.main.order.order.OrderFragment">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:gravity="start">
+
+
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Your Orders"
+                android:textColor="@color/dark"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                />
+
+        <LinearLayout
+                android:id="@+id/search_button"
+                android:paddingStart="10dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/ic_baseline_manage_search_24"
+                    />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/filter_button"
+                android:paddingStart="10dp"
+                android:paddingEnd="20dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/ic_baseline_filter_alt_24"
+                    />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -133,3 +199,5 @@
             app:layout_constraintRight_toRightOf="parent"
             />
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

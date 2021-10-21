@@ -73,6 +73,13 @@ constructor(
         setHasOptionsMenu(true)
 
         initOrderRecyclerView()
+        backProceed()
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun initOrderRecyclerView() {

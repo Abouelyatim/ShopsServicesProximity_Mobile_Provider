@@ -64,12 +64,20 @@ constructor(
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
+        uiCommunicationListener.displayBottomNavigation(false)
 
         scanQrCode()
         searchByReceiver()
         searchByDate()
         searchPastOrders()
         subscribeObservers()
+        backProceed()
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun searchByDate() {

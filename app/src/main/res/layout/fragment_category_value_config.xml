@@ -4,7 +4,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/new_default_background_color"
+        android:orientation="vertical"
         tools:context=".ui.config.CategoryValueConfigFragment">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Choose sub-fields"
+            android:textColor="#000"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:background="@color/white"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

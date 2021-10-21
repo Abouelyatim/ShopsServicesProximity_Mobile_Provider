@@ -71,16 +71,24 @@ constructor(
         setHasOptionsMenu(true)
         swipe_refresh.setOnRefreshListener(this)
         uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(false)
 
         addProduct()
         initProductRecyclerView()
         ProductMain()
         subscribeObservers()
         setToolBareText(viewModel.getSelectedCustomCategory()!!.name)
+        backProceed()
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun setToolBareText(text:String){
-        toolbarTitle.text=text
+        category_name.text=text
     }
 
     fun ProductMain(){
@@ -89,8 +97,6 @@ constructor(
             viewModel.getSelectedCustomCategory()!!.pk.toLong()
         ))
     }
-
-
 
     private fun subscribeObservers() {
         viewModel.stateMessage.observe(viewLifecycleOwner, Observer { stateMessage ->//must

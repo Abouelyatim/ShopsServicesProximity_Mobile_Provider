@@ -97,6 +97,7 @@ constructor(
             ACTION=ActionConstants.UPDATE
         else ACTION= ActionConstants.CREATE
 
+
         if(ACTION==ActionConstants.UPDATE){
             if (viewModel.isEmptyProductFields()){//if fields product fields are not set
                 setOldProductFields()

@@ -52,6 +52,7 @@ import com.smartcity.provider.util.StateMessageCallback
 import com.smartcity.provider.util.SuccessHandling
 import com.smartcity.provider.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_order.*
+import kotlinx.android.synthetic.main.fragment_search_orders.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
@@ -129,6 +130,8 @@ constructor(
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         setHasOptionsMenu(true)
         swipe_refresh.setOnRefreshListener(this)
+        uiCommunicationListener.updateStatusBarColor(R.color.white,false)
+        uiCommunicationListener.displayBottomNavigation(true)
 
         initOrderRecyclerView()
         initOrderActionRecyclerView()
@@ -141,9 +144,24 @@ constructor(
         initData(viewModel.getOrderActionRecyclerPosition(),viewModel.getOrderStepsRecyclerPosition())
 
         setEmptyListUi(viewModel.getOrderList().isEmpty())
+
+        searchOrder()
+        filterOrders()
     }
 
-     fun initData(actionPosition: Int,stepPosition: Int){
+    private fun filterOrders() {
+        filter_button.setOnClickListener {
+            showFilterDialog()
+        }
+    }
+
+    private fun searchOrder() {
+        search_button.setOnClickListener {
+            navSearch()
+        }
+    }
+
+    fun initData(actionPosition: Int,stepPosition: Int){
         when(stepPosition){
             NEW.second ->{
                 viewModel.setOrderStepFilter(OrderStep.NEW_ORDER)
@@ -489,27 +507,6 @@ constructor(
 
     private fun navSearch(){
         findNavController().navigate(R.id.action_orderFragment_to_searchOrdersFragment)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.search_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        when(item.itemId){
-            R.id.action_filter_settings -> {
-                showFilterDialog()
-                return true
-            }
-
-            R.id.action_search_settings -> {
-                navSearch()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun initFilterOrderRecyclerView(recyclerView: RecyclerView,recyclerAdapter: OrderFilterAdapter) {

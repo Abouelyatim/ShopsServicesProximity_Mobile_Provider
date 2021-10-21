@@ -24,8 +24,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/custom_category_name"
                 android:text="The Title of a Blog"
-                android:textColor="#000"
+                android:textColor="@color/dark"
                 android:textSize="19sp"
+                android:textStyle="bold"
                 android:layout_weight="1"
                 />
 
@@ -33,7 +34,7 @@
                 android:id="@+id/update_custom_category"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/ic_edit_24"
+                android:background="@drawable/ic_outline_create_24"
                 android:layout_marginRight="10dp"
                 />
 
@@ -41,7 +42,7 @@
                 android:id="@+id/delete_custom_category"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/ic_delete_24"
+                android:background="@drawable/ic_baseline_delete_outline_24"
                 android:layout_marginRight="10dp"
                 />
 

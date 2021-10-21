@@ -78,6 +78,7 @@ constructor(
         setHasOptionsMenu(true)
         swipe_refresh.setOnRefreshListener(this)
         uiCommunicationListener.expandAppBar()
+        uiCommunicationListener.displayBottomNavigation(true)
 
         CustomCategoryMain()
         initvRecyclerView()

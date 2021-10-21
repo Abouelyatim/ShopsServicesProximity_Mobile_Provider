@@ -13,6 +13,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/app_bar"
             app:elevation="0dp"
+            android:visibility="gone"
             >
 
         <androidx.appcompat.widget.Toolbar

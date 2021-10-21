@@ -1,9 +1,6 @@
 package com.smartcity.provider.ui.main.custom_category.createOption
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -72,7 +69,34 @@ constructor(
         createOptions()
         initvRecyclerView()
         subscribeObservers()
-        adaptViewToNavigate()
+        setCheckButton()
+        saveVariants()
+        backProceed()
+    }
+
+    private fun backProceed() {
+        back_button.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
+
+    private fun saveVariants() {
+        check_button.setOnClickListener {
+            generateProductVariants()
+            findNavController().navigate(R.id.action_createOptionFragment_to_createProductFragment)
+        }
+    }
+
+    private fun setCheckButton() {
+        viewModel.getOptionList()?.let {
+            it.isNotEmpty()
+        }?.let {
+            if(it){
+                check_button.visibility = View.VISIBLE
+            }else{
+                check_button.visibility = View.GONE
+            }
+        }
     }
 
     private fun subscribeObservers() {
@@ -179,32 +203,6 @@ constructor(
         for (i in 0..lists.get(depth).size-1){
             generatePermutation(lists,result,depth+1,current+separator+lists.get(depth).get(i))
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        viewModel.getOptionList()?.let {
-            it.isNotEmpty()
-        }?.let {
-            if(it){
-                inflater.inflate(R.menu.update_menu, menu)
-            }
-        }
-
-    }
-
-    fun adaptViewToNavigate(){
-        activity?.invalidateOptionsMenu()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.save -> {
-                generateProductVariants()
-                findNavController().navigate(R.id.action_createOptionFragment_to_createProductFragment)
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {

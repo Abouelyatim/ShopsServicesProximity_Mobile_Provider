@@ -122,7 +122,6 @@ class ProductAdapter(
                 val image=PRODUCT_IMAGE_URL+item.images.first().image
                 requestManager
                     .load(image)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(itemView.product_image)
             }catch (exception:Exception){
