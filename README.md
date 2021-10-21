@@ -9,6 +9,14 @@ The arrival of the COVID-19 pandemic has completely transformed the way the mark
 This app is for local trader.
 </br> this repository is part of two other repositories [client app](https://github.com/Abouelyatim/ShopsServicesProximity_Mobile_Client) and [backend](https://github.com/Abouelyatim/ShopsServicesProximity_Backend).
 
+## Main features
+* Store policy management.
+* Store management.
+* Product management.
+* Offers management.
+* Orders management.
+* Account management.
+
 ## Architecture
 <img src=images/architecture_mvi.png width="800">
 
